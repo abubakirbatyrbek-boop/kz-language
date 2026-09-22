@@ -108,3 +108,8 @@ nav a:hover { color: var(--accent); }
   .section-head { align-items: start; }
   .footer-wrap { flex-direction:column; gap:6px; }
 }
+.course-btn, .scene-btn { width:100%; text-align:left; color:inherit; font:inherit; }
+.course-btn { cursor:pointer; }
+.scene-btn { cursor:pointer; }
+.selected-path { margin-top: -12px; margin-bottom: 12px; color: var(--muted); font-size: 13px; }
+.course-btn:focus-visible, .scene-btn:focus-visible, button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
