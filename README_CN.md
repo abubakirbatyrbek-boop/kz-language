@@ -23,3 +23,11 @@ V5 改为“初学者优先”的闯关式路线：
 - 游客在当前设备的进度会在第一次登录时尝试迁移到新账号。
 - `supabase-config.js` 不要用本压缩包中的占位配置覆盖你 GitHub 里已经填写好的正式配置。
 - 如果你的 Supabase 还没有创建 `learning_progress` 和 `test_results`，运行 `supabase-v6-schema.sql` 一次。
+
+
+## V6 修复说明
+修复小课完成状态显示问题：本地与 Supabase 的 node_id 统一使用 v5: 前缀，并兼容旧记录。
+
+
+## V6 进度显示修复
+修复小课完成后仍显示 0% 的问题：统一并兼容 progress key，并补齐 progressEntry()。

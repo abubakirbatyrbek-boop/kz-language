@@ -239,6 +239,7 @@ function localProgress(){
 }
 function saveLocal(k,v){const p=localProgress();p[k]=v;localStorage.setItem(currentUserKey(),JSON.stringify(p))}
 function getUser(){return window.__v5User||null}
+function progressEntry(id){const p=localProgress(); return p[nodeKey(id)] || p[id] || null}
 function supabaseConfigured(){return !!(window.supabase&&window.SUPABASE_CONFIG?.url&&window.SUPABASE_CONFIG?.publishableKey&&!String(window.SUPABASE_CONFIG.url).includes('YOUR-PROJECT')&&!String(window.SUPABASE_CONFIG.publishableKey).includes('YOUR_SUPABASE'))}
 async function initUser(){
   try {
@@ -268,18 +269,20 @@ async function initUser(){
   return getUser();
 }
 async function saveRemoteProgress(nodeId,data){
-  saveLocal(nodeId,data);
+  const key=nodeId.startsWith('v5:')?nodeId:nodeKey(nodeId);
+  saveLocal(key,data);
   const u=getUser(),s=window.__v5Supabase;
   if(!u||!s)return;
-  try{await s.from('learning_progress').upsert({user_id:u.id,node_id:nodeId,language:data.language,status:data.status||'in_progress',score:data.score??null,updated_at:new Date().toISOString()},{onConflict:'user_id,node_id'})}catch(e){console.warn('remote progress failed',e)}
+  try{await s.from('learning_progress').upsert({user_id:u.id,node_id:key,language:data.language,status:data.status||'in_progress',score:data.score??null,updated_at:new Date().toISOString()},{onConflict:'user_id,node_id'})}catch(e){console.warn('remote progress failed',e)}
 }
 async function saveTestResult(nodeId,data){
   const u=getUser(),s=window.__v5Supabase;
   if(!u||!s)return;
-  try{await s.from('test_results').insert({user_id:u.id,node_id:nodeId,language:data.language,score:data.score,passed:data.passed,answers:data.answers||[],created_at:new Date().toISOString()})}catch(e){console.warn('remote test failed',e)}
+  const key=nodeId.startsWith('v5:')?nodeId:nodeKey(nodeId);
+  try{await s.from('test_results').insert({user_id:u.id,node_id:key,language:data.language,score:data.score,passed:data.passed,answers:data.answers||[],created_at:new Date().toISOString()})}catch(e){console.warn('remote test failed',e)}
 }
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
-function calcUnitState(unit){const p=localProgress(),done=unit.lessons.filter(l=>p[nodeKey(l.id)]?.status==='done').length,test=p[nodeKey(unit.id)]?.status==='passed';return {done,total:unit.lessons.length,percent:Math.round(done/unit.lessons.length*100),test}}
+function calcUnitState(unit){const done=unit.lessons.filter(l=>progressEntry(l.id)?.status==='done').length,test=progressEntry(unit.id)?.status==='passed';return {done,total:unit.lessons.length,percent:Math.round(done/unit.lessons.length*100),test}}
 function requiresAccount(path,idx){return !!getUser()===false && idx>=3}
 function unitUnlocked(path,idx){
   if(idx===0)return true;
@@ -316,7 +319,7 @@ function renderUnit(){
   document.getElementById('backLink').href=`path.html?lang=${langKey()}`;
   const st=calcUnitState(unit);
   document.getElementById('unitHeader').innerHTML=`<span class="eyebrow">UNIT ${unit.num} · ${unit.level}</span><h1>${unit.title}</h1><p>${unit.desc}</p><div class="unit-meter"><span>${st.done}/${st.total} 小课完成</span><div class="progress-track"><span style="width:${st.percent}%"></span></div></div>`;
-  document.getElementById('lessonList').innerHTML=unit.lessons.map((l,i)=>{const done=localProgress()[nodeKey(l.id)]?.status==='done';const typeLabel={intro:'认识发音',listen:'听音选择',select:'认识词语',translate:'翻译',reorder:'组句',write:'造句'}[l.type]||'练习';return `<a class="lesson-row ${done?'done':''}" href="lesson-v4.html?lang=${langKey()}&unit=${unit.id}&lesson=${l.id}"><div class="lesson-index">${done?'✓':i+1}</div><div><strong>${l.title}</strong><span>${typeLabel}</span></div><b>${done?'已完成':'开始 →'}</b></a>`}).join('')+`<div class="unit-test-card"><div><span class="eyebrow">UNIT TEST</span><h3>单元考试</h3><p>必须先完成本单元所有小课，再参加测试；达到 80% 才能解锁下一单元。</p></div><a class="primary-btn" href="quiz-v4.html?lang=${langKey()}&unit=${unit.id}">参加考试 →</a></div>`;
+  document.getElementById('lessonList').innerHTML=unit.lessons.map((l,i)=>{const done=progressEntry(l.id)?.status==='done';const typeLabel={intro:'认识发音',listen:'听音选择',select:'认识词语',translate:'翻译',reorder:'组句',write:'造句'}[l.type]||'练习';return `<a class="lesson-row ${done?'done':''}" href="lesson-v4.html?lang=${langKey()}&unit=${unit.id}&lesson=${l.id}"><div class="lesson-index">${done?'✓':i+1}</div><div><strong>${l.title}</strong><span>${typeLabel}</span></div><b>${done?'已完成':'开始 →'}</b></a>`}).join('')+`<div class="unit-test-card"><div><span class="eyebrow">UNIT TEST</span><h3>单元考试</h3><p>必须先完成本单元所有小课，再参加测试；达到 80% 才能解锁下一单元。</p></div><a class="primary-btn" href="quiz-v4.html?lang=${langKey()}&unit=${unit.id}">参加考试 →</a></div>`;
 }
 function renderLesson(){
   const path=getPath(),unit=path.units.find(u=>u.id===qs('unit')),lesson=unit?.lessons.find(l=>l.id===qs('lesson'));
@@ -341,7 +344,7 @@ function renderQuiz(){
   const idx=path.units.indexOf(unit);
   if(requiresAccount(path,idx) && !getUser()){document.getElementById('quizArea').innerHTML=loginGate(path,unit,idx);return;}
   if(!unitUnlocked(path,idx)){document.getElementById('quizArea').innerHTML=`<div class="result-card"><h2>这个单元还没有解锁</h2><a class="primary-btn" href="path.html?lang=${langKey()}">返回学习路径 →</a></div>`;return}
-  const ready=unit.lessons.every(l=>localProgress()[nodeKey(l.id)]?.status==='done');
+  const ready=unit.lessons.every(l=>progressEntry(l.id)?.status==='done');
   if(!ready){document.getElementById('quizArea').innerHTML=`<div class="result-card"><span class="eyebrow">UNIT TEST</span><h2>先完成本单元的小课</h2><p>你需要完成所有 ${unit.lessons.length} 个小课，之后才能参加单元考试。</p><a class="primary-btn" href="unit.html?lang=${langKey()}&unit=${unit.id}">返回单元 →</a></div>`;return}
   const all=[];unit.lessons.forEach(l=>l.items.forEach(it=>{const q=normalizeQuestion(l,it);if(q)all.push(q)}));const q=shuffle(all).slice(0,Math.min(10,all.length));let i=0,score=0,answers=[];
   function draw(){const area=document.getElementById('quizArea');if(i>=q.length){const pct=Math.round(score/q.length*100),passed=pct>=80;saveRemoteProgress(unit.id,{language:langKey(),status:passed?'passed':'failed',score:pct});saveTestResult(unit.id,{language:langKey(),score:pct,passed,answers});area.innerHTML=`<div class="result-card ${passed?'pass':'fail'}"><span class="eyebrow">UNIT TEST</span><h1>${passed?'恭喜过关！':'还差一点'}</h1><div class="score-big">${pct}%</div><p>答对 ${score} / ${q.length}。${passed?'下一单元已解锁。':'需要达到 80%，回去复习后再试一次。'}</p><div class="result-actions"><a class="secondary-btn" href="unit.html?lang=${langKey()}&unit=${unit.id}">返回单元</a><a class="primary-btn" href="path.html?lang=${langKey()}">返回路线 →</a></div></div>`;return}const x=q[i];let html=`<div class="quiz-head"><div><span class="eyebrow">UNIT TEST · ${i+1}/${q.length}</span><h1>${unit.title}</h1></div><div class="quiz-score">${score} 分</div></div><div class="exercise-card"><h2>${x.prompt}</h2>`;if(x.audio)html+=`<button class="audio-btn" id="quizAudio">🔊 播放听力</button>`;if(x.type==='select')html+=x.options.map((o,j)=>`<button class="answer-option" data-j="${j}">${o}</button>`).join('');else if(x.type==='translate'||x.type==='write')html+=`<textarea id="quizInput" class="answer-input" rows="3" placeholder="请输入答案"></textarea><button class="primary-btn" id="quizSubmit">提交</button>`;else html+=`<div class="chip-bank">${shuffle(x.words).map(w=>`<button class="word-chip" data-word="${w}">${w}</button>`).join('')}</div><div id="chosen" class="chosen-line"></div><button class="primary-btn" id="quizSubmit" disabled>检查句子</button>`;html+='</div>';area.innerHTML=html;if(x.audio)area.querySelector('#quizAudio').onclick=()=>speak(x.audio,langKey());if(x.type==='select'){area.querySelectorAll('.answer-option').forEach(b=>b.onclick=()=>{const ok=+b.dataset.j===x.correct;if(ok)score++;answers.push({prompt:x.prompt,correct:ok});area.querySelectorAll('.answer-option').forEach(z=>z.disabled=true);b.classList.add(ok?'correct':'wrong');if(!ok){const right=area.querySelector(`[data-j="${x.correct}"]`);if(right)right.classList.add('correct')}const box=document.createElement('div');box.className='feedback-box '+(ok?'good':'bad');box.textContent=ok?'正确！':'再看一下正确答案。';area.querySelector('.exercise-card').appendChild(box);setTimeout(()=>{i++;draw()},650)})}else if(x.type==='translate'||x.type==='write'){area.querySelector('#quizSubmit').onclick=()=>{const v=area.querySelector('#quizInput').value.trim(),ok=v===x.answer;if(ok)score++;answers.push({prompt:x.prompt,correct:ok});area.querySelector('#quizInput').disabled=true;area.querySelector('#quizSubmit').disabled=true;const box=document.createElement('div');box.className='feedback-box '+(ok?'good':'bad');box.textContent=ok?'正确！':`参考答案：${x.answer}`;area.querySelector('.exercise-card').appendChild(box);setTimeout(()=>{i++;draw()},900)}}else{const chosen=[];area.querySelectorAll('.word-chip').forEach(b=>b.onclick=()=>{if(b.disabled)return;chosen.push(b.dataset.word);b.disabled=true;area.querySelector('#chosen').textContent=chosen.join(' ');area.querySelector('#quizSubmit').disabled=false});area.querySelector('#quizSubmit').onclick=()=>{const ok=chosen.join(' ')===x.answer;if(ok)score++;answers.push({prompt:x.prompt,correct:ok});const box=document.createElement('div');box.className='feedback-box '+(ok?'good':'bad');box.textContent=ok?'正确！':`正确顺序：${x.answer}`;area.querySelector('.exercise-card').appendChild(box);area.querySelector('#quizSubmit').disabled=true;setTimeout(()=>{i++;draw()},900)}}}
