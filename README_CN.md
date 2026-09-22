@@ -1,48 +1,19 @@
-# 中亚语言通 V3
+# 中亚语言通 V4
 
-多页面公开网站原型，当前包含：
+这是 V3 的升级版：把“课程/场景/考试”改成闯关式学习路线。
 
-- 首页、课程、场景、独立学习页
-- 每个场景 5 题选择题考试
-- 场景考试百分制成绩与通过提示
-- 浏览器语音朗读
-- 邮箱注册 / 登录（Supabase Auth）
-- 客服与意见反馈页面（Supabase Database）
-- 所有主要页面显示登录状态与客服入口
+## V4 已加入
+- 哈萨克语 / 俄语独立学习路径
+- 单元解锁：通过上一单元测试后解锁下一单元
+- 小课练习：选择、翻译、组句、造句
+- 单元测试：随机抽题，80% 通过
+- 学习进度：游客保存在浏览器，登录用户可同步到 Supabase
+- 我的学习：查看两种语言的整体进度
 
-## 需要你配置的 Supabase
+## 需要再做的 Supabase 配置
+1. 现有 `supabase-config.js` 保持不变。
+2. 在 Supabase SQL Editor 执行 `supabase-v4-schema.sql`。
+3. 上传 V4 文件到 GitHub 的 `main` 分支，Vercel 会自动部署。
 
-### 1. 创建项目
-在 Supabase 创建一个 Project。
-
-### 2. 配置邮箱登录
-在 Authentication 中启用 Email / Password。
-
-### 3. 填写 supabase-config.js
-把：
-
-```js
-window.SUPABASE_CONFIG = {
-  url: 'https://YOUR-PROJECT.supabase.co',
-  publishableKey: 'YOUR_SUPABASE_PUBLISHABLE_KEY'
-};
-```
-
-换成你自己的 Project URL 和 Publishable Key（或旧版 anon key）。不要把 service_role key 放进前端。
-
-### 4. 创建反馈表
-打开 Supabase 的 SQL Editor，执行 `supabase-schema.sql`。
-
-执行后，用户可以在 `feedback.html` 提交：
-- 反馈类型
-- 主题
-- 详细内容
-- 联系邮箱
-- 体验评分
-
-已登录用户会自动记录 user_id；未登录用户可以提交匿名反馈。
-
-## 部署
-
-把这些文件上传到现有 GitHub 仓库的 `main` 分支，Vercel 会自动重新部署。
-
+## 注意
+当前“自己造句”先采用参考答案精确匹配，后续可以接 AI 语义评分、拼写容错和发音评分。
