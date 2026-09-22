@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>中亚语言通｜中文学哈萨克语和俄语</title>
+  <meta name="description" content="为中国人在哈萨克斯坦生活、工作和商务沟通打造的哈萨克语与俄语学习平台。" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav-wrap">
+      <a class="brand" href="#top" aria-label="中亚语言通首页">
+        <span class="brand-mark">中</span>
+        <span>
+          <strong>中亚语言通</strong>
+          <small>哈萨克语 · 俄语</small>
+        </span>
+      </a>
+      <nav>
+        <a href="#courses">课程</a>
+        <a href="#scenes">场景</a>
+        <a href="#about">为什么学</a>
+      </nav>
+      <button class="ghost-btn" id="resetProgress">重置进度</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">给中国人的哈萨克斯坦语言工具</span>
+          <h1>在哈萨克斯坦，<br /><em>真正说得上话。</em></h1>
+          <p>中文对照学习哈萨克语和俄语，按生活、工作、物流、工程、商务等真实场景练习。</p>
+          <div class="hero-actions">
+            <button class="primary-btn" data-scroll="courses">开始学习</button>
+            <button class="secondary-btn" data-scroll="scenes">按场景学</button>
+          </div>
+          <div class="mini-proof">
+            <span>🇨🇳 中文</span><span>↔</span><span>🇰🇿 Қазақша</span><span>↔</span><span>🇷🇺 Русский</span>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="card-topline"><span>今日一句</span><span class="dot">●</span></div>
+          <div class="quote-cn">货物什么时候到？</div>
+          <div class="lang-block">
+            <div><span>哈萨克语</span><strong>Жүк қашан келеді?</strong></div>
+            <button class="sound-btn" data-speak="Жүк қашан келеді?" aria-label="播放哈萨克语">🔊</button>
+          </div>
+          <div class="lang-block">
+            <div><span>俄语</span><strong>Когда прибудет груз?</strong></div>
+            <button class="sound-btn" data-speak="Когда прибудет груз?" aria-label="播放俄语">🔊</button>
+          </div>
+          <div class="tip">点击扬声器，可用浏览器语音朗读。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="courses">
+      <div class="container">
+        <div class="section-head">
+          <div><span class="eyebrow">课程</span><h2>先学最常用的</h2></div>
+          <div class="progress-box"><span>总进度</span><strong id="progressText">0%</strong></div>
+        </div>
+        <div class="course-grid" id="courseGrid"></div>
+      </div>
+    </section>
+
+    <section class="section soft" id="scenes">
+      <div class="container">
+        <div class="section-head">
+          <div><span class="eyebrow">真实场景</span><h2>到了当地就能用</h2></div>
+        </div>
+        <div class="scene-grid" id="sceneGrid"></div>
+      </div>
+    </section>
+
+    <section class="section" id="lesson">
+      <div class="container lesson-layout">
+        <div class="lesson-panel">
+          <div class="section-head compact">
+            <div><span class="eyebrow">学习卡片</span><h2 id="lessonTitle">日常打招呼</h2></div>
+            <span class="lesson-count" id="lessonCount">1 / 4</span>
+          </div>
+          <div class="lesson-card">
+            <div class="tag-row"><span class="tag" id="lessonTag">生活</span><span class="tag muted" id="lessonLevel">入门</span></div>
+            <p class="cn-line" id="cnLine">您好。</p>
+            <div class="translation-row">
+              <div><span>哈萨克语</span><strong id="kzLine">Сәлеметсіз бе?</strong></div>
+              <button class="round-sound" data-target="kzLine">🔊</button>
+            </div>
+            <div class="translation-row">
+              <div><span>俄语</span><strong id="ruLine">Здравствуйте.</strong></div>
+              <button class="round-sound" data-target="ruLine">🔊</button>
+            </div>
+            <div class="lesson-tip" id="lessonTip">正式、礼貌地向陌生人打招呼时可以使用。</div>
+            <div class="lesson-actions">
+              <button class="secondary-btn" id="prevLesson">上一句</button>
+              <button class="primary-btn" id="nextLesson">记住了，下一句</button>
+            </div>
+          </div>
+        </div>
+        <aside class="side-panel">
+          <div class="side-card">
+            <span class="eyebrow">学习方式</span>
+            <h3>中文 → 两种语言</h3>
+            <p>不把用户当成语言专业学生，而是从“我今天要说什么”开始。</p>
+            <div class="feature"><b>01</b><span>中文看懂意思</span></div>
+            <div class="feature"><b>02</b><span>哈语和俄语并排比较</span></div>
+            <div class="feature"><b>03</b><span>马上进入实际对话</span></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section about" id="about">
+      <div class="container about-grid">
+        <div>
+          <span class="eyebrow">产品方向</span>
+          <h2>不是背单词，而是解决沟通问题。</h2>
+        </div>
+        <p>这个原型把产品重点放在中国人在哈萨克斯坦最常遇到的语言任务：生活办事、工厂、工程、物流、铁路、海关和商务沟通。后续可以继续接入账号、数据库、AI 对话、会员和企业课程。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-wrap">
+      <span>中亚语言通 V0 原型</span>
+      <span>中文 · Қазақша · Русский</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
