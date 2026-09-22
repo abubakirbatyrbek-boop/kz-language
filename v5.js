@@ -351,4 +351,163 @@ function renderQuiz(){
   draw()
 }
 function renderProgress(){initUser().then(()=>{const p=localProgress(),paths=[V5_PATHS.kk,V5_PATHS.ru];const u=getUser();document.getElementById('progressUser').textContent=u?`当前账号：${u.email}。学习进度将同步到云端。`:'当前为游客模式，完成前 3 个单元后注册，可把进度同步到账号。';document.getElementById('progressDashboard').innerHTML=paths.map(path=>{const passed=path.units.filter(u=>p[nodeKey(u.id)]?.status==='passed').length,done=path.units.reduce((n,u)=>n+u.lessons.filter(l=>p[nodeKey(l.id)]?.status==='done').length,0),total=path.units.reduce((n,u)=>n+u.lessons.length,0),pct=Math.round(done/total*100);const rows=path.units.map((unit,idx)=>{const st=calcUnitState(unit);const gate=requiresAccount(path,idx);let state=st.test?'✅ 已通过':gate&&!getUser()?'🔐 注册后继续':st.percent?`学习中 · ${st.percent}%`:'未开始';return `<div class="mini-unit-row"><span>${unit.num}. ${unit.title}</span><b>${state}</b></div>`}).join('');return `<div class="dashboard-card"><div class="dashboard-title"><span>${path.flag} ${path.label}</span><b>${pct}%</b></div><div class="progress-track"><span style="width:${pct}%"></span></div><p>${passed}/${path.units.length} 个单元通过 · ${done}/${total} 小课完成</p><div class="mini-unit-list">${rows}</div><a class="secondary-btn" href="path.html?lang=${path===V5_PATHS.kk?'kk':'ru'}">继续学习 →</a></div>`}).join('')})}
-(async function(){await initUser();const page=document.body.querySelector('#pathList')?'path':document.body.querySelector('#lessonList')?'unit':document.body.querySelector('#exerciseArea')?'lesson':document.body.querySelector('#quizArea')?'quiz':document.body.querySelector('#progressDashboard')?'progress':'home';if(page==='path')renderPath();else if(page==='unit')renderUnit();else if(page==='lesson')renderLesson();else if(page==='quiz')renderQuiz();else if(page==='progress')renderProgress()})()
+
+
+/* ========================= V7 ========================= */
+const V7_PLACEMENT = { kk: {questions: [["选出正确的特殊元音。",["Ә ә","Е е","И и","А а"],0],["“үй”是什么意思？",["房子","语言","朋友","车站"],0],["“Рақмет.”是什么意思？",["你好","谢谢","再见","对不起"],1],["“Сәлеметсіз бе.”是什么意思？",["谢谢","对不起","你好/您好","请等一下"],2],["“Мен”是什么意思？",["我","你","他","我们"],0],["“Мен Қазақстанда жұмыс істеймін.”是什么意思？",["我住在中国。","我在哈萨克斯坦工作。","我去火车站。","我需要帮助。"],1],["“Қазір сағат неше?”是什么意思？",["多少钱？","在哪里？","现在几点？","什么时候到？"],2],["“Қанша тұрады?”是什么意思？",["多少钱？","在哪里？","几点？","什么时候？"],0],["“Күте тұрыңызшы.”是什么意思？",["请坐下。","请等一下。","请进来。","请签字。"],1],["“Маған көмек керек.”是什么意思？",["我要走了。","我需要帮助。","我有时间。","我在工作。"],1],["哪一句表示“货物明天到”？",["Жүк ертең келеді.","Жүк қашан келеді?","Жүк әлі келген жоқ.","Жүк қайда?"],0],["哪一句表示“火车什么时候发车”？",["Вагон нөмірін тексеріңізші.","Пойыз қашан жөнеледі?","Пойыз қайда?","Пойызды күтіңіз."],1],["“Құжаттарды маған беріңізші.”是什么意思？",["请把单据给我。","请确认车厢。","请等一下。","请开始装货。"],0],["“Жүкті қай жерде түсіреміз?”是什么意思？",["什么时候装货？","在哪里卸货？","货物到了吗？","谁负责运输？"],1],["“Жүк әлі келген жоқ.”是什么意思？",["货物已经到了。","货物还没到。","货物明天到。","货物在哪里？"],1],["哪一句表示“我需要帮助”？",["Мен жұмыс істеймін.","Маған көмек керек.","Көмек қашан болады?","Мен үйдемін."],1],["哪一句表示“我在哈萨克斯坦工作”？",["Мен Қазақстанда жұмыс істеймін.","Мен Қазақстанға барамын.","Мен Қазақстанды білемін.","Мен үйде жұмыс істеймін."],0],["你看到“Вагон нөмірін тексеріңізші.”，它最可能用于什么场景？",["餐厅点菜","铁路现场","租房","医院"],1]]}, ru: {questions: [["选出正确的特殊元音。",["Ы ы","И и","У у","Э э"],0],["“чай”是什么意思？",["茶","水","早晨","道路"],0],["“Спасибо.”是什么意思？",["谢谢","你好","对不起","再见"],0],["“Здравствуйте.”是什么意思？",["谢谢","你好/您好","请等一下","明天见"],1],["“Я”是什么意思？",["我","你","他","我们"],0],["“Я работаю в Казахстане.”是什么意思？",["我住在俄罗斯。","我在哈萨克斯坦工作。","我去车站。","我需要帮助。"],1],["“Который сейчас час?”是什么意思？",["多少钱？","现在几点？","在哪里？","什么时候到？"],1],["“Сколько стоит?”是什么意思？",["多少钱？","在哪里？","几点？","怎么走？"],0],["“Подождите, пожалуйста.”是什么意思？",["请进来。","请等一下。","请签字。","请停车。"],1],["“Мне нужна помощь.”是什么意思？",["我需要帮助。","我有时间。","我要回家。","我在工作。"],0],["哪一句表示“货物明天到”？",["Груз прибудет завтра.","Когда прибудет груз?","Груз ещё не приехал.","Где груз?"],0],["哪一句表示“货物什么时候到”？",["Груз завтра.","Когда прибудет груз?","Дайте документы.","Где водитель?"],1],["“Дайте мне документы, пожалуйста.”是什么意思？",["请把单据给我。","请关闭门。","请等一下。","请开始装货。"],0],["“Оборудование сломалось.”是什么意思？",["设备坏了。","设备到了。","设备很新。","设备在仓库。"],0],["“Машина ещё не приехала.”是什么意思？",["车还没到。","车已经到了。","车在这里。","车要出发了。"],0],["哪一句表示“这里不能停车”？",["Здесь можно парковаться.","Здесь нельзя парковаться.","Здесь стоит машина.","Здесь парковка."],1],["哪一句表示“我在哈萨克斯坦工作”？",["Я работаю в Казахстане.","Я еду в Казахстан.","Я живу дома.","Я знаю Казахстан."],0],["你看到“Когда начнётся погрузка?”，它最可能用于什么场景？",["餐厅点菜","货物装运","医院问诊","租房"],1]]} };
+const V7_KK_ALPHABET = [["А а","ана","妈妈","基础元音。"],["Ә ә","әке","爸爸","哈萨克语特殊元音。"],["Б б","бала","孩子","普通 b 音。"],["В в","вагон","车厢","多见于借词。"],["Г г","гүл","花","基础 g 音。"],["Ғ ғ","ғалым","学者","喉部摩擦音。"],["Д д","дос","朋友","基础 d 音。"],["Е е","ел","国家","词首常读作 y+e，具体读法随位置变化。"],["Ё ё","ёлка","圣诞树","主要见于俄语等借词。"],["Ж ж","жол","路","浊的 zh 音。"],["З з","заң","法律","基础 z 音。"],["И и","ине","针","i 音。"],["Й й","ай","月亮","短促的 y 近似音。"],["К к","күн","太阳/天","较前的 k 音。"],["Қ қ","қала","城市","比 к 更靠后的清辅音。"],["Л л","лақ","小山羊","基础 l 音。"],["М м","мал","牲畜","基础 m 音。"],["Н н","нан","面包","基础 n 音。"],["Ң ң","аң","野兽","类似英语 sing 结尾的 ng 音。"],["О о","от","火","基础 o 音。"],["Ө ө","өзен","河流","圆唇前元音 ö。"],["П п","піл","大象","基础 p 音。"],["Р р","радио","收音机","颤音 r。"],["С с","су","水","基础 s 音。"],["Т т","тіл","语言","基础 t 音。"],["У у","тау","山","哈萨克语中常作为半元音/音节组成部分出现。"],["Ұ ұ","ұн","面粉","后元音，嘴唇不圆。"],["Ү ү","үй","房子","圆唇前元音 ü。"],["Ф ф","футбол","足球","主要见于借词。"],["Х х","хат","信","摩擦音，多见于借词。"],["Һ һ","қаһарман","英雄","较少见，常见于部分词和借词。"],["Ц ц","цирк","马戏团","主要见于俄语借词。"],["Ч ч","чемпион","冠军","主要见于借词。"],["Ш ш","шай","茶","硬的 sh 音。"],["Щ щ","щетка","刷子","主要见于俄语借词。"],["Ъ ъ","объект","对象","硬音符号，本身不独立发音。"],["Ы ы","ыдыс","器皿","后元音。"],["І і","тіл","语言","短而清晰的 i 类元音。"],["Ь ь","рельс","铁轨","软音符号，本身不独立发音。"],["Э э","экран","屏幕","主要见于借词。"],["Ю ю","аю","熊","常由 y + u 类声音组成。"],["Я я","аяз","霜","常由 y + a 类声音组成。"]];
+const V7_RU_ALPHABET = [["А а","мама","妈妈","基础元音。"],["Б б","брат","兄弟","b 音。"],["В в","вагон","车厢","v 音。"],["Г г","груз","货物","g 音。"],["Д д","дом","房子","d 音。"],["Е е","еда","食物","词首常带 y 起音。"],["Ё ё","ёлка","圣诞树","yo 音。"],["Ж ж","жизнь","生活","浊的 zh 音。"],["З з","зима","冬天","z 音。"],["И и","имя","名字","i 音。"],["Й й","чай","茶","短促的 y 音。"],["К к","книга","书","k 音。"],["Л л","лук","洋葱","l 音。"],["М м","мама","妈妈","m 音。"],["Н н","нос","鼻子","n 音。"],["О о","окно","窗户","o 音。"],["П п","поезд","火车","p 音。"],["Р р","работа","工作","颤音 r。"],["С с","самолёт","飞机","s 音。"],["Т т","транспорт","交通","t 音。"],["У у","утро","早晨","u 音。"],["Ф ф","факт","事实","f 音，多见于借词。"],["Х х","хлеб","面包","喉部摩擦音。"],["Ц ц","цена","价格","ts 音。"],["Ч ч","чай","茶","ch 音。"],["Ш ш","шар","球","硬 sh 音。"],["Щ щ","щётка","刷子","较软的 shch 音。"],["Ъ ъ","объект","对象","硬音符号，本身不发音。"],["Ы ы","мы","我们","俄语后元音，舌位靠后。"],["Ь ь","день","天","软音符号，本身不发音。"],["Э э","это","这/这是","清晰 e 音。"],["Ю ю","юг","南方","yu 音。"],["Я я","яблоко","苹果","ya 音。"]];
+
+function v7PlacementKey(lang, userId){ return `v7_placement_${lang}_${userId || 'guest'}`; }
+function v7GetPlacement(lang){ try { return JSON.parse(localStorage.getItem(v7PlacementKey(lang, getUser()?.id)) || 'null'); } catch { return null; } }
+function v7SetPlacement(lang, data){ localStorage.setItem(v7PlacementKey(lang, getUser()?.id), JSON.stringify(data)); }
+async function v7SyncPlacement(){
+  const u=getUser(), s=window.__v5Supabase; if(!u||!s) return;
+  try{
+    const langs=['kk','ru'];
+    for(const lang of langs){
+      const guestKey=v7PlacementKey(lang,'guest');
+      const userKey=v7PlacementKey(lang,u.id);
+      const guestRaw=localStorage.getItem(guestKey);
+      if(guestRaw && !localStorage.getItem(userKey)){
+        try{
+          const guest=JSON.parse(guestRaw);
+          localStorage.setItem(userKey, JSON.stringify(guest));
+          if(guest && guest.score!=null){
+            await saveTestResult('placement:'+lang,{language:lang,score:guest.score,passed:true,answers:[]});
+          }
+        }catch(e){ console.warn('guest placement migration failed',e); }
+      }
+    }
+    const {data,error}=await s.from('test_results').select('node_id,language,score,answers,created_at').eq('user_id',u.id).like('node_id','v5:placement:%').order('created_at',{ascending:false}).limit(20);
+    if(error) return;
+    for(const lang of langs){
+      const row=(data||[]).find(r=>r.node_id===`v5:placement:${lang}`);
+      if(row) v7SetPlacement(lang,{score:row.score,max:18,index:v7LevelIndex(row.score),level:v7LevelLabel(v7LevelIndex(row.score)),created_at:row.created_at});
+    }
+  }catch(e){ console.warn('placement sync failed',e); }
+}
+function v7LevelIndex(score){ if(score<=3)return 0; if(score<=6)return 1; if(score<=9)return 2; if(score<=12)return 3; if(score<=15)return 4; return 5; }
+function v7LevelLabel(i){ return ['入门','基础','初级','初级+','生活交流','实用'][i] || '入门'; }
+function v7PlacementCard(path){
+  const p=v7GetPlacement(langKey());
+  if(!p) return `<div class="placement-top"><div><span class="eyebrow">STEP 0 · 等级测试</span><h2>先测一下，再决定从哪一关开始</h2><p>18 道题，题目会从发音、词汇、句型逐步变难。测试用于匹配学习起点，不是正式语言水平考试。</p><div class="placement-badges"><span class="placement-badge">18 题</span><span class="placement-badge">约 5 分钟</span><span class="placement-badge">完成后解锁对应起点</span></div></div><a class="primary-btn" href="level-test.html?lang=${langKey()}">开始等级测试 →</a></div>`;
+  const u=path.units[p.index];
+  return `<div class="placement-top"><div><span class="eyebrow">已完成等级测试</span><h2>你的起点：${p.level}</h2><p>得分 ${p.score}/18，建议从第 ${u?.num||1} 单元开始。前面的单元已开放，可随时复习。</p></div><div class="result-actions"><a class="secondary-btn" href="level-test.html?lang=${langKey()}">重新测试</a>${u?`<a class="primary-btn" href="unit.html?lang=${langKey()}&unit=${u.id}">从这里开始 →</a>`:''}</div></div>`;
+}
+function v7UnitUnlocked(path,idx){
+  const p=v7GetPlacement(langKey());
+  if(!p) return false;
+  if(idx > p.index){ if(requiresAccount(path,idx) && !getUser()) return false; return !!calcUnitState(path.units[idx-1]).test; }
+  if(requiresAccount(path,idx) && !getUser()) return false;
+  return true;
+}
+function v7LessonUnlocked(unit, lessonIdx){ if(lessonIdx===0) return true; return progressEntry(unit.lessons[lessonIdx-1].id)?.status==='done'; }
+function v7LoginGate(path,unit,idx){
+  const next=encodeURIComponent(`unit.html?lang=${langKey()}&unit=${unit.id}`);
+  return `<div class="login-gate"><span class="eyebrow">免费体验到这里</span><h2>从第 4 单元开始，请先注册 / 登录</h2><p>你已经可以免费体验前 3 个单元。注册后，系统会把你的学习进度和考试成绩绑定到账号。</p><div class="gate-stats"><span>✅ 前 3 单元免费体验</span><span>☁️ 云端保存进度</span><span>📊 保存考试成绩</span></div><div class="result-actions"><a class="secondary-btn" href="path.html?lang=${langKey()}">返回学习路径</a><a class="primary-btn" href="auth.html?mode=signup&next=${next}">注册 / 登录</a></div></div>`;
+}
+
+// Replace Unit 1 alphabet lessons with the full alphabet.
+V5_PATHS.kk.units[0].lessons[0].items = V7_KK_ALPHABET.map(x=>({symbol:x[0],example:x[1],meaning:x[2],note:x[3]}));
+V5_PATHS.ru.units[0].lessons[0].items = V7_RU_ALPHABET.map(x=>({symbol:x[0],example:x[1],meaning:x[2],note:x[3]}));
+
+function renderPath(){
+  const path=getPath(), p=v7GetPlacement(langKey()); document.title=`${path.label}学习路径｜中亚语言通`;
+  document.getElementById('pathTitle').textContent=`${path.flag} ${path.label}`;
+  document.getElementById('pathDesc').textContent=p?path.desc:`${path.desc} 先完成等级测试，再按结果开始学习。`;
+  const card=document.getElementById('placementCard'); if(card) card.innerHTML=v7PlacementCard(path);
+  const unlocked=path.units.filter((u,i)=>v7UnitUnlocked(path,i)).length;
+  document.getElementById('pathStats').innerHTML=`<div><b>${unlocked}</b><span>当前可进入</span></div><div><b>${path.units.length}</b><span>总单元</span></div><div><b>${p?p.level:'未测试'}</b><span>${getUser()?'进度云端同步':'游客'}</span></div>`;
+  document.getElementById('pathList').innerHTML=path.units.map((u,i)=>{
+    const open=v7UnitUnlocked(path,i), st=calcUnitState(u), acct=requiresAccount(path,i), recommended=!!p&&i===p.index;
+    let action='';
+    if(open) action=`<a class="primary-btn small" href="unit.html?lang=${langKey()}&unit=${u.id}">${st.percent?'继续':'开始'} →</a>`;
+    else if(acct && getUser()) action=`<span class="lock-copy">通过上一单元考试后解锁</span>`;
+    else if(acct) action=`<a class="secondary-btn small" href="auth.html?mode=signup&next=${encodeURIComponent(`path.html?lang=${langKey()}`)}">注册 / 登录后继续</a>`;
+    else if(!p) action=`<a class="secondary-btn small" href="level-test.html?lang=${langKey()}">先做等级测试</a>`;
+    else action=`<span class="lock-copy">通过上一单元考试后解锁</span>`;
+    const status=st.test?'✅ 已通过':st.percent?`学习中 · ${st.percent}%`:(!p?'🔒 等级测试后开放':'未开始');
+    return `<div class="path-node ${open?'open':'locked'} ${recommended?'recommended':''}"><div class="node-num">${open?u.num:'🔒'}</div><div class="node-main"><div class="node-top"><span class="eyebrow">UNIT ${u.num} · ${u.level}</span><span>${status}${recommended?'<span class="recommend-badge">建议起点</span>':''}</span></div><h3>${u.title}</h3><p>${u.desc}</p><div class="progress-track"><span style="width:${st.percent}%"></span></div></div><div class="node-action">${action}</div></div>`;
+  }).join('');
+}
+
+function renderUnit(){
+  const path=getPath(), unitId=qs('unit')||path.units[0].id, unit=path.units.find(u=>u.id===unitId); if(!unit)return location.href=`path.html?lang=${langKey()}`;
+  const idx=path.units.indexOf(unit);
+  if(!v7GetPlacement(langKey())) return location.href=`level-test.html?lang=${langKey()}&next=${encodeURIComponent(`unit.html?lang=${langKey()}&unit=${unit.id}`)}`;
+  if(requiresAccount(path,idx) && !getUser()){document.getElementById('backLink').href=`path.html?lang=${langKey()}`;document.getElementById('unitHeader').innerHTML=v7LoginGate(path,unit,idx);document.getElementById('lessonList').innerHTML='';return;}
+  if(!v7UnitUnlocked(path,idx)) return location.href=`path.html?lang=${langKey()}`;
+  const st=calcUnitState(unit);
+  document.getElementById('backLink').href=`path.html?lang=${langKey()}`;
+  document.getElementById('unitHeader').innerHTML=`<span class="eyebrow">UNIT ${unit.num} · ${unit.level}</span><h1>${unit.title}</h1><p>${unit.desc}</p><div class="unit-meter"><span>${st.done}/${st.total} 小课完成</span><div class="progress-track"><span style="width:${st.percent}%"></span></div></div>`;
+  const rows=unit.lessons.map((l,i)=>{
+    const done=progressEntry(l.id)?.status==='done', unlocked=v7LessonUnlocked(unit,i), typeLabel={intro:'认识发音',listen:'听音选择',select:'认识词语',translate:'翻译',reorder:'组句',write:'造句'}[l.type]||'练习';
+    if(unlocked) return `<a class="lesson-row ${done?'done':''}" href="lesson-v4.html?lang=${langKey()}&unit=${unit.id}&lesson=${l.id}"><div class="lesson-index">${done?'✓':i+1}</div><div><strong>${l.title}</strong><span>${typeLabel}</span></div><b>${done?'已完成':'开始 →'}</b></a>`;
+    return `<div class="lesson-row lesson-locked"><div class="lesson-index">🔒</div><div><strong>${l.title}</strong><span>${typeLabel}</span></div><b class="lesson-lock-copy">完成上一小课后解锁</b></div>`;
+  }).join('');
+  const ready=unit.lessons.every(l=>progressEntry(l.id)?.status==='done');
+  const testBlock=ready?`<div class="unit-test-card"><div><span class="eyebrow">UNIT TEST</span><h3>单元考试</h3><p>完成所有小课后参加测试；达到 80% 才能解锁下一单元。</p></div><a class="primary-btn" href="quiz-v4.html?lang=${langKey()}&unit=${unit.id}">参加考试 →</a></div>`:`<div class="unit-test-card"><div><span class="eyebrow">UNIT TEST</span><h3>单元考试</h3><p>先按顺序完成所有小课，完成后这里会自动开放。</p></div><span class="lock-copy">🔒 未开放</span></div>`;
+  document.getElementById('lessonList').innerHTML=rows+testBlock;
+}
+
+function renderLesson(){
+  const path=getPath(),unit=path.units.find(u=>u.id===qs('unit')),lesson=unit?.lessons.find(l=>l.id===qs('lesson')); if(!lesson)return;
+  const idx=unit?path.units.indexOf(unit):-1, li=unit?unit.lessons.indexOf(lesson):-1;
+  if(!v7GetPlacement(langKey())) return location.href=`level-test.html?lang=${langKey()}&next=${encodeURIComponent(location.href)}`;
+  if(unit && requiresAccount(path,idx) && !getUser()){document.getElementById('lessonTop').innerHTML=v7LoginGate(path,unit,idx);document.getElementById('exerciseArea').innerHTML='';return;}
+  if(unit && !v7UnitUnlocked(path,idx)) return location.href=`path.html?lang=${langKey()}`;
+  if(unit && !v7LessonUnlocked(unit,li)){document.getElementById('lessonTop').innerHTML=`<div class="result-card"><h2>这一小课还没解锁</h2><p>请先完成上一小课。</p><a class="primary-btn" href="unit.html?lang=${langKey()}&unit=${unit.id}">返回单元 →</a></div>`;document.getElementById('exerciseArea').innerHTML='';return;}
+  document.getElementById('lessonTop').innerHTML=`<a class="back-link" href="unit.html?lang=${langKey()}&unit=${unit.id}">← ${unit.title}</a><span class="eyebrow">小课 · ${unit.num}</span><h1>${lesson.title}</h1><p>按顺序完成这一小课，完成后才会解锁下一项。</p>`;
+  // Re-run the original lesson engine body by calling a temporary copy stored from V5.
+  v7RenderLessonBody(path,unit,lesson);
+}
+
+function v7RenderLessonBody(path,unit,lesson){
+  const area=document.getElementById('exerciseArea'); let i=0,score=0; const items=lesson.items;
+  function finish(){
+    const pct=Math.round(score/items.length*100); saveRemoteProgress(lesson.id,{language:langKey(),status:'done',score:pct});
+    const next=unit.lessons[unit.lessons.indexOf(lesson)+1];
+    area.innerHTML=`<div class="result-card"><span class="eyebrow">完成</span><h2>本小课完成！</h2><div class="score-big">${pct}%</div><p>你完成了 ${items.length} 个练习。${getUser()?'进度已同步到账号。':'当前为游客模式，进度仅保存在本设备。'}</p><div class="result-actions">${next?`<a class="primary-btn" href="lesson-v4.html?lang=${langKey()}&unit=${unit.id}&lesson=${next.id}">下一小课 →</a>`:''}<a class="secondary-btn" href="unit.html?lang=${langKey()}&unit=${unit.id}">返回单元</a></div></div>`;
+  }
+  function meta(){return `<div class="exercise-meta"><span>${i+1} / ${items.length}</span><div class="progress-track"><span style="width:${Math.round((i)/items.length*100)}%"></span></div></div>`}
+  function next(){ if(i>=items.length)return finish(); const it=items[i]; area.innerHTML=meta()+`<div class="exercise-card"><span class="eyebrow">${lesson.type==='intro'?'认识发音':lesson.type==='listen'?'先听再选':lesson.type==='select'?'认识词语':lesson.type==='translate'?`中文 → ${path.label}`:lesson.type==='reorder'?'组句':'自己造句'}</span>${lesson.type==='intro'?`<div class="pronunciation-item"><div class="sound-symbol">${it.symbol}</div><button class="pronunciation-audio" id="playSymbol" type="button">🔊 听字母</button></div><div class="pronunciation-item"><h2>${it.example}</h2><button class="pronunciation-audio" id="playExample" type="button">🔊 听单词</button></div><p class="meaning">${it.meaning}</p><p class="hint">${it.note}</p><div class="pronunciation-actions"><button class="secondary-btn" id="knowIt">我会了，下一张 →</button></div>`:lesson.type==='listen'||lesson.type==='select'?`<h2>${it[0]}</h2>${lesson.type==='listen'?`<button class="audio-btn" id="playAudio">🔊 播放 ${it[1]}</button>`:''}${(Array.isArray(it[2])?it[2]:it[1]).map((x,j)=>`<button class="answer-option" data-j="${j}">${x}</button>`).join('')}`:lesson.type==='translate'||lesson.type==='write'?`<h2>${it[0]}</h2><textarea id="textAnswer" class="answer-input" rows="3" placeholder="写出你的答案"></textarea><button id="submitText" class="primary-btn">提交答案</button><p class="hint">初学阶段先用标准答案建立正确表达；后续可接 AI 语义评分。</p>`:`<h2>${it[0]}</h2><div class="chip-bank">${shuffle(it[1]).map((x,j)=>`<button class="word-chip" data-word="${x}">${x}</button>`).join('')}</div><div id="chosen" class="chosen-line"></div><button id="checkOrder" class="primary-btn" disabled>检查句子</button>`}</div>`;
+    if(lesson.type==='intro'){area.querySelector('#playSymbol').onclick=()=>speak(it.symbol,langKey());area.querySelector('#playExample').onclick=()=>speak(it.example,langKey());area.querySelector('#knowIt').onclick=()=>{score++;i++;next()};return}
+    if(lesson.type==='listen'||lesson.type==='select'){if(lesson.type==='listen')area.querySelector('#playAudio').onclick=()=>speak(it[1],langKey());area.querySelectorAll('.answer-option').forEach(b=>b.onclick=()=>{const ok=+b.dataset.j===Number(it[3]);if(ok)score++;area.querySelectorAll('.answer-option').forEach(x=>x.disabled=true);b.classList.add(ok?'correct':'wrong');if(!ok){const right=area.querySelector(`[data-j="${it[3]}"]`);if(right)right.classList.add('correct')}const fb=document.createElement('div');fb.className='feedback-box '+(ok?'good':'bad');fb.textContent=ok?'正确！':'看看绿色的正确答案。';area.querySelector('.exercise-card').appendChild(fb);setTimeout(()=>{i++;next()},650)});return}
+    if(lesson.type==='translate'||lesson.type==='write'){area.querySelector('#submitText').onclick=()=>{const v=area.querySelector('#textAnswer').value.trim(),ok=v===it[1];if(ok)score++;area.querySelector('#textAnswer').disabled=true;area.querySelector('#submitText').disabled=true;const fb=document.createElement('div');fb.className='feedback-box '+(ok?'good':'bad');fb.textContent=ok?'正确！':`参考表达：${it[1]}`;area.querySelector('.exercise-card').appendChild(fb);setTimeout(()=>{i++;next()},900)};return}
+    const chosen=[];area.querySelectorAll('.word-chip').forEach(b=>b.onclick=()=>{if(b.disabled)return;chosen.push(b.dataset.word);b.disabled=true;area.querySelector('#chosen').textContent=chosen.join(' ');area.querySelector('#checkOrder').disabled=false});area.querySelector('#checkOrder').onclick=()=>{const ok=chosen.join(' ')===it[2];if(ok)score++;const fb=document.createElement('div');fb.className='feedback-box '+(ok?'good':'bad');fb.textContent=ok?'组句正确！':`正确顺序：${it[2]}`;area.querySelector('.exercise-card').appendChild(fb);area.querySelector('#checkOrder').disabled=true;setTimeout(()=>{i++;next()},900)};
+  }
+  next();
+}
+
+function renderPlacement(){
+  const lang=langKey(), path=getPath(), list=V7_PLACEMENT[lang].questions; let i=0,score=0,answers=[];
+  const area=document.getElementById('placementArea');
+  const old=v7GetPlacement(lang);
+  if(old){
+    const u=path.units[old.index]; area.innerHTML=`<div class="placement-result"><span class="eyebrow">等级测试已完成</span><div class="level-pill">${old.level}</div><h1>建议从第 ${u?.num||1} 单元开始</h1><p>得分 ${old.score}/18。这个结果只是为了帮助你找到合适的学习起点，前面的单元仍然可以复习。</p><div class="result-actions"><a class="secondary-btn" href="path.html?lang=${lang}">返回学习路径</a><button class="primary-btn" id="retake">重新测试</button></div></div>`; area.querySelector('#retake').onclick=()=>{localStorage.removeItem(v7PlacementKey(lang,getUser()?.id)); renderPlacement();}; return;
+  }
+  function draw(){
+    if(i>=list.length){
+      const idx=v7LevelIndex(score), level=v7LevelLabel(idx), obj={score,max:list.length,index:idx,level,created_at:new Date().toISOString()}; v7SetPlacement(lang,obj);
+      if(getUser()) saveTestResult('placement:'+lang,{language:lang,score,passed:true,answers});
+      const u=path.units[idx]; const locked=requiresAccount(path,idx)&&!getUser();
+      const nextHref=locked?`auth.html?mode=signup&next=${encodeURIComponent(`unit.html?lang=${lang}&unit=${u.id}`)}`:`unit.html?lang=${lang}&unit=${u.id}`;
+      area.innerHTML=`<div class="placement-result"><span class="eyebrow">测试完成</span><div class="level-pill">${level}</div><h1>建议从第 ${u?.num||1} 单元开始</h1><div class="score-big">${score}/18</div><p>${locked?'这个起点从第 4 单元开始，先注册/登录后即可进入。':'已根据测试结果开放对应起点及之前的复习单元。'}</p><div class="result-actions"><a class="secondary-btn" href="path.html?lang=${lang}">查看学习路径</a><a class="primary-btn" href="${nextHref}">${locked?'注册 / 登录后开始':'从这里开始 →'}</a></div></div>`; return;
+    }
+    const q=list[i]; area.innerHTML=`<div class="placement-test-head"><span class="eyebrow">STEP 0 · 等级测试</span><h1>${path.flag} ${path.label}起点测试</h1><p>题目会由易到难。不会的可以跳过，系统按答对题数建议学习起点。</p><div class="placement-progress"><span style="width:${Math.round(i/list.length*100)}%"></span></div><div class="exercise-meta"><span>第 ${i+1} / ${list.length} 题</span><span>当前得分：${score}</span></div></div><div class="placement-question"><span class="eyebrow">请选择答案</span><h2>${q[0]}</h2><div class="placement-options">${q[1].map((x,j)=>`<button class="answer-option" data-j="${j}">${x}</button>`).join('')}</div></div>`;
+    area.querySelectorAll('.answer-option').forEach(b=>b.onclick=()=>{const ok=+b.dataset.j===q[2];if(ok)score++;answers.push({prompt:q[0],answer:b.textContent,correct:ok});area.querySelectorAll('.answer-option').forEach(x=>x.disabled=true);b.classList.add(ok?'correct':'wrong');if(!ok)area.querySelector(`[data-j="${q[2]}"]`)?.classList.add('correct');const fb=document.createElement('div');fb.className='feedback-box '+(ok?'good':'bad');fb.textContent=ok?'正确！':'这一题记一下，后面会复习。';area.querySelector('.placement-question').appendChild(fb);setTimeout(()=>{i++;draw()},650)});
+  }
+  draw();
+}
+
+(async function(){
+  await initUser(); await v7SyncPlacement();
+  if(document.getElementById('pathList')) renderPath();
+  else if(document.getElementById('lessonList')) renderUnit();
+  else if(document.getElementById('exerciseArea')) renderLesson();
+  else if(document.getElementById('quizArea')) renderQuiz();
+  else if(document.getElementById('progressDashboard')) renderProgress();
+  else if(document.getElementById('placementArea')) renderPlacement();
+})();
+
