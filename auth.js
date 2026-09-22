@@ -11,6 +11,10 @@
     return new URL('auth.html', window.location.href).href;
   }
 
+  function nextUrl() {
+    return new URLSearchParams(window.location.search).get('next') || 'index.html';
+  }
+
   function renderAuthNav(user) {
     const host = document.getElementById('authNav');
     if (!host) return;
@@ -94,14 +98,14 @@
             email,
             password,
             options: {
-              emailRedirectTo: redirectUrl(),
+              emailRedirectTo: new URL(`auth.html?next=${encodeURIComponent(nextUrl())}`, window.location.href).href,
               data: { display_name: nameInput.value.trim() }
             }
           });
           if (error) throw error;
           if (data.session) {
             setMessage('注册成功，正在进入网站…', 'ok');
-            setTimeout(() => { location.href = 'index.html'; }, 500);
+            setTimeout(() => { location.href = nextUrl(); }, 500);
           } else {
             setMessage('注册成功。请打开邮箱中的验证链接，然后回来登录。', 'ok');
           }
@@ -111,8 +115,7 @@
           if (data.session) {
             setMessage('登录成功，正在进入网站…', 'ok');
             setTimeout(() => {
-              const next = new URLSearchParams(location.search).get('next');
-              location.href = next || 'index.html';
+              location.href = nextUrl();
             }, 350);
           }
         }
