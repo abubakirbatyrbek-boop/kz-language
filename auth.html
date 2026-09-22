@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录 / 注册｜中亚语言通</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="auth">
+<header class="topbar">
+  <div class="container nav-wrap">
+    <a class="brand" href="index.html" aria-label="中亚语言通首页">
+      <span class="brand-mark">中</span>
+      <span><strong>中亚语言通</strong><small>哈萨克语 · 俄语</small></span>
+    </a>
+    <nav><a href="courses.html">课程</a><a href="scenes.html">场景</a><a href="learn.html?pool=course&id=daily-kz&start=0">开始学习</a></nav>
+    <div id="authNav" class="auth-nav"><a class="auth-link" href="auth.html">登录 / 注册</a></div>
+  </div>
+</header>
+
+<main>
+  <section class="section auth-section">
+    <div class="container auth-container">
+      <div class="auth-intro">
+        <span class="eyebrow">账号</span>
+        <h1>登录后，继续你的学习。</h1>
+        <p class="page-lead">用邮箱创建账号。以后可以把学习进度、考试成绩和更多个人设置放到云端。</p>
+      </div>
+
+      <div id="authConfigWarning" class="auth-warning hidden">
+        <strong>还差一步：连接 Supabase</strong>
+        <p>这个版本已经做好邮箱注册和登录界面。请把 <code>supabase-config.js</code> 里的项目 URL 和 Publishable Key 换成你自己的 Supabase 项目信息，再上传到 GitHub。</p>
+      </div>
+
+      <div id="alreadyLoggedIn" class="already-card hidden">
+        <span class="eyebrow">当前账号</span>
+        <h2 id="alreadyEmail"></h2>
+        <p>你已经登录。可以直接继续使用网站。</p>
+        <div class="detail-actions"><a class="primary-btn" href="index.html">返回首页</a><button id="logoutFromAuth" class="secondary-btn">退出登录</button></div>
+      </div>
+
+      <div class="auth-card">
+        <div class="auth-card-head">
+          <div><span class="eyebrow">邮箱账号</span><h2 id="authModeTitle">登录账号</h2><p id="authModeDesc">使用邮箱和密码继续学习。</p></div>
+        </div>
+        <form id="authForm" class="auth-form">
+          <div id="nameWrap" class="field hidden"><label for="authName">昵称</label><input id="authName" name="name" type="text" autocomplete="name" placeholder="例如：Abu" /></div>
+          <div class="field"><label for="authEmail">邮箱</label><input id="authEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com" required /></div>
+          <div class="field"><label for="authPassword">密码</label><input id="authPassword" name="password" type="password" autocomplete="current-password" placeholder="至少 8 个字符" required /></div>
+          <div id="passwordConfirmWrap" class="field hidden"><label for="authPasswordConfirm">确认密码</label><input id="authPasswordConfirm" name="passwordConfirm" type="password" autocomplete="new-password" placeholder="再次输入密码" /></div>
+          <button id="authSubmit" class="primary-btn auth-submit" type="submit">登录</button>
+          <div id="authMessage" class="auth-message" role="status" aria-live="polite"></div>
+          <button id="authToggle" class="auth-toggle" type="button">还没有账号？<strong>创建账号</strong></button>
+        </form>
+      </div>
+
+      <p class="auth-note">账号认证由 Supabase Auth 处理。浏览器端只应使用 Publishable Key / anon key，绝对不要把 service_role key 放进网站代码。</p>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="container footer-wrap"><span>中亚语言通</span><a href="index.html">返回首页</a></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>

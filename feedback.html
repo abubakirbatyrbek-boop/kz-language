@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>客服与意见反馈｜中亚语言通</title>
+  <meta name="description" content="向中亚语言通提交客服咨询、问题反馈和课程建议。" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-page="feedback">
+<header class="topbar">
+  <div class="container nav-wrap">
+    <a class="brand" href="index.html"><span class="brand-mark">中</span><span><strong>中亚语言通</strong><small>哈萨克语 · 俄语</small></span></a>
+    <nav><a href="courses.html">课程</a><a href="scenes.html">场景</a><a href="learn.html?pool=course&id=daily-kz&start=0">开始学习</a><a class="active" href="feedback.html">客服反馈</a></nav>
+    <div id="authNav" class="auth-nav"><a class="auth-link" href="auth.html">登录 / 注册</a></div>
+  </div>
+</header>
+
+<main>
+  <section class="section feedback-section">
+    <div class="container feedback-container">
+      <div class="feedback-intro">
+        <span class="eyebrow">客服与建议</span>
+        <h1>遇到问题，或者有想法？</h1>
+        <p class="page-lead">告诉我们你在学习过程中遇到的问题、希望增加的场景，或者网站功能建议。提交后会进入客服反馈记录。</p>
+      </div>
+
+      <div class="feedback-grid">
+        <form id="feedbackForm" class="feedback-card">
+          <div class="field"><label for="feedbackCategory">反馈类型</label><select id="feedbackCategory" name="category"><option value="课程建议">课程建议</option><option value="内容纠错">内容纠错</option><option value="网站问题">网站问题</option><option value="账号问题">账号问题</option><option value="商务合作">商务合作</option><option value="其他">其他</option></select></div>
+          <div class="field"><label for="feedbackSubject">主题</label><input id="feedbackSubject" name="subject" maxlength="120" placeholder="例如：希望增加铁路俄语课程" /></div>
+          <div class="field"><label for="feedbackMessage">详细内容</label><textarea id="feedbackMessage" name="message" rows="7" maxlength="2000" placeholder="请告诉我们具体遇到了什么问题……" required></textarea><div class="field-hint"><span>最多 2000 字</span><span id="messageCount">0 / 2000</span></div></div>
+          <div class="field"><label for="feedbackEmail">联系邮箱 <span class="optional">（可选）</span></label><input id="feedbackEmail" name="email" type="email" autocomplete="email" placeholder="需要回复时填写" /></div>
+          <div class="field"><label for="feedbackRating">整体体验</label><div class="rating-row" role="radiogroup" aria-label="整体体验评分"><label><input type="radio" name="rating" value="5" checked />很好</label><label><input type="radio" name="rating" value="4" />不错</label><label><input type="radio" name="rating" value="3" />一般</label><label><input type="radio" name="rating" value="2" />不太好</label><label><input type="radio" name="rating" value="1" />很不好</label></div></div>
+          <button class="primary-btn feedback-submit" id="feedbackSubmit" type="submit">提交反馈</button>
+          <div id="feedbackMessage" class="auth-message" role="status" aria-live="polite"></div>
+        </form>
+
+        <aside class="feedback-side">
+          <div class="side-card">
+            <span class="eyebrow">我们会关注什么</span>
+            <h2>真实用户的反馈，会直接影响课程。</h2>
+            <div class="feedback-point"><b>01</b><span>哪些工作场景最需要学</span></div>
+            <div class="feedback-point"><b>02</b><span>哪些翻译表达需要修正</span></div>
+            <div class="feedback-point"><b>03</b><span>哪些页面不好用</span></div>
+            <div class="feedback-point"><b>04</b><span>你最希望加入什么功能</span></div>
+          </div>
+          <div class="side-card light-card">
+            <span class="eyebrow">账号</span>
+            <h3>登录后提交会更方便</h3>
+            <p>登录状态会自动关联反馈记录。未登录也可以提交，填写联系邮箱后方便客服回复。</p>
+            <a class="secondary-btn" href="auth.html">登录 / 注册</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="container footer-wrap"><span>中亚语言通</span><a href="index.html">返回首页</a></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="auth.js"></script>
+<script src="feedback.js"></script>
+</body>
+</html>

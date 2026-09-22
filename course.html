@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>课程详情｜中亚语言通</title><link rel="stylesheet" href="styles.css"/></head>
 <body data-page="course">
-<header class="topbar"><div class="container nav-wrap"><a class="brand" href="index.html"><span class="brand-mark">中</span><span><strong>中亚语言通</strong><small>哈萨克语 · 俄语</small></span></a><nav><a href="courses.html">课程</a><a href="scenes.html">场景</a><a href="learn.html?pool=course&id=daily-kz&start=0">开始学习</a></nav><button class="ghost-btn" id="resetProgress">重置进度</button></div></header>
+<header class="topbar"><div class="container nav-wrap"><a class="brand" href="index.html"><span class="brand-mark">中</span><span><strong>中亚语言通</strong><small>哈萨克语 · 俄语</small></span></a><nav><a href="courses.html">课程</a><a href="scenes.html">场景</a><a href="learn.html?pool=course&id=daily-kz&start=0">开始学习</a><a href="feedback.html">客服反馈</a></nav><div id="authNav" class="auth-nav"><a class="auth-link" href="auth.html">登录 / 注册</a></div></div></header>
 <main><section class="section"><div class="container detail-head"><div><span class="eyebrow">课程详情</span><h1 id="courseTitle">课程</h1><p id="courseDesc" class="page-lead">课程简介</p></div><div class="progress-box"><span>课程进度</span><strong id="courseProgress">0%</strong></div></div><div class="container course-detail"><div class="lesson-list" id="lessonList"></div><div class="detail-actions"><a id="courseStart" class="primary-btn" href="#">从第一句开始 →</a><a class="secondary-btn" href="courses.html">返回课程列表</a></div></div></section></main>
-<footer class="footer"><div class="container footer-wrap"><span>中亚语言通</span><a href="index.html">首页</a></div></footer><script src="app.js"></script></body></html>
+<footer class="footer"><div class="container footer-wrap"><span>中亚语言通</span><a href="index.html">首页</a></div></footer><script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="auth.js"></script></body></html>

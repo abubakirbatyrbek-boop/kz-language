@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>场景考试｜中亚语言通</title><link rel="stylesheet" href="styles.css"/></head>
 <body data-page="test">
-<header class="topbar"><div class="container nav-wrap"><a class="brand" href="index.html"><span class="brand-mark">中</span><span><strong>中亚语言通</strong><small>哈萨克语 · 俄语</small></span></a><nav><a href="courses.html">课程</a><a class="active" href="scenes.html">场景</a><a href="learn.html?pool=course&id=daily-kz&start=0">开始学习</a></nav><button class="ghost-btn" id="resetProgress">重置进度</button></div></header>
+<header class="topbar"><div class="container nav-wrap"><a class="brand" href="index.html"><span class="brand-mark">中</span><span><strong>中亚语言通</strong><small>哈萨克语 · 俄语</small></span></a><nav><a href="courses.html">课程</a><a class="active" href="scenes.html">场景</a><a href="learn.html?pool=course&id=daily-kz&start=0">开始学习</a><a href="feedback.html">客服反馈</a></nav><div id="authNav" class="auth-nav"><a class="auth-link" href="auth.html">登录 / 注册</a></div></div></header>
 <main><section class="section test-section"><div class="container narrow">
   <div class="test-header"><span class="eyebrow">场景考试</span><h1 id="testTitle">场景考试</h1><p id="testDesc" class="page-lead">测试你在真实场景中的语言理解。题目会从该场景的专属题库中抽取。</p></div>
   <div id="testMain" class="test-shell">
@@ -24,4 +24,7 @@
 </div></section></main>
 <footer class="footer"><div class="container footer-wrap"><span>中亚语言通</span><a href="scenes.html">返回场景</a></div></footer>
 <script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="auth.js"></script>
 </body></html>
