@@ -7,17 +7,17 @@
   <meta name="description" content="给中国人在哈萨克斯坦生活、工作、物流、铁路和商务沟通使用的哈萨克语与俄语学习网站。" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
+<body data-page="home">
   <header class="topbar">
     <div class="container nav-wrap">
-      <a class="brand" href="#top" aria-label="中亚语言通首页">
+      <a class="brand" href="index.html" aria-label="中亚语言通首页">
         <span class="brand-mark">中</span>
         <span><strong>中亚语言通</strong><small>哈萨克语 · 俄语</small></span>
       </a>
       <nav>
-        <a href="#courses">课程</a>
-        <a href="#scenes">场景</a>
-        <a href="#lesson">开始学习</a>
+        <a href="courses.html">课程</a>
+        <a href="scenes.html">场景</a>
+        <a href="learn.html?pool=course&id=daily-kz&start=0">开始学习</a>
       </nav>
       <button class="ghost-btn" id="resetProgress">重置进度</button>
     </div>
@@ -31,8 +31,8 @@
           <h1>在哈萨克斯坦，<br /><em>真正说得上话。</em></h1>
           <p>中文对照学习哈萨克语和俄语，按生活、工作、物流、铁路、工厂和商务场景练习。</p>
           <div class="hero-actions">
-            <button class="primary-btn" id="startLearning">开始学习</button>
-            <button class="secondary-btn" id="sceneLearning">按场景学</button>
+            <a class="primary-btn" href="learn.html?pool=course&id=daily-kz&start=0">开始学习</a>
+            <a class="secondary-btn" href="scenes.html">按场景学</a>
           </div>
           <div class="mini-proof"><span>中文</span><span>↔</span><span>Қазақша</span><span>↔</span><span>Русский</span></div>
         </div>
@@ -75,38 +75,20 @@
       <div class="container lesson-layout">
         <div class="lesson-panel">
           <div class="section-head compact">
-            <div><span class="eyebrow">正在学习</span><h2 id="lessonTitle">日常打招呼</h2></div>
-            <span class="lesson-count" id="lessonCount">1 / 30</span>
+            <div><span class="eyebrow">开始学习</span><h2>每天学一句，马上开口。</h2></div>
+            <span class="lesson-count">中文 → 哈语 + 俄语</span>
           </div>
-          <div class="selected-path" id="selectedPath">当前课程：日常哈萨克语</div>
           <div class="lesson-card">
-            <div class="tag-row"><span class="tag" id="lessonTag">生活</span><span class="tag muted" id="lessonLevel">入门</span></div>
-            <p class="cn-line" id="cnLine">您好。</p>
-            <div class="translation-row">
-              <div><span>哈萨克语</span><strong id="kzLine">Сәлеметсіз бе?</strong></div>
-              <button class="round-sound" data-target="kzLine" data-lang="kk-KZ">🔊</button>
-            </div>
-            <div class="translation-row">
-              <div><span>俄语</span><strong id="ruLine">Здравствуйте.</strong></div>
-              <button class="round-sound" data-target="ruLine" data-lang="ru-RU">🔊</button>
-            </div>
-            <div class="lesson-tip" id="lessonTip">正式、礼貌地向陌生人打招呼时可以使用。</div>
-            <div class="lesson-actions">
-              <button class="secondary-btn" id="prevLesson">上一句</button>
-              <button class="primary-btn" id="nextLesson">记住了，下一句</button>
-            </div>
+            <div class="tag-row"><span class="tag">日常</span><span class="tag muted">入门</span></div>
+            <p class="cn-line">您好。</p>
+            <div class="translation-row"><div><span>哈萨克语</span><strong>Сәлеметсіз бе?</strong></div><button class="round-sound" data-text="Сәлеметсіз бе?" data-lang="kk-KZ">🔊</button></div>
+            <div class="translation-row"><div><span>俄语</span><strong>Здравствуйте.</strong></div><button class="round-sound" data-text="Здравствуйте." data-lang="ru-RU">🔊</button></div>
+            <div class="lesson-tip">点击进入完整课程，在独立页面连续学习。</div>
+            <div class="lesson-actions"><a class="secondary-btn" href="courses.html">看全部课程</a><a class="primary-btn" href="learn.html?pool=course&id=daily-kz&start=0">开始学习 →</a></div>
           </div>
         </div>
         <aside class="side-panel">
-          <div class="side-card">
-            <span class="eyebrow">学习方式</span>
-            <h3>中文 → 两种语言</h3>
-            <p>先理解你要表达的意思，再比较哈萨克语和俄语怎么说。</p>
-            <div class="feature"><b>01</b><span>中文看懂意思</span></div>
-            <div class="feature"><b>02</b><span>哈语和俄语并排比较</span></div>
-            <div class="feature"><b>03</b><span>点击发音，马上开口</span></div>
-            <div class="feature"><b>04</b><span>完成后自动保存本机进度</span></div>
-          </div>
+          <div class="side-card"><span class="eyebrow">学习方式</span><h3>每个选项都打开独立页面</h3><p>首页、课程、场景、具体课程和具体句子都各自有页面，后面可以继续接登录、数据库和 AI。</p><div class="feature"><b>01</b><span>课程 → 课程详情页</span></div><div class="feature"><b>02</b><span>场景 → 场景详情页</span></div><div class="feature"><b>03</b><span>句子 → 独立学习页</span></div><div class="feature"><b>04</b><span>学习进度保存在本机</span></div></div>
         </aside>
       </div>
     </section>

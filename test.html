@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>场景考试｜中亚语言通</title><link rel="stylesheet" href="styles.css"/></head>
+<body data-page="test">
+<header class="topbar"><div class="container nav-wrap"><a class="brand" href="index.html"><span class="brand-mark">中</span><span><strong>中亚语言通</strong><small>哈萨克语 · 俄语</small></span></a><nav><a href="courses.html">课程</a><a class="active" href="scenes.html">场景</a><a href="learn.html?pool=course&id=daily-kz&start=0">开始学习</a></nav><button class="ghost-btn" id="resetProgress">重置进度</button></div></header>
+<main><section class="section test-section"><div class="container narrow">
+  <div class="test-header"><span class="eyebrow">场景考试</span><h1 id="testTitle">场景考试</h1><p id="testDesc" class="page-lead">测试你在真实场景中的语言理解。题目会从该场景的专属题库中抽取。</p></div>
+  <div id="testMain" class="test-shell">
+    <div class="test-top"><span>第 <strong id="qNo">1</strong> / <strong id="qTotal">5</strong> 题</span><div class="test-progress-track"><i id="testProgress"></i></div></div>
+    <article class="question-card">
+      <div class="question-label">选择题</div>
+      <h2 id="questionPrompt"></h2>
+      <button id="questionSource" class="source-sentence" data-text="" data-lang="zh-CN" title="点击朗读"></button>
+      <div id="testOptions" class="answer-options"></div>
+      <div id="testFeedback" class="test-feedback"></div>
+      <button id="nextQuestion" class="primary-btn test-next" disabled>下一题</button>
+    </article>
+    <div class="test-tip">每次考试 5 题。考试成绩和该场景最高成绩保存在当前浏览器。</div>
+  </div>
+  <div id="testResult" class="result-card hidden">
+    <span class="eyebrow">考试完成</span><div class="result-score" id="resultScore">0%</div><h2 id="resultMessage">继续练习</h2><p id="resultDetail">答对 0 / 5 题</p>
+    <div class="detail-actions"><button id="resultRetry" class="primary-btn">再考一次</button><a class="test-btn" id="resultBack" href="scenes.html">返回场景</a></div>
+  </div>
+</div></section></main>
+<footer class="footer"><div class="container footer-wrap"><span>中亚语言通</span><a href="scenes.html">返回场景</a></div></footer>
+<script src="app.js"></script>
+</body></html>

@@ -9,7 +9,6 @@ const lessons = [
   { id:'daily-08', course:'daily-kz', title:'在哪里', tag:'生活', level:'入门', cn:'在哪里？', kz:'Қай жерде?', ru:'Где находится?', tip:'询问地点的基础句型。' },
   { id:'daily-09', course:'daily-kz', title:'明天见', tag:'生活', level:'入门', cn:'明天见。', kz:'Ертең көріскенше.', ru:'До завтра.', tip:'结束今天的交流时可以使用。' },
   { id:'daily-10', course:'daily-kz', title:'没问题', tag:'生活', level:'入门', cn:'没问题。', kz:'Мәселе жоқ.', ru:'Без проблем.', tip:'工作沟通里也经常出现。' },
-
   { id:'log-01', course:'work-ru', title:'货物什么时候到', tag:'物流', level:'实用', cn:'货物什么时候到？', kz:'Жүк қашан келеді?', ru:'Когда прибудет груз?', tip:'物流沟通里的高频句。' },
   { id:'log-02', course:'work-ru', title:'货物到了吗', tag:'物流', level:'实用', cn:'货物到了吗？', kz:'Жүк келді ме?', ru:'Груз прибыл?', tip:'适合向司机、仓库或同事确认状态。' },
   { id:'log-03', course:'work-ru', title:'什么时候装货', tag:'物流', level:'实用', cn:'什么时候开始装货？', kz:'Тиеу қашан басталады?', ru:'Когда начнётся погрузка?', tip:'装车、装箱前确认时间。' },
@@ -20,13 +19,11 @@ const lessons = [
   { id:'log-08', course:'work-ru', title:'请等一下', tag:'物流', level:'实用', cn:'请等一下。', kz:'Күте тұрыңызшы.', ru:'Подождите, пожалуйста.', tip:'让对方稍等时使用。' },
   { id:'log-09', course:'work-ru', title:'这里不能停车', tag:'物流', level:'实用', cn:'这里不能停车。', kz:'Бұл жерде көлік қоюға болмайды.', ru:'Здесь нельзя парковаться.', tip:'装卸区和厂区里很实用。' },
   { id:'log-10', course:'work-ru', title:'什么时候发车', tag:'物流', level:'实用', cn:'什么时候发车？', kz:'Қашан жөнелтіледі?', ru:'Когда отправляется?', tip:'铁路、车辆运输等场景都可继续扩展。' },
-
   { id:'rail-01', course:'work-kz', title:'火车什么时候发', tag:'铁路', level:'实用', cn:'火车什么时候发车？', kz:'Пойыз қашан жөнеледі?', ru:'Когда отправляется поезд?', tip:'车站和运输计划沟通。' },
   { id:'rail-02', course:'work-kz', title:'这批车皮到了吗', tag:'铁路', level:'实用', cn:'这批车皮到了吗？', kz:'Бұл вагондар келді ме?', ru:'Эти вагоны уже прибыли?', tip:'铁路物流现场常见表达。' },
   { id:'rail-03', course:'work-kz', title:'哪个站', tag:'铁路', level:'实用', cn:'在哪个车站？', kz:'Қай станцияда?', ru:'На какой станции?', tip:'确认接车站或作业站。' },
   { id:'rail-04', course:'work-kz', title:'请确认编号', tag:'铁路', level:'实用', cn:'请确认车厢编号。', kz:'Вагон нөмірін тексеріңізші.', ru:'Проверьте номер вагона, пожалуйста.', tip:'核对车厢信息时使用。' },
   { id:'rail-05', course:'work-kz', title:'什么时候装车', tag:'铁路', level:'实用', cn:'什么时候开始装车？', kz:'Вагонға тиеу қашан басталады?', ru:'Когда начнётся погрузка в вагоны?', tip:'铁路装车作业时间确认。' },
-
   { id:'factory-01', course:'work-kz', title:'设备坏了', tag:'工厂', level:'实用', cn:'设备坏了。', kz:'Жабдық істен шықты.', ru:'Оборудование сломалось.', tip:'报告设备故障的基础表达。' },
   { id:'factory-02', course:'work-kz', title:'请停机', tag:'工厂', level:'实用', cn:'请停机。', kz:'Жабдықты тоқтатыңызшы.', ru:'Остановите оборудование, пожалуйста.', tip:'操作前要根据现场安全规定沟通。' },
   { id:'factory-03', course:'work-ru', title:'今天几点开会', tag:'工作', level:'实用', cn:'今天几点开会？', kz:'Бүгін жиналыс сағат нешеде?', ru:'Во сколько сегодня совещание?', tip:'工作会议安排。' },
@@ -35,155 +32,261 @@ const lessons = [
 ];
 
 const courses = [
-  { id:'daily-kz', icon:'🇰🇿', title:'哈萨克语入门', desc:'从打招呼、问路开始', filter:l => l.course==='daily-kz' },
-  { id:'daily-ru', icon:'🇷🇺', title:'俄语入门', desc:'生活场景高频表达', filter:l => l.course==='daily-ru' },
-  { id:'work-ru', icon:'🏭', title:'工作俄语', desc:'工厂、物流、商务沟通', filter:l => l.course==='work-ru' },
-  { id:'work-kz', icon:'🚛', title:'工作哈语', desc:'铁路、工厂、现场沟通', filter:l => l.course==='work-kz' }
+  { id:'daily-kz', icon:'🇰🇿', title:'哈萨克语入门', desc:'从打招呼、问路开始', accent:'KZ' },
+  { id:'daily-ru', icon:'🇷🇺', title:'俄语入门', desc:'生活场景高频表达', accent:'RU' },
+  { id:'work-ru', icon:'🏭', title:'工作俄语', desc:'工厂、物流、商务沟通', accent:'WORK' },
+  { id:'work-kz', icon:'🚛', title:'工作哈语', desc:'铁路、工厂、现场沟通', accent:'WORK' }
 ];
 
 const scenes = [
-  ['🚕','打车','问价、目的地、下车', 'daily-kz'],
-  ['🏠','租房','看房、合同、水电', 'daily-kz'],
-  ['🏦','银行','开户、转账、咨询', 'daily-kz'],
-  ['🍽','餐厅','点餐、结账、需求', 'daily-kz'],
-  ['🏭','工厂','设备、生产、安全', 'factory'],
-  ['🚆','铁路','车站、车皮、发运', 'rail'],
-  ['📦','海关','报关、查验、放行', 'log'],
-  ['🤝','商务','谈价、会议、合同', 'factory']
+  { id:'taxi', icon:'🚕', title:'打车', desc:'问价、目的地、下车', type:'daily-kz' },
+  { id:'rent', icon:'🏠', title:'租房', desc:'看房、合同、水电', type:'daily-kz' },
+  { id:'bank', icon:'🏦', title:'银行', desc:'开户、转账、咨询', type:'daily-kz' },
+  { id:'restaurant', icon:'🍽', title:'餐厅', desc:'点餐、结账、需求', type:'daily-kz' },
+  { id:'factory', icon:'🏭', title:'工厂', desc:'设备、生产、安全', type:'factory' },
+  { id:'rail', icon:'🚆', title:'铁路', desc:'车站、车皮、发运', type:'rail' },
+  { id:'customs', icon:'📦', title:'海关', desc:'报关、查验、放行', type:'log' },
+  { id:'business', icon:'🤝', title:'商务', desc:'谈价、会议、合同', type:'factory' }
 ];
 
-let currentPool = lessons;
-let current = Number(localStorage.getItem('currentLesson') || 0);
-let completed = JSON.parse(localStorage.getItem('completedLessons') || '[]');
+const sceneTestBank = {
+  taxi:[
+    ['我要去火车站。','Мен вокзалға барғым келеді.','Я хочу поехать на вокзал.'],
+    ['多少钱？','Қанша тұрады?','Сколько стоит?'],
+    ['请在这里停车。','Осы жерде тоқтатыңызшы.','Остановите здесь, пожалуйста.'],
+    ['请右转。','Оңға бұрылыңызшы.','Поверните направо, пожалуйста.'],
+    ['请等我一下。','Мені сәл күте тұрыңызшы.','Подождите меня немного, пожалуйста.']
+  ],
+  rent:[
+    ['一个月房租多少钱？','Бір айлық жалдау ақысы қанша?','Сколько стоит аренда за месяц?'],
+    ['水电费包括在内吗？','Коммуналдық төлемдерге су мен электр энергиясы кіре ме?','Коммунальные услуги, вода и электричество, включены?'],
+    ['合同可以看看吗？','Шартты көрсете аласыз ба?','Можно посмотреть договор?'],
+    ['我想看一下房子。','Пәтерді көргім келеді.','Я хочу посмотреть квартиру.'],
+    ['地址在哪里？','Мекенжайы қай жерде?','Где находится адрес?']
+  ],
+  bank:[
+    ['我要开银行账户。','Банк шотын ашқым келеді.','Я хочу открыть банковский счёт.'],
+    ['手续费是多少？','Комиссия қанша?','Какая комиссия?'],
+    ['可以转账吗？','Ақша аударуға бола ма?','Можно сделать перевод?'],
+    ['银行卡什么时候可以拿？','Банк картасын қашан ала аламын?','Когда я могу получить банковскую карту?'],
+    ['请告诉我需要什么文件。','Қандай құжаттар қажет екенін айтып беріңізші.','Скажите, пожалуйста, какие документы нужны.']
+  ],
+  restaurant:[
+    ['请给我菜单。','Мәзірді беріңізші.','Дайте, пожалуйста, меню.'],
+    ['这个菜辣吗？','Бұл тағам ащы ма?','Это блюдо острое?'],
+    ['请给我一杯水。','Маған бір стақан су беріңізші.','Дайте мне, пожалуйста, стакан воды.'],
+    ['买单。','Есеп айырысайық.','Счёт, пожалуйста.'],
+    ['可以刷卡吗？','Картамен төлеуге бола ма?','Можно оплатить картой?']
+  ],
+  factory:[
+    ['设备坏了。','Жабдық істен шықты.','Оборудование сломалось.'],
+    ['请停机。','Жабдықты тоқтатыңызшы.','Остановите оборудование, пожалуйста.'],
+    ['请戴安全帽。','Қауіпсіздік каскасын киіңізші.','Наденьте защитную каску, пожалуйста.'],
+    ['今天几点下班？','Бүгін жұмысты сағат нешеде аяқтаймыз?','Во сколько сегодня заканчиваем работу?'],
+    ['这里不安全。','Бұл жерде қауіпсіз емес.','Здесь небезопасно.']
+  ],
+  rail:[
+    ['火车什么时候发车？','Пойыз қашан жөнеледі?','Когда отправляется поезд?'],
+    ['请确认车厢编号。','Вагон нөмірін тексеріңізші.','Проверьте номер вагона, пожалуйста.'],
+    ['在哪个站？','Қай станцияда?','На какой станции?'],
+    ['什么时候开始装车？','Вагонға тиеу қашан басталады?','Когда начнётся погрузка в вагоны?'],
+    ['请把单据给我。','Құжаттарды маған беріңізші.','Дайте мне документы, пожалуйста.']
+  ],
+  customs:[
+    ['需要报关。','Кедендік декларация қажет.','Нужно оформить таможенную декларацию.'],
+    ['请准备好海关文件。','Кедендік құжаттарды дайындаңызшы.','Подготовьте таможенные документы, пожалуйста.'],
+    ['什么时候查验？','Кедендік тексеру қашан болады?','Когда будет досмотр?'],
+    ['货物什么时候放行？','Жүк қашан шығарылады?','Когда груз будет выпущен?'],
+    ['这是过境货物。','Бұл транзиттік жүк.','Это транзитный груз.']
+  ],
+  business:[
+    ['这个价格太高了。','Бұл баға тым жоғары.','Эта цена слишком высокая.'],
+    ['我们什么时候开会？','Біз қашан жиналамыз?','Когда у нас будет совещание?'],
+    ['请把合同发给我。','Шартты маған жіберіңізші.','Отправьте мне договор, пожалуйста.'],
+    ['请发一份报价。','Баға ұсынысын жіберіңізші.','Пришлите коммерческое предложение, пожалуйста.'],
+    ['我们明天再讨论。','Ертең қайта талқылаймыз.','Обсудим завтра.']
+  ]
+};
 
-function courseLessons(courseId) {
-  if (courseId === 'daily-ru') return lessons.slice(0, 10);
-  return lessons.filter(l => l.course === courseId);
+const sceneTestInfo = {
+  taxi:{title:'打车场景考试'}, rent:{title:'租房场景考试'}, bank:{title:'银行场景考试'},
+  restaurant:{title:'餐厅场景考试'}, factory:{title:'工厂场景考试'}, rail:{title:'铁路场景考试'},
+  customs:{title:'海关场景考试'}, business:{title:'商务场景考试'}
+};
+
+function readCompleted(){
+  try { return JSON.parse(localStorage.getItem('completedLessons') || '[]'); } catch { return []; }
+}
+let completed = readCompleted();
+
+function courseLessons(id){
+  if(id === 'daily-ru') return lessons.filter(l => l.course === 'daily-kz');
+  return lessons.filter(l => l.course === id);
+}
+function sceneLessons(type){
+  if(type==='rail') return lessons.filter(l=>l.id.startsWith('rail-'));
+  if(type==='log') return lessons.filter(l=>l.id.startsWith('log-'));
+  if(type==='factory') return lessons.filter(l=>l.id.startsWith('factory-'));
+  return lessons.filter(l=>l.course==='daily-kz');
+}
+function percentFor(pool){ return pool.length ? Math.round(pool.filter(l=>completed.includes(l.id)).length/pool.length*100) : 0; }
+function saveCompleted(){ localStorage.setItem('completedLessons', JSON.stringify(completed)); }
+
+function speak(text, lang){
+  if(!('speechSynthesis' in window)){ alert('当前浏览器不支持语音朗读。'); return; }
+  window.speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang=lang; u.rate=0.88; window.speechSynthesis.speak(u);
 }
 
-function filterScene(type) {
-  if (type === 'rail') return lessons.filter(l => l.id.startsWith('rail-'));
-  if (type === 'log') return lessons.filter(l => l.id.startsWith('log-'));
-  if (type === 'factory') return lessons.filter(l => l.id.startsWith('factory-'));
-  return lessons.filter(l => l.course === 'daily-kz');
+function courseById(id){ return courses.find(c=>c.id===id); }
+function qs(name){ return new URLSearchParams(location.search).get(name); }
+function go(url){ location.href = url; }
+
+function bindSounds(){
+  document.addEventListener('click', e=>{
+    const btn=e.target.closest('[data-text]');
+    if(btn) speak(btn.dataset.text, btn.dataset.lang);
+  });
 }
 
-function percentFor(pool) {
-  if (!pool.length) return 0;
-  const done = pool.filter(l => completed.includes(l.id)).length;
-  return Math.round(done / pool.length * 100);
-}
-
-function renderCourses() {
-  const el = document.getElementById('courseGrid');
-  el.innerHTML = courses.map(c => {
-    const pool = courseLessons(c.id);
-    const pct = percentFor(pool);
-    return `<button class="course course-btn" data-course="${c.id}">
-      <div class="course-icon">${c.icon}</div><h3>${c.title}</h3><p>${c.desc}</p>
-      <div class="bar"><i style="width:${pct}%"></i></div>
-      <div class="meta"><span>${pool.length} 课</span><span>${pct}%</span></div>
-    </button>`;
-  }).join('');
-}
-
-function renderScenes() {
-  document.getElementById('sceneGrid').innerHTML = scenes.map(s => `<button class="scene scene-btn" data-scene="${s[3]}">
-    <div><div class="scene-icon">${s[0]}</div><h3>${s[1]}</h3><p>${s[2]}</p></div><div class="tagline">开始场景练习 →</div>
-  </button>`).join('');
-}
-
-function updateProgress() {
-  document.getElementById('progressText').textContent = `${percentFor(lessons)}%`;
-  renderCourses();
-}
-
-function renderLesson() {
-  if (!currentPool.length) return;
-  current = Math.max(0, Math.min(current, currentPool.length - 1));
-  const l = currentPool[current];
-  document.getElementById('lessonTitle').textContent = l.title;
-  document.getElementById('lessonTag').textContent = l.tag;
-  document.getElementById('lessonLevel').textContent = l.level;
-  document.getElementById('cnLine').textContent = l.cn;
-  document.getElementById('kzLine').textContent = l.kz;
-  document.getElementById('ruLine').textContent = l.ru;
-  document.getElementById('lessonTip').textContent = l.tip;
-  document.getElementById('lessonCount').textContent = `${current + 1} / ${currentPool.length}`;
-  document.getElementById('selectedPath').textContent = `当前内容：${l.tag} · ${l.title}`;
-  localStorage.setItem('currentLesson', String(current));
-  updateProgress();
-}
-
-function setPool(pool, label) {
-  currentPool = pool.length ? pool : lessons;
-  current = 0;
-  document.getElementById('selectedPath').textContent = `当前内容：${label}`;
-  renderLesson();
-  document.getElementById('lesson').scrollIntoView({behavior:'smooth'});
-}
-
-function speak(text, lang) {
-  if (!('speechSynthesis' in window)) {
-    alert('当前浏览器不支持语音朗读。');
-    return;
+function renderHome(){
+  const cg=document.getElementById('courseGrid');
+  if(cg){
+    cg.innerHTML=courses.map(c=>{const p=percentFor(courseLessons(c.id)); return `<a class="course course-link" href="course.html?id=${c.id}"><div class="course-icon">${c.icon}</div><h3>${c.title}</h3><p>${c.desc}</p><div class="bar"><i style="width:${p}%"></i></div><div class="meta"><span>${courseLessons(c.id).length} 课</span><span>${p}%</span></div></a>`}).join('');
   }
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang;
-  u.rate = 0.88;
-  window.speechSynthesis.speak(u);
+  const sg=document.getElementById('sceneGrid');
+  if(sg){
+    sg.innerHTML=scenes.map(s=>`<a class="scene scene-link" href="scene.html?id=${s.id}"><div><div class="scene-icon">${s.icon}</div><h3>${s.title}</h3><p>${s.desc}</p></div><div class="tagline">练习 → <span class="test-pill">小测</span></div></a>`).join('');
+  }
+  const overall=document.getElementById('progressText'); if(overall) overall.textContent=percentFor(lessons)+'%';
 }
 
-document.getElementById('startLearning').addEventListener('click', () => setPool(lessons.slice(0, 10), '哈萨克语入门'));
-document.getElementById('sceneLearning').addEventListener('click', () => document.getElementById('scenes').scrollIntoView({behavior:'smooth'}));
+function renderCoursePage(){
+  const id=qs('id') || 'daily-kz'; const c=courseById(id) || courses[0];
+  document.title = `${c.title}｜中亚语言通`;
+  const title=document.getElementById('courseTitle'); if(title) title.textContent=c.title;
+  const desc=document.getElementById('courseDesc'); if(desc) desc.textContent=c.desc;
+  const list=document.getElementById('lessonList');
+  const pool=courseLessons(c.id);
+  if(list){ list.innerHTML=pool.map((l,i)=>`<a class="list-item" href="learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${i}"><span class="num">${String(i+1).padStart(2,'0')}</span><span><strong>${l.title}</strong><small>${l.cn}</small></span><span class="arrow">→</span></a>`).join(''); }
+  const pct=document.getElementById('courseProgress'); if(pct) pct.textContent=percentFor(pool)+'%';
+  const start=document.getElementById('courseStart'); if(start) start.href=`learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=0`;
+}
 
-document.addEventListener('click', e => {
-  const sound = e.target.closest('[data-text]');
-  if (sound) speak(sound.dataset.text, sound.dataset.lang);
+function sceneById(id){ return scenes.find(s=>s.id===id); }
+function bestScoreForScene(id){ return Number(localStorage.getItem(`sceneBest:${id}`) || 0); }
 
-  const target = e.target.closest('[data-target]');
-  if (target) speak(document.getElementById(target.dataset.target).textContent, target.dataset.lang);
-
-  const courseBtn = e.target.closest('[data-course]');
-  if (courseBtn) {
-    const id = courseBtn.dataset.course;
-    setPool(courseLessons(id), courseBtn.querySelector('h3').textContent);
-    return;
+function renderScenePage(){
+  const sceneId=qs('id');
+  let scene=sceneById(sceneId);
+  if(!scene){
+    const type=qs('type') || 'rail';
+    scene=scenes.find(s=>s.type===type) || scenes[0];
   }
+  const titleText=scene.title+'场景';
+  document.title = `${titleText}｜中亚语言通`;
+  document.getElementById('sceneTitle').textContent=titleText;
+  document.getElementById('sceneDesc').textContent=scene.desc;
+  const pool=sceneLessons(scene.type);
+  const list=document.getElementById('sceneLessonList');
+  list.innerHTML=pool.map((l,i)=>`<a class="list-item" href="learn.html?pool=scene&scene=${encodeURIComponent(scene.id)}&type=${encodeURIComponent(scene.type)}&start=${i}"><span class="num">${String(i+1).padStart(2,'0')}</span><span><strong>${l.title}</strong><small>${l.cn}</small></span><span class="arrow">→</span></a>`).join('');
+  document.getElementById('sceneCount').textContent=`${pool.length} 句`;
+  document.getElementById('sceneStart').href=`learn.html?pool=scene&scene=${encodeURIComponent(scene.id)}&type=${encodeURIComponent(scene.type)}&start=0`;
+  const testLink=document.getElementById('sceneTest'); if(testLink) testLink.href=`test.html?scene=${encodeURIComponent(scene.id)}`;
+  const best=document.getElementById('sceneBest');
+  if(best){ const b=bestScoreForScene(scene.id); best.textContent=b?`最佳成绩：${b}%`:'最佳成绩：未参加'; }
+}
 
-  const sceneBtn = e.target.closest('[data-scene]');
-  if (sceneBtn) {
-    const type = sceneBtn.dataset.scene;
-    const map = { rail:['铁路场景', 'rail'], log:['物流场景', 'log'], factory:['工厂/工作场景', 'factory'], 'daily-kz':['生活场景', 'daily'] };
-    const [label, key] = map[type] || ['生活场景','daily'];
-    setPool(filterScene(key), label);
+function renderLearnPage(){
+  let pool=[]; let label='学习';
+  if(qs('pool')==='scene'){ pool=sceneLessons(qs('type')||'daily-kz'); label='场景练习'; }
+  else { const c=courseById(qs('id')||'daily-kz')||courses[0]; pool=courseLessons(c.id); label=c.title; }
+  let current=Math.max(0,Math.min(Number(qs('start')||0),pool.length-1));
+  const title=document.getElementById('learnTitle'); const count=document.getElementById('learnCount'); const cn=document.getElementById('learnCn'); const kz=document.getElementById('learnKz'); const ru=document.getElementById('learnRu'); const tip=document.getElementById('learnTip'); const tag=document.getElementById('learnTag'); const path=document.getElementById('learnPath');
+  function draw(){
+    const l=pool[current]; if(!l) return;
+    title.textContent=l.title; count.textContent=`${current+1} / ${pool.length}`; cn.textContent=l.cn; kz.textContent=l.kz; ru.textContent=l.ru; tip.textContent=l.tip; tag.textContent=l.tag; path.textContent=`当前内容：${label}`;
+    document.getElementById('prevLink').href = learnUrl(current-1<0?pool.length-1:current-1);
+    document.getElementById('nextLink').href = learnUrl((current+1)%pool.length);
+    document.getElementById('markBtn').textContent = completed.includes(l.id) ? '已记住 ✓' : '记住了，下一句';
+    document.getElementById('nextLink').onclick=()=>{ if(!completed.includes(l.id)){completed.push(l.id);saveCompleted();} };
+    document.title=`${l.title}｜${label}｜中亚语言通`;
   }
-});
+  function learnUrl(i){
+    if(qs('pool')==='scene') return `learn.html?pool=scene&scene=${encodeURIComponent(qs('scene')||'')}&type=${encodeURIComponent(qs('type')||'daily-kz')}&start=${i}`;
+    return `learn.html?pool=course&id=${encodeURIComponent(qs('id')||'daily-kz')}&start=${i}`;
+  }
+  draw();
+  bindSounds();
+}
 
-document.getElementById('nextLesson').addEventListener('click', () => {
-  const l = currentPool[current];
-  if (!completed.includes(l.id)) completed.push(l.id);
-  if (current < currentPool.length - 1) current += 1;
-  else current = 0;
-  localStorage.setItem('completedLessons', JSON.stringify(completed));
-  renderLesson();
-});
+function buildTestQuestions(sceneId){
+  const bank=sceneTestBank[sceneId] || sceneTestBank.rail;
+  const shuffle=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+  return shuffle(bank).slice(0,5).map((row,idx)=>{
+    const [cn,kz,ru]=row;
+    if(idx%3===0){
+      const distractors=shuffle(bank.filter(x=>x[0]!==cn)).slice(0,3).map(x=>x[1]);
+      return {prompt:'下面哪一个是这句话的哈萨克语？',source:cn,answer:kz,options:shuffle([kz,...distractors]),lang:'kk-KZ'};
+    }
+    if(idx%3===1){
+      const distractors=shuffle(bank.filter(x=>x[0]!==cn)).slice(0,3).map(x=>x[2]);
+      return {prompt:'下面哪一个是这句话的俄语？',source:cn,answer:ru,options:shuffle([ru,...distractors]),lang:'ru-RU'};
+    }
+    const distractors=shuffle(bank.filter(x=>x[0]!==cn)).slice(0,3).map(x=>x[0]);
+    return {prompt:'这句话是什么意思？',source:ru,answer:cn,options:shuffle([cn,...distractors]),lang:'ru-RU'};
+  });
+}
 
-document.getElementById('prevLesson').addEventListener('click', () => {
-  current = (current - 1 + currentPool.length) % currentPool.length;
-  renderLesson();
-});
+function renderTestPage(){
+  const sceneId=qs('scene')||'rail';
+  const scene=sceneById(sceneId)||scenes[0];
+  document.getElementById('testTitle').textContent=scene.title+'场景考试';
+  document.getElementById('testDesc').textContent=`${scene.desc} 每次考试 5 题，答对越多，成绩越高。`;
+  document.title=`${scene.title}场景考试｜中亚语言通`;
+  let questions=buildTestQuestions(scene.id), current=0, score=0, answered=false;
+  const qNo=document.getElementById('qNo'), total=document.getElementById('qTotal'), prompt=document.getElementById('questionPrompt');
+  const source=document.getElementById('questionSource'), optionsEl=document.getElementById('testOptions');
+  const feedback=document.getElementById('testFeedback'), nextBtn=document.getElementById('nextQuestion'), progress=document.getElementById('testProgress');
+  const result=document.getElementById('testResult'), main=document.getElementById('testMain');
+  total.textContent=questions.length;
+  function render(){
+    const q=questions[current]; answered=false;
+    qNo.textContent=current+1; prompt.textContent=q.prompt; source.textContent=q.source; source.dataset.text=q.source; source.dataset.lang=q.lang;
+    optionsEl.innerHTML=q.options.map((opt,i)=>`<button class="answer-option" data-answer-index="${i}"><span class="option-letter">${String.fromCharCode(65+i)}</span><span>${opt}</span></button>`).join('');
+    feedback.className='test-feedback'; feedback.textContent=''; nextBtn.disabled=true; nextBtn.textContent=current===questions.length-1?'查看成绩':'下一题'; progress.style.width=`${Math.round((current/questions.length)*100)}%`;
+  }
+  function choose(btn){
+    if(answered)return; answered=true;
+    const q=questions[current], value=q.options[Number(btn.dataset.answerIndex)], correct=value===q.answer;
+    optionsEl.querySelectorAll('.answer-option').forEach(b=>{b.disabled=true; if(q.options[Number(b.dataset.answerIndex)]===q.answer)b.classList.add('correct');});
+    if(correct){btn.classList.add('correct');score++;feedback.className='test-feedback ok';feedback.textContent='回答正确！';}
+    else{btn.classList.add('wrong');feedback.className='test-feedback bad';feedback.textContent=`回答错误。正确答案：${q.answer}`;}
+    nextBtn.disabled=false;
+  }
+  optionsEl.addEventListener('click',e=>{const b=e.target.closest('.answer-option');if(b)choose(b);});
+  nextBtn.addEventListener('click',()=>{if(!answered)return;if(current<questions.length-1){current++;render();window.scrollTo({top:0,behavior:'smooth'});}else showResult();});
+  function showResult(){
+    const pct=Math.round(score/questions.length*100), best=Math.max(pct,bestScoreForScene(scene.id));
+    localStorage.setItem(`sceneBest:${scene.id}`,String(best));
+    main.classList.add('hidden'); result.classList.remove('hidden');
+    document.getElementById('resultScore').textContent=`${pct}%`;
+    document.getElementById('resultDetail').textContent=`答对 ${score} / ${questions.length} 题`;
+    document.getElementById('resultMessage').textContent=pct>=80?'通过！继续学习下一组内容。':'还差一点，再试一次会更稳。';
+    document.getElementById('resultRetry').onclick=()=>{questions=buildTestQuestions(scene.id);current=0;score=0;result.classList.add('hidden');main.classList.remove('hidden');render();window.scrollTo({top:0,behavior:'smooth'});};
+    document.getElementById('resultBack').href=`scene.html?id=${scene.id}`;
+  }
+  render();
+}
 
-document.getElementById('resetProgress').addEventListener('click', () => {
-  if (!confirm('确定要清空本机学习进度吗？')) return;
-  completed = [];
-  current = 0;
-  localStorage.removeItem('completedLessons');
-  localStorage.removeItem('currentLesson');
-  renderLesson();
-});
+function init(){
+  bindSounds();
+  const page=document.body.dataset.page;
+  if(page==='home') renderHome();
+  if(page==='course') renderCoursePage();
+  if(page==='scene') renderScenePage();
+  if(page==='learn') renderLearnPage();
+  if(page==='test') renderTestPage();
+  const reset=document.getElementById('resetProgress'); if(reset) reset.addEventListener('click',()=>{if(confirm('确定要清空本机学习进度吗？')){completed=[];localStorage.removeItem('completedLessons');location.reload();}});
+}
 
-renderScenes();
-renderCourses();
-renderLesson();
+document.addEventListener('DOMContentLoaded', init);
