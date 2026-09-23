@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>哈萨克斯坦国家机关｜中亚语言通</title><meta name="description" content="哈萨克斯坦常见国家机关、政府部门和机构名称：中文、哈萨克语、俄语对照及发音。"><link rel="stylesheet" href="styles.css"></head><body data-page="government">
 <header class="topbar"><div class="container nav-wrap"><a class="brand" href="index.html"><span class="brand-mark">中</span><span><strong>中亚语言通</strong><small>哈萨克语 · 俄语</small></span></a><nav><a href="courses.html">课程</a><a href="scenes.html">场景</a><a class="active" href="government.html">国家机关</a><a href="progress.html">我的学习</a><a href="feedback.html">客服反馈</a></nav><div id="authNav" class="auth-nav"><a class="auth-link" href="auth.html">登录 / 注册</a></div></div></header>
-<main><section class="section government-section"><div class="container government-container"><div class="government-intro"><span class="eyebrow">哈萨克斯坦国家机关</span><h1>国家部门与机构名称</h1><p class="page-lead">中文、哈萨克语、俄语对照，并为哈语和俄语名称提供独立发音按钮。名称按当前官方 GOV.KZ 国家机关目录整理，后续可继续扩充到委员会、地方政府和具体业务部门。</p></div>
+<main><div id="protectedContent"><section class="section government-section"><div class="container government-container"><div class="government-intro"><span class="eyebrow">哈萨克斯坦国家机关</span><h1>国家部门与机构名称</h1><p class="page-lead">中文、哈萨克语、俄语对照，并为哈语和俄语名称提供独立发音按钮。名称按当前官方 GOV.KZ 国家机关目录整理，后续可继续扩充到委员会、地方政府和具体业务部门。</p></div>
 <div class="government-tools"><input id="govSearch" type="search" placeholder="搜索中文、哈萨克语或俄语名称…"><select id="govCategory"><option value="all">全部分类</option><option value="ministry">中央部委</option><option value="agency">国家机构与监管部门</option><option value="law">司法、执法与安全机构</option><option value="local">地方行政机关</option></select></div>
-<div id="govList" class="government-list"></div><p class="government-source">资料核对：2026-09-22。名称以 GOV.KZ 当前公开国家机关目录为准；具体机构名称今后如有调整，应以官方网站最新页面为准。</p></div></section></main>
+<div id="govList" class="government-list"></div><p class="government-source">资料核对：2026-09-22。名称以 GOV.KZ 当前公开国家机关目录为准；具体机构名称今后如有调整，应以官方网站最新页面为准。</p></div></section></div></main>
 <footer class="footer"><div class="container footer-wrap"><span>中亚语言通</span><a href="index.html">返回首页</a></div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="auth.js"></script>
 <script>
@@ -58,4 +58,4 @@ function renderGov(){
  draw(); search.addEventListener('input',draw); cat.addEventListener('change',draw); list.addEventListener('click',e=>{const b=e.target.closest('.gov-audio');if(!b)return;govSpeak(b.dataset.t,b.dataset.l);});
 }
 document.addEventListener('DOMContentLoaded',renderGov);
-</script></body></html>
+</script><script src="access.js"></script></body></html>

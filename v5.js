@@ -283,7 +283,7 @@ async function saveTestResult(nodeId,data){
 }
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function calcUnitState(unit){const done=unit.lessons.filter(l=>progressEntry(l.id)?.status==='done').length,test=progressEntry(unit.id)?.status==='passed';return {done,total:unit.lessons.length,percent:Math.round(done/unit.lessons.length*100),test}}
-function requiresAccount(path,idx){return !!getUser()===false && idx>=3}
+function requiresAccount(path,idx){return !!getUser()===false && idx>=1}
 function unitUnlocked(path,idx){
   if(idx===0)return true;
   if(requiresAccount(path,idx))return false;
@@ -291,16 +291,16 @@ function unitUnlocked(path,idx){
 }
 function loginGate(path,unit,idx){
   const next=encodeURIComponent(`unit.html?lang=${langKey()}&unit=${unit.id}`);
-  return `<div class="login-gate"><span class="eyebrow">免费体验到这里</span><h2>完成前 3 个单元后，请注册 / 登录继续</h2><p>前面的课程可以先免费体验。注册后，我们会把你的学习进度和考试成绩绑定到这个账号，换设备也能继续。</p><div class="gate-stats"><span>✅ 前 3 单元可体验</span><span>☁️ 登录后云端保存进度</span><span>📊 可查看考试成绩</span></div><div class="result-actions"><a class="secondary-btn" href="path.html?lang=${langKey()}">返回学习路径</a><a class="primary-btn" href="auth.html?mode=signup&next=${next}">注册 / 登录</a></div></div>`;
+  return `<div class="login-gate"><span class="eyebrow">免费体验到这里</span><h2>从第 2 单元开始，请先注册 / 登录继续</h2><p>前面的课程可以先免费体验。注册后，我们会把你的学习进度和考试成绩绑定到这个账号，换设备也能继续。</p><div class="gate-stats"><span>✅ 第1单元可免费体验</span><span>☁️ 登录后云端保存进度</span><span>📊 可查看考试成绩</span></div><div class="result-actions"><a class="secondary-btn" href="path.html?lang=${langKey()}">返回学习路径</a><a class="primary-btn" href="auth.html?mode=signup&next=${next}">注册 / 登录</a></div></div>`;
 }
 function speak(text,lang){if(!('speechSynthesis' in window)){alert('当前浏览器不支持语音朗读');return}window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang==='kk'?'kk-KZ':'ru-RU';u.rate=0.86;u.pitch=1;window.speechSynthesis.speak(u)}
 function renderPath(){
   const path=getPath();
   document.title=`${path.label}学习路径｜中亚语言通`;
   document.getElementById('pathTitle').textContent=`${path.flag} ${path.label}`;
-  document.getElementById('pathDesc').textContent=getUser()?path.desc:`${path.desc} 前 3 个单元免费体验，注册后可保存进度并继续。`;
+  document.getElementById('pathDesc').textContent=getUser()?path.desc:`${path.desc} 第 1 单元免费体验，从第 2 单元开始需要注册；登录后学习进度会保存到账号。`;
   const unlocked=path.units.filter((u,i)=>unitUnlocked(path,i)).length;
-  document.getElementById('pathStats').innerHTML=`<div><b>${unlocked}</b><span>当前可进入</span></div><div><b>${path.units.length}</b><span>总单元</span></div><div><b>${getUser()?'已登录':'游客'}</b><span>${getUser()?'进度云端同步':'完成3关后注册'}</span></div>`;
+  document.getElementById('pathStats').innerHTML=`<div><b>${unlocked}</b><span>当前可进入</span></div><div><b>${path.units.length}</b><span>总单元</span></div><div><b>${getUser()?'已登录':'游客'}</b><span>${getUser()?'进度云端同步':'完成第1单元后注册'}</span></div>`;
   document.getElementById('pathList').innerHTML=path.units.map((u,i)=>{
     const open=unitUnlocked(path,i),st=calcUnitState(u),gate=requiresAccount(path,i);
     let action='';
@@ -405,7 +405,7 @@ function v7UnitUnlocked(path,idx){
 function v7LessonUnlocked(unit, lessonIdx){ if(lessonIdx===0) return true; return progressEntry(unit.lessons[lessonIdx-1].id)?.status==='done'; }
 function v7LoginGate(path,unit,idx){
   const next=encodeURIComponent(`unit.html?lang=${langKey()}&unit=${unit.id}`);
-  return `<div class="login-gate"><span class="eyebrow">免费体验到这里</span><h2>从第 4 单元开始，请先注册 / 登录</h2><p>你已经可以免费体验前 3 个单元。注册后，系统会把你的学习进度和考试成绩绑定到账号。</p><div class="gate-stats"><span>✅ 前 3 单元免费体验</span><span>☁️ 云端保存进度</span><span>📊 保存考试成绩</span></div><div class="result-actions"><a class="secondary-btn" href="path.html?lang=${langKey()}">返回学习路径</a><a class="primary-btn" href="auth.html?mode=signup&next=${next}">注册 / 登录</a></div></div>`;
+  return `<div class="login-gate"><span class="eyebrow">免费体验到这里</span><h2>从第 4 单元开始，请先注册 / 登录</h2><p>你已经可以免费体验第 1 单元。注册后，系统会把你的学习进度和考试成绩绑定到账号。</p><div class="gate-stats"><span>✅ 前 3 单元免费体验</span><span>☁️ 云端保存进度</span><span>📊 保存考试成绩</span></div><div class="result-actions"><a class="secondary-btn" href="path.html?lang=${langKey()}">返回学习路径</a><a class="primary-btn" href="auth.html?mode=signup&next=${next}">注册 / 登录</a></div></div>`;
 }
 
 // Replace Unit 1 alphabet lessons with the full alphabet.
