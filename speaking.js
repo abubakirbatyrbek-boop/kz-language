@@ -236,7 +236,17 @@ function renderCourseChooser(){
 
 function renderSpeakingCourse(lang){
   window.__speakingLang=lang; const c=SPEAKING_COURSES[lang]; const progress=getSpeakingProgress(lang);
-  const allLessons=c.modules.flatMap(m=>m[2].map((x,i)=>({module:m[0],moduleTitle:m[1],index:i,title:x[0],steps:x[1],note:x[2],id:`${m[0]}-${i+1}`})));
+  const allLessons=c.modules.flatMap(m=>m[2].map((x,i)=>({
+    module:m[0],
+    moduleTitle:m[1],
+    index:i,
+    title:x[0],
+    // Each source item is [title, Chinese prompt, target-language expression, note].
+    // Turn it into one complete ladder step so the target language is never undefined.
+    steps:[[x[1],x[2],x[3]]],
+    note:x[3],
+    id:`${m[0]}-${i+1}`
+  })));
   const doneCount=allLessons.filter(l=>isDone(lang,l.id)).length;
   const nextIndex=Math.min(doneCount,allLessons.length-1);
   const chooser=document.getElementById('courseChooser');
@@ -251,7 +261,7 @@ function startLesson(course,allLessons,lessonIndex,stepIndex){
   const totalSteps=lesson.steps.length; stepIndex=Math.max(0,Math.min(stepIndex,totalSteps-1));
   const step=lesson.steps[stepIndex];
   const done=isDone(lang,lesson.id);
-  area.innerHTML=`<div class="ladder-card"><div class="lesson-top"><div><span class="eyebrow">第 ${lesson.module} 模块 · ${lesson.moduleTitle}</span><h2 style="margin:6px 0 0">${lesson.title}</h2></div><span>第 ${stepIndex+1} / ${totalSteps} 步</span></div><div class="lesson-progress"><i style="width:${Math.round((stepIndex+1)/totalSteps*100)}%"></i></div><span class="ladder-badge">${stepIndex===0?'先认识':stepIndex===totalSteps-1?'自己说':'往上加一层'}</span><div class="ladder-cn">${step[0]}</div><div class="ladder-target">${step[1]}</div><div class="speak-actions"><button class="audio-large" id="playTarget">🔊 听${course.label}</button><button class="ghost-btn" id="nextStep">${stepIndex===totalSteps-1?'进入自己说':'下一步 →'}</button></div><p class="ladder-note">${step[2]}</p>${stepIndex===totalSteps-1?`<div class="challenge"><div class="challenge-row"><div><span class="eyebrow">自己说</span><div class="challenge-target">${lesson.title}</div></div><button class="ghost-btn" id="showAnswer">看参考答案</button></div><div id="answer" class="hidden-answer"><strong>${step[1]}</strong> <button class="ghost-btn" id="playAnswer" style="padding:7px 10px">🔊</button></div><div style="margin-top:10px"><button class="audio-large" id="doneSpeaking">我已经说出来了 ✓</button></div></div>`:''}${done?`<div class="speak-footer-note">这课已经完成过。你可以重新练习，不会影响原来的进度。</div>`:''}</div>`;
+  area.innerHTML=`<div class="ladder-card"><div class="lesson-top"><div><span class="eyebrow">第 ${lesson.module} 模块 · ${lesson.moduleTitle}</span><h2 style="margin:6px 0 0">${lesson.title}</h2></div><span>第 ${stepIndex+1} / ${totalSteps} 步</span></div><div class="lesson-progress"><i style="width:${Math.round((stepIndex+1)/totalSteps*100)}%"></i></div><span class="ladder-badge">${stepIndex===0?'先认识':stepIndex===totalSteps-1?'自己说':'往上加一层'}</span><div class="ladder-cn">${step[0]}</div><div class="ladder-target" lang="${course.key==='kk'?'kk':'ru'}">${step[1]}</div><div class="speak-actions"><button class="audio-large" id="playTarget">🔊 听${course.label}</button><button class="ghost-btn" id="nextStep">${stepIndex===totalSteps-1?'进入自己说':'下一步 →'}</button></div><p class="ladder-note">${step[2]}</p>${stepIndex===totalSteps-1?`<div class="challenge"><div class="challenge-row"><div><span class="eyebrow">自己说</span><div class="challenge-target">${lesson.title}</div></div><button class="ghost-btn" id="showAnswer">看参考答案</button></div><div id="answer" class="hidden-answer"><strong lang="${course.key==='kk'?'kk':'ru'}">${step[1]}</strong> <button class="ghost-btn" id="playAnswer" style="padding:7px 10px">🔊</button></div><div style="margin-top:10px"><button class="audio-large" id="doneSpeaking">我已经说出来了 ✓</button></div></div>`:''}${done?`<div class="speak-footer-note">这课已经完成过。你可以重新练习，不会影响原来的进度。</div>`:''}</div>`;
   area.querySelector('#playTarget').onclick=()=>speakTarget(step[1],course.language);
   area.querySelector('#nextStep').onclick=()=>{ if(stepIndex<totalSteps-1) startLesson(course,allLessons,lessonIndex,stepIndex+1); else finishLesson(course,allLessons,lessonIndex); };
   if(stepIndex===totalSteps-1){

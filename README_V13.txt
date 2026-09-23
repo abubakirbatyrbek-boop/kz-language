@@ -11,3 +11,6 @@ V13：零基础造句与口语课
 5. Supabase 不需要新建表。本课程把完成记录写入已有 learning_progress，node_id 格式为 v13:speaking:kk:01-1 / v13:speaking:ru:01-1。
 
 说明：浏览器发音使用 SpeechSynthesis，不同浏览器和设备的哈萨克语语音质量可能不同。
+
+
+V13.1 修复：修正口语课程数据结构，哈萨克语课只显示哈萨克语，俄语课只显示俄语；解决课程目标语言显示 undefined 的问题。
