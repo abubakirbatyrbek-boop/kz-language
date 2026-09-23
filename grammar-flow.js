@@ -19,6 +19,7 @@
 
   let user = null;
   let client = null;
+  let authReady = null;
 
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -51,18 +52,41 @@
     return m.lessons.length > 0 && m.lessons.every(l => done(c,l.id));
   }
   function open(c,mi){
-    if(mi === 0) return true;
-    return !!user && passed(c,mi);
+    const ms = allModules(c);
+    return mi >= 0 && mi < ms.length && (mi === 0 || !!user) &&
+      ms.slice(0,mi).every(m => complete(c,m) && passed(c,m.no));
   }
 
   async function initUser(){
-    client = window.KZAuth?.getClient?.() || null;
-    if(client){
-      try {
-        const {data} = await client.auth.getSession();
-        user = data?.session?.user || null;
-      } catch {}
+    if(!authReady){
+      authReady = (async () => {
+        // app.js registers its DOMContentLoaded handler before auth.js.
+        // Wait until ALL handlers have run before reading the shared client.
+        await new Promise(resolve => {
+          const afterBoot = () => setTimeout(resolve,0);
+          if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',afterBoot,{once:true});
+          else afterBoot();
+        });
+        client = window.KZAuth?.getClient?.() || null;
+        if(!client) throw new Error('登录服务尚未就绪，请刷新重试。');
+        let observedId;
+        client.auth.onAuthStateChange((event,session) => {
+          const nextId = session?.user?.id || null;
+          const changed = observedId !== undefined && observedId !== nextId;
+          observedId = nextId;
+          user = session?.user || null;
+          // Same-user sign-in/token refresh events must not interrupt an exam.
+          if(changed) setTimeout(() => location.reload(),0);
+        });
+        const {data,error} = await client.auth.getSession();
+        if(error && !data?.session) throw error;
+        if(observedId === undefined){
+          user = data?.session?.user || null;
+          observedId = user?.id || null;
+        }
+      })();
     }
+    await authReady;
     if(user) await syncRemote();
   }
 
@@ -298,7 +322,7 @@
         ? '正式哈萨克语基础语法课：每次只学一个词或一个结构。按模块学习，完成一个模块后参加考核，答对 ≥70% 才能进入下一模块。'
         : '正式俄语基础语法课：每次只学一个词或一个结构。按模块学习，完成一个模块后参加考核，答对 ≥70% 才能进入下一模块。';
       const map=document.getElementById('courseStudyMap');
-      if(map) map.innerHTML=`<div class="grammar-v22-note"><strong>闯关规则</strong><span>模块 1 免费体验；每个模块完成全部小课后参加考试；答对 ≥70% 才能通过。模块 2 开始需要注册 / 登录。</span></div>`;
+      if(map) map.innerHTML=`<div class="grammar-v22-note"><strong>闯关规则</strong><span>每个模块完成全部小课后参加考试；答对 ≥70% 才能通过。${user?'已登录，后续模块按闯关成绩解锁。':'模块 1 免费体验；模块 2 开始需要注册 / 登录。'}</span></div>`;
       const pct=document.getElementById('courseProgress');
       const d=pool.filter(l=>done(c,l.id)).length; if(pct) pct.textContent=Math.round(d/(pool.length||1)*100)+'%';
       const start=document.getElementById('courseStart'); if(start) start.href=`learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=0`;
@@ -315,7 +339,7 @@
 
       const root=document.getElementById('protectedContent');
       if(mi>=1 && !user){root.innerHTML='';root.appendChild(gate(c));return;}
-      if(mi>=1 && !passed(c,m.no-1)){root.innerHTML='';root.appendChild(Object.assign(document.createElement('div'),{className:'grammar-v22-gate',innerHTML:`<span class="eyebrow">尚未解锁</span><h2>先通过模块 ${m.no-1} 的考试</h2><p>完成上一模块全部小课，并在考试中答对 ≥70% 后，才能进入本模块。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a>`}));return;}
+      if(!open(c,mi)){root.innerHTML='';root.appendChild(Object.assign(document.createElement('div'),{className:'grammar-v22-gate',innerHTML:`<span class="eyebrow">尚未解锁</span><h2>等待上一模块通过</h2><p>完成前面模块全部小课，并在各模块考试中答对 ≥70% 后，才能进入本模块。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a>`}));return;}
       if(inModuleIndex>0 && !m.lessons.slice(0,inModuleIndex).every(x=>done(c,x.id))){
         const first=m.lessons.findIndex(x=>!done(c,x.id));
         idx=pool.findIndex(x=>x.id===m.lessons[first].id); l=pool[idx];
@@ -332,14 +356,16 @@
       if(prev)prev.href=`learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${Math.max(0,idx-1)}`;
       if(next)next.href=`learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${Math.min(pool.length-1,idx+1)}`;
       const markBtn=document.getElementById('markBtn');if(markBtn)markBtn.textContent=done(c,l.id)?'已记住 ✓':'记住了，下一句';
-      if(next)next.onclick=async(e)=>{e.preventDefault();await mark(c,l);location.href=`learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${Math.min(pool.length-1,idx+1)}`;};
+      if(next)next.onclick=async(e)=>{e.preventDefault();await mark(c,l);location.href=complete(c,m)
+        ? `grammar-test.html?grammar=1&course=${encodeURIComponent(c.id)}&module=${m.no}`
+        : `learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${Math.min(pool.length-1,idx+1)}`;};
     },
 
     renderTestPage: async function(c,mNo){
       await initUser(); migrateGuest(c); injectStyles();
       const ms=allModules(c),m=ms.find(x=>x.no===mNo),root=document.getElementById('grammarTestRoot'); if(!m||!root)return;
       if(mNo>=2&&!user){root.innerHTML='';root.appendChild(gate(c,'第 2 模块开始需要注册 / 登录，登录后考试成绩会保存到账号。'));return;}
-      if(mNo>=2&&!passed(c,mNo-1)){root.innerHTML='';const b=document.createElement('div');b.className='grammar-v22-gate';b.innerHTML=`<span class="eyebrow">尚未解锁</span><h2>先通过模块 ${mNo-1} 的考试</h2><p>答对 ≥70% 才能进入下一模块。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a>`;root.appendChild(b);return;}
+      if(!open(c,ms.indexOf(m))){root.innerHTML='';const b=document.createElement('div');b.className='grammar-v22-gate';b.innerHTML=`<span class="eyebrow">尚未解锁</span><h2>等待上一模块通过</h2><p>完成前面模块全部小课，各模块考试答对 ≥70% 才能进入下一模块。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a>`;root.appendChild(b);return;}
       if(!complete(c,m)){root.innerHTML=`<div class="grammar-v22-gate"><span class="eyebrow">还不能考试</span><h2>请先完成模块 ${mNo} 的全部小课</h2><p>目前完成 ${m.lessons.filter(l=>done(c,l.id)).length} / ${m.lessons.length} 课。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a></div>`;return;}
 
       const pool=m.lessons, questions=[];
@@ -400,6 +426,16 @@
     return map[l.group] || '一个重点只学一点：先听、跟读、自己说。';
   }
 
-  window.GrammarFlow = { renderCoursePage:G.renderCoursePage, renderLearnPage:G.renderLearnPage, renderTestPage:G.renderTestPage, TEST_PASS:PASS };
+  function guarded(render,rootId){
+    return async (...args) => {
+      try { return await render(...args); }
+      catch(error){
+        console.warn('grammar page failed',error);
+        const root=document.getElementById(rootId);
+        if(root) root.innerHTML='<p role="status">暂时无法读取登录状态或学习进度，请刷新重试。请检查网络和浏览器存储设置。</p>';
+      }
+    };
+  }
+  window.GrammarFlow = { renderCoursePage:guarded(G.renderCoursePage,'lessonList'), renderLearnPage:guarded(G.renderLearnPage,'protectedContent'), renderTestPage:guarded(G.renderTestPage,'grammarTestRoot'), TEST_PASS:PASS };
 
 })();
