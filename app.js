@@ -64,8 +64,12 @@ const lessons = [
   { id:'business-03', course:'work-kz', title:'请把合同发给我', tag:'商务', level:'工作', cn:'请把合同发给我。', kz:'Шартты маған жіберіңізші.', ru:'Отправьте мне договор, пожалуйста.', tip:'合同文件往来。' },
   { id:'business-04', course:'work-kz', title:'请发一份报价', tag:'商务', level:'工作', cn:'请发一份报价。', kz:'Баға ұсынысын жіберіңізші.', ru:'Пришлите коммерческое предложение, пожалуйста.', tip:'索取商务报价。' },
   { id:'business-05', course:'work-kz', title:'我们明天再讨论', tag:'商务', level:'工作', cn:'我们明天再讨论。', kz:'Ертең қайта талқылаймыз.', ru:'Обсудим завтра.', tip:'结束当次讨论并约定后续。' },
-  { id:"sentence-kz-01", course:"sentence-kz", title:"人称：我、你、他、我们、你们、他们", tag:'语法与造句', level:'基础语法', cn:"我 / 你 / 他 / 我们 / 你们 / 他们", kz:"Мен / Сен / Ол / Біз / Сендер / Олар", ru:"", tip:"认识基本人称代词，为后面的句子主语打基础。", group:"人称代词" },
-  { id:"sentence-kz-02", course:"sentence-kz", title:"第一、二、三人称的使用", tag:'语法与造句', level:'基础语法', cn:"我工作。你工作。他工作。", kz:"Мен жұмыс істеймін. Сен жұмыс істейсің. Ол жұмыс істейді.", ru:"", tip:"根据人称变化选择正确的动词形式。", group:"人称代词" },
+  { id:"sentence-kz-pronoun-01", course:"sentence-kz", title:"我：Мен", tag:'语法与造句', level:'基础语法', cn:"我", kz:"Мен", ru:"", tip:"第一人称单数。先只记一个词：Мен = 我。先听发音，再跟读，再自己说一遍。", group:"人称代词" },
+  { id:"sentence-kz-pronoun-02", course:"sentence-kz", title:"你：Сен", tag:'语法与造句', level:'基础语法', cn:"你", kz:"Сен", ru:"", tip:"第二人称单数。先只记一个词：Сен = 你。先听发音，再跟读，再自己说一遍。", group:"人称代词" },
+  { id:"sentence-kz-pronoun-03", course:"sentence-kz", title:"他 / 她：Ол", tag:'语法与造句', level:'基础语法', cn:"他 / 她", kz:"Ол", ru:"", tip:"第三人称单数常用 Ол，可指男性或女性。先单独记住这个词。", group:"人称代词" },
+  { id:"sentence-kz-pronoun-04", course:"sentence-kz", title:"我们：Біз", tag:'语法与造句', level:'基础语法', cn:"我们", kz:"Біз", ru:"", tip:"第一人称复数。Біз = 我们。先听、跟读，再脱离中文说一遍。", group:"人称代词" },
+  { id:"sentence-kz-pronoun-05", course:"sentence-kz", title:"你们：Сендер", tag:'语法与造句', level:'基础语法', cn:"你们", kz:"Сендер", ru:"", tip:"第二人称复数。Сендер = 你们。先单独记熟，再进入句子。", group:"人称代词" },
+  { id:"sentence-kz-pronoun-06", course:"sentence-kz", title:"他们：Олар", tag:'语法与造句', level:'基础语法', cn:"他们", kz:"Олар", ru:"", tip:"第三人称复数。Олар = 他们。先单独记词，再学习它在句子中的作用。", group:"人称代词" },
   { id:"sentence-kz-03", course:"sentence-kz", title:"我是……", tag:'语法与造句', level:'基础语法', cn:"我是中国人。", kz:"Мен қытаймын.", ru:"", tip:"在哈萨克语中，身份或类别可以直接用名词性谓语表达。", group:"名词谓语" },
   { id:"sentence-kz-04", course:"sentence-kz", title:"你是……", tag:'语法与造句', level:'基础语法', cn:"你是学生。", kz:"Сен студентсің.", ru:"", tip:"第二人称名词性谓语出现相应的人称形式。", group:"名词谓语" },
   { id:"sentence-kz-05", course:"sentence-kz", title:"他是……", tag:'语法与造句', level:'基础语法', cn:"他是老师。", kz:"Ол мұғалім.", ru:"", tip:"第三人称名词性谓语通常不加人称词尾。", group:"名词谓语" },
@@ -109,8 +113,13 @@ const lessons = [
   { id:"sentence-kz-43", course:"sentence-kz", title:"中文 → 哈萨克语", tag:'语法与造句', level:'基础语法', cn:"他在家。", kz:"Ол үйде.", ru:"", tip:"独立完成地点句。", group:"造句" },
   { id:"sentence-kz-44", course:"sentence-kz", title:"场景：办公室", tag:'语法与造句', level:'基础语法', cn:"请把文件给我。", kz:"Құжатты маған беріңізші.", ru:"", tip:"把基础语法迁移到工作交流。", group:"场景造句" },
   { id:"sentence-kz-45", course:"sentence-kz", title:"场景：物流", tag:'语法与造句', level:'基础语法', cn:"货物明天到。", kz:"Жүк ертең келеді.", ru:"", tip:"把时间和动作句用于物流场景。", group:"场景造句" },
-  { id:"sentence-ru-01", course:"sentence-ru", title:"人称：我、你、他、我们、你们、他们", tag:'语法与造句', level:'基础语法', cn:"我 / 你 / 他 / 我们 / 你们 / 他们", kz:"", ru:"Я / Ты / Он / Мы / Вы / Они", tip:"认识基本人称代词，为后面的句子主语打基础。", group:"人称代词" },
-  { id:"sentence-ru-02", course:"sentence-ru", title:"第一、二、三人称的使用", tag:'语法与造句', level:'基础语法', cn:"我工作。你工作。他工作。", kz:"", ru:"Я работаю. Ты работаешь. Он работает.", tip:"根据人称变化选择正确的动词形式。", group:"人称与动词" },
+  { id:"sentence-ru-pronoun-01", course:"sentence-ru", title:"我：Я", tag:'语法与造句', level:'基础语法', cn:"我", kz:"", ru:"Я", tip:"第一人称单数。先只记一个词：Я = 我。先听发音，再跟读，再自己说一遍。", group:"人称代词" },
+  { id:"sentence-ru-pronoun-02", course:"sentence-ru", title:"你：Ты", tag:'语法与造句', level:'基础语法', cn:"你", kz:"", ru:"Ты", tip:"第二人称单数。先只记一个词：Ты = 你。先听、跟读，再自己说一遍。", group:"人称代词" },
+  { id:"sentence-ru-pronoun-03", course:"sentence-ru", title:"他：Он", tag:'语法与造句', level:'基础语法', cn:"他", kz:"", ru:"Он", tip:"第三人称阳性单数。Он = 他。先单独记熟词形和读音。", group:"人称代词" },
+  { id:"sentence-ru-pronoun-04", course:"sentence-ru", title:"她：Она", tag:'语法与造句', level:'基础语法', cn:"她", kz:"", ru:"Она", tip:"第三人称阴性单数。Она = 她。俄语里要和“Он”分开记。", group:"人称代词" },
+  { id:"sentence-ru-pronoun-05", course:"sentence-ru", title:"我们：Мы", tag:'语法与造句', level:'基础语法', cn:"我们", kz:"", ru:"Мы", tip:"第一人称复数。Мы = 我们。先单独掌握，再进入动词句。", group:"人称代词" },
+  { id:"sentence-ru-pronoun-06", course:"sentence-ru", title:"你们 / 您：Вы", tag:'语法与造句', level:'基础语法', cn:"你们 / 您", kz:"", ru:"Вы", tip:"Вы 可表示复数“你们”，也可用于礼貌称呼“您”。先整体记住。", group:"人称代词" },
+  { id:"sentence-ru-pronoun-07", course:"sentence-ru", title:"他们：Они", tag:'语法与造句', level:'基础语法', cn:"他们", kz:"", ru:"Они", tip:"第三人称复数。Они = 他们。先单独掌握，再进入复数句。", group:"人称代词" },
   { id:"sentence-ru-03", course:"sentence-ru", title:"我是……", tag:'语法与造句', level:'基础语法', cn:"我是中国人。", kz:"", ru:"Я из Китая.", tip:"用“Я + 身份/来源”表达基本身份信息。", group:"名词谓语" },
   { id:"sentence-ru-04", course:"sentence-ru", title:"你是……", tag:'语法与造句', level:'基础语法', cn:"你是学生。", kz:"", ru:"Ты студент.", tip:"名词作表语，注意性别和形式。", group:"名词谓语" },
   { id:"sentence-ru-05", course:"sentence-ru", title:"他是……", tag:'语法与造句', level:'基础语法', cn:"他是老师。", kz:"", ru:"Он учитель.", tip:"第三人称身份句。", group:"名词谓语" },
@@ -254,10 +263,10 @@ const lessons = [
 
 const courses = [
   { id:'daily-kz', icon:'🔤', title:'哈萨克语｜零基础·字母与发音', desc:'从 42 个字母、特殊音和拼读开始。先听、再读、再做辨音练习。', accent:'KZ', kind:'foundation', targetLang:'kk' },
-  { id:'sentence-kz', icon:'📘', title:'哈萨克语｜基础语法课', desc:'把常见语法拆成小块，一个重点一个例子，学完马上组句。', accent:'KZ', kind:'sentence', targetLang:'kk' },
+  { id:'sentence-kz', icon:'📘', title:'哈萨克语｜基础语法课', desc:'把语法拆成最小单位：一个词、一个结构、一个例句。先单独学清楚，再组合成句子。', accent:'KZ', kind:'sentence', targetLang:'kk' },
   { id:'speaking-kz', icon:'💬', title:'哈萨克语｜零基础造句与口语', desc:'不等语法学完，从“我、你、他”开始。先说短句，再一步步扩展。', accent:'KZ', kind:'speaking', targetLang:'kk' },
   { id:'daily-ru', icon:'🔤', title:'俄语｜零基础·字母与发音', desc:'从 33 个字母、发音、重音和拼读开始。先听、再读、再做辨音练习。', accent:'RU', kind:'foundation', targetLang:'ru' },
-  { id:'sentence-ru', icon:'📘', title:'俄语｜基础语法课', desc:'把俄语语法拆成小块，一个重点一个例子，学完马上组句。', accent:'RU', kind:'sentence', targetLang:'ru' },
+  { id:'sentence-ru', icon:'📘', title:'俄语｜基础语法课', desc:'把俄语语法拆成最小单位：一个词、一个结构、一个例句。先单独学清楚，再组合成句子。', accent:'RU', kind:'sentence', targetLang:'ru' },
   { id:'speaking-ru', icon:'💬', title:'俄语｜零基础造句与口语', desc:'不等语法学完，从“我、你、他”开始。先说短句，再一步步扩展。', accent:'RU', kind:'speaking', targetLang:'ru' }
 ];
 
