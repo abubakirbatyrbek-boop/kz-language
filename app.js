@@ -673,16 +673,17 @@ const SpeakingFlow = (() => {
       ms.slice(0, i).every(m => done(m) && best(c, m) >= PASS);
   }
   async function userNow() {
-    try {
-      const client = window.KZAuth?.getClient?.();
-      if (!client) return null;
-      const {data, error} = await client.auth.getSession();
-      return error ? null : data?.session?.user || null;
-    } catch { return null; }
+    const client = window.KZAuth?.getClient?.();
+    // An unavailable auth service is not proof that the visitor is signed out.
+    if (!client) throw new Error('登录服务尚未就绪，请刷新重试。');
+    const {data, error} = await client.auth.getSession();
+    if (data?.session?.user) return data.session.user;
+    if (error) throw error;
+    return null;
   }
   function gate(c, ms, i, user, next) {
     if (i > 0 && !user) return '<p>第 2 模块开始必须注册 / 登录；前面模块的考试也须达到 70%。本浏览器已有学习进度会保留。</p><a class="primary-btn" href="' + esc(loginUrl(next)) + '">注册 / 登录</a>';
-    return '<p>请先完成前面模块的全部小课，并通过各模块考试（≥70%）。</p><a class="primary-btn" href="' + esc(courseUrl(c)) + '">返回模块列表</a>';
+    return '<p>未解锁：等待上一模块通过。请先完成前面模块的全部小课，并通过各模块考试（≥70%）。</p><a class="primary-btn" href="' + esc(courseUrl(c)) + '">返回模块列表</a>';
   }
   function questions(c, m) {
     const target = l => c.targetLang === 'kk' ? l.kz : l.ru;
@@ -697,7 +698,7 @@ const SpeakingFlow = (() => {
     document.title = c.title + '｜中亚语言通';
     document.getElementById('courseTitle').textContent = c.title;
     document.getElementById('courseDesc').textContent = c.desc;
-    document.getElementById('courseIntroNote').textContent = '按模块闯关：完成全部小课 → 模块考试达到 70% → 解锁下一模块。第 1 模块可游客体验，第 2 模块起需注册 / 登录。';
+    document.getElementById('courseIntroNote').textContent = '按模块闯关：完成全部小课 → 模块考试达到 70% → 解锁下一模块。' + (user ? '已登录，后续模块按学习进度和考试成绩解锁。' : '第 1 模块可游客体验，第 2 模块起需注册 / 登录。');
     document.getElementById('courseProgress').textContent = percentFor(pool) + '%';
     document.getElementById('courseStudyMap').innerHTML = courseStudyMap(pool, c);
     const root = document.getElementById('lessonList'), start = document.getElementById('courseStart');
@@ -795,15 +796,26 @@ const SpeakingFlow = (() => {
     // auth.js initializes its client in its own DOMContentLoaded callback.
     setTimeout(async () => {
       try {
+        const client = window.KZAuth?.getClient?.();
+        if (!client) throw new Error('登录服务尚未就绪');
+        // Subscribe before the first session read so sign-in/out cannot be missed.
+        // INITIAL_SESSION and token refreshes for the same user must not reload
+        // the page (or interrupt a module exam).
+        let observedUserId;
+        client.auth.onAuthStateChange((event, session) => {
+          const nextUserId = session?.user?.id || null;
+          const changed = observedUserId !== undefined && observedUserId !== nextUserId;
+          observedUserId = nextUserId;
+          if (changed) setTimeout(() => location.reload(), 0);
+        });
+        const user = await userNow();
+        if (observedUserId === undefined) observedUserId = user?.id || null;
         completed = readCompleted();
         if(!Array.isArray(completed))completed=[];
         if(page==='learn')await renderLearn(c); else await renderCourse(c);
-        window.KZAuth?.getClient?.()?.auth.onAuthStateChange((event) => {
-          if(event==='SIGNED_OUT' || event==='SIGNED_IN')setTimeout(()=>location.reload(),0);
-        });
       } catch {
         const root = host || document.getElementById('lessonList');
-        root.innerHTML = '<p>暂时无法读取学习进度，请刷新重试，并检查浏览器是否允许本地存储。</p>';
+        root.innerHTML = '<p role="status">暂时无法读取登录状态或学习进度，请刷新重试，并检查网络及浏览器是否允许本地存储。</p>';
         root.hidden = false;
       }
     },0);
