@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>哈萨克斯坦国家机关｜中亚语言通</title><meta name="description" content="哈萨克斯坦常见国家机关、政府部门和机构名称：中文、哈萨克语、俄语对照及发音。"><link rel="stylesheet" href="styles.css"></head><body data-page="government">
+<header class="topbar"><div class="container nav-wrap"><a class="brand" href="index.html"><span class="brand-mark">中</span><span><strong>中亚语言通</strong><small>哈萨克语 · 俄语</small></span></a><nav><a href="courses.html">课程</a><a href="scenes.html">场景</a><a class="active" href="government.html">国家机关</a><a href="progress.html">我的学习</a><a href="feedback.html">客服反馈</a></nav><div id="authNav" class="auth-nav"><a class="auth-link" href="auth.html">登录 / 注册</a></div></div></header>
+<main><section class="section government-section"><div class="container government-container"><div class="government-intro"><span class="eyebrow">哈萨克斯坦国家机关</span><h1>国家部门与机构名称</h1><p class="page-lead">中文、哈萨克语、俄语对照，并为哈语和俄语名称提供独立发音按钮。名称按当前官方 GOV.KZ 国家机关目录整理，后续可继续扩充到委员会、地方政府和具体业务部门。</p></div>
+<div class="government-tools"><input id="govSearch" type="search" placeholder="搜索中文、哈萨克语或俄语名称…"><select id="govCategory"><option value="all">全部分类</option><option value="ministry">中央部委</option><option value="agency">国家机构与监管部门</option><option value="law">司法、执法与安全机构</option><option value="local">地方行政机关</option></select></div>
+<div id="govList" class="government-list"></div><p class="government-source">资料核对：2026-09-22。名称以 GOV.KZ 当前公开国家机关目录为准；具体机构名称今后如有调整，应以官方网站最新页面为准。</p></div></section></main>
+<footer class="footer"><div class="container footer-wrap"><span>中亚语言通</span><a href="index.html">返回首页</a></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="auth.js"></script>
+<script>
+const GOV_DATA=[
+  {c:'ministry',cn:'内务部',kk:'Қазақстан Республикасы Ішкі істер министрлігі',ru:'Министерство внутренних дел Республики Казахстан'},
+  {c:'ministry',cn:'水资源与灌溉部',kk:'Қазақстан Республикасы Су ресурстары және ирригация министрлігі',ru:'Министерство водных ресурсов и ирригации Республики Казахстан'},
+  {c:'ministry',cn:'卫生部',kk:'Қазақстан Республикасы Денсаулық сақтау министрлігі',ru:'Министерство здравоохранения Республики Казахстан'},
+  {c:'ministry',cn:'工业与建设部',kk:'Қазақстан Республикасы Өнеркәсіп және құрылыс министрлігі',ru:'Министерство промышленности и строительства Республики Казахстан'},
+  {c:'ministry',cn:'外交部',kk:'Қазақстан Республикасы Сыртқы істер министрлігі',ru:'Министерство иностранных дел Республики Казахстан'},
+  {c:'ministry',cn:'文化和信息部',kk:'Қазақстан Республикасы Мәдениет және ақпарат министрлігі',ru:'Министерство культуры и информации Республики Казахстан'},
+  {c:'ministry',cn:'旅游与体育部',kk:'Қазақстан Республикасы Туризм және спорт министрлігі',ru:'Министерство туризма и спорта Республики Казахстан'},
+  {c:'ministry',cn:'科学与高等教育部',kk:'Қазақстан Республикасы Ғылым және жоғары білім министрлігі',ru:'Министерство науки и высшего образования Республики Казахстан'},
+  {c:'ministry',cn:'国民经济部',kk:'Қазақстан Республикасы Ұлттық экономика министрлігі',ru:'Министерство национальной экономики Республики Казахстан'},
+  {c:'ministry',cn:'国防部',kk:'Қазақстан Республикасы Қорғаныс министрлігі',ru:'Министерство обороны Республики Казахстан'},
+  {c:'ministry',cn:'教育启蒙部',kk:'Қазақстан Республикасы Оқу-ағарту министрлігі',ru:'Министерство просвещения Республики Казахстан'},
+  {c:'ministry',cn:'农业部',kk:'Қазақстан Республикасы Ауыл шаруашылығы министрлігі',ru:'Министерство сельского хозяйства Республики Казахстан'},
+  {c:'ministry',cn:'贸易和一体化部',kk:'Қазақстан Республикасы Сауда және интеграция министрлігі',ru:'Министерство торговли и интеграции Республики Казахстан'},
+  {c:'ministry',cn:'交通部',kk:'Қазақстан Республикасы Көлік министрлігі',ru:'Министерство транспорта Республики Казахстан'},
+  {c:'ministry',cn:'财政部',kk:'Қазақстан Республикасы Қаржы министрлігі',ru:'Министерство финансов Республики Казахстан'},
+  {c:'ministry',cn:'劳动和社会保障部',kk:'Қазақстан Республикасы Еңбек және халықты әлеуметтік қорғау министрлігі',ru:'Министерство труда и социальной защиты населения Республики Казахстан'},
+  {c:'ministry',cn:'人工智能和数字发展部',kk:'Қазақстан Республикасы Жасанды интеллект және цифрлық даму министрлігі',ru:'Министерство искусственного интеллекта и цифрового развития Республики Казахстан'},
+  {c:'ministry',cn:'生态与自然资源部',kk:'Қазақстан Республикасы Экология және табиғи ресурстар министрлігі',ru:'Министерство экологии и природных ресурсов Республики Казахстан'},
+  {c:'ministry',cn:'能源部',kk:'Қазақстан Республикасы Энергетика министрлігі',ru:'Министерство энергетики Республики Казахстан'},
+  {c:'ministry',cn:'司法部',kk:'Қазақстан Республикасы Әділет министрлігі',ru:'Министерство юстиции Республики Казахстан'},
+  {c:'ministry',cn:'紧急情况部',kk:'Қазақстан Республикасы Төтенше жағдайлар министрлігі',ru:'Министерство по чрезвычайным ситуациям Республики Казахстан'},
+  {c:'agency',cn:'原子能部（国家原子能机构）',kk:'Қазақстан Республикасының Атом энергиясы агенттігі',ru:'Агентство Республики Казахстан по атомной энергии'},
+  {c:'agency',cn:'国家公务事务局',kk:'Қазақстан Республикасының Мемлекеттік қызмет істері агенттігі',ru:'Агентство Республики Казахстан по делам государственной службы'},
+  {c:'agency',cn:'金融市场监管与发展局',kk:'Қазақстан Республикасының Қаржы нарығын реттеу және дамыту агенттігі',ru:'Агентство Республики Казахстан по регулированию и развитию финансового рынка'},
+  {c:'agency',cn:'竞争保护与发展局',kk:'Қазақстан Республикасының Бәсекелестікті қорғау және дамыту агенттігі',ru:'Агентство Республики Казахстан по защите и развитию конкуренции'},
+  {c:'agency',cn:'战略规划与改革局',kk:'Қазақстан Республикасының Стратегиялық жоспарлау және реформалар агенттігі',ru:'Агентство Республики Казахстан по стратегическому планированию и реформам'},
+  {c:'agency',cn:'金融监测局',kk:'Қазақстан Республикасының Қаржылық мониторинг агенттігі',ru:'Агентство Республики Казахстан по финансовому мониторингу'},
+  {c:'law',cn:'总检察院',kk:'Қазақстан Республикасының Бас прокуратурасы',ru:'Генеральная прокуратура Республики Казахстан'},
+  {c:'law',cn:'国家安全委员会（国安委）',kk:'Қазақстан Республикасының Ұлттық қауіпсіздік комитеті',ru:'Комитет национальной безопасности Республики Казахстан'},
+  {c:'law',cn:'国安委边防局',kk:'Қазақстан Республикасы Ұлттық қауіпсіздік комитетінің Шекара қызметі',ru:'Пограничная служба Комитета национальной безопасности Республики Казахстан'},
+  {c:'law',cn:'国家警卫局',kk:'Қазақстан Республикасының Мемлекеттік күзет қызметі',ru:'Служба государственной охраны Республики Казахстан'},
+  {c:'law',cn:'宪法法院',kk:'Қазақстан Республикасының Конституциялық Соты',ru:'Конституционный Суд Республики Казахстан'},
+  {c:'law',cn:'最高司法委员会',kk:'Қазақстан Республикасының Жоғары Сот Кеңесі',ru:'Высший Судебный Совет Республики Казахстан'},
+  {c:'law',cn:'最高审计院',kk:'Қазақстан Республикасының Жоғары аудиторлық палатасы',ru:'Высшая аудиторская палата Республики Казахстан'},
+  {c:'law',cn:'中央选举委员会',kk:'Қазақстан Республикасының Орталық сайлау комиссиясы',ru:'Центральная избирательная комиссия Республики Казахстан'},
+  {c:'law',cn:'人权专员',kk:'Қазақстан Республикасындағы Адам құқықтары жөніндегі уәкіл',ru:'Уполномоченный по правам человека в Республике Казахстан'},
+  {c:'law',cn:'儿童权利专员',kk:'Қазақстан Республикасының Бала құқықтары жөніндегі уәкілі',ru:'Уполномоченный по правам ребенка в Республике Казахстан'},
+  {c:'local',cn:'地方行政机构（州/城市/地区）',kk:'Облыс, қала және аудан әкімдіктері',ru:'Акиматы областей, городов и районов'}
+];
+function govSpeak(text,lang){ if(!('speechSynthesis' in window)) return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang=lang; u.rate=.84; speechSynthesis.speak(u); }
+function renderGov(){
+ const list=document.getElementById('govList'), search=document.getElementById('govSearch'), cat=document.getElementById('govCategory');
+ function draw(){
+  const q=(search.value||'').trim().toLowerCase(), c=cat.value;
+  const rows=GOV_DATA.filter(x=>(c==='all'||x.c===c)&&(!q||[x.cn,x.kk,x.ru].some(v=>v.toLowerCase().includes(q))));
+  list.innerHTML=rows.map(x=>`<article class="government-card"><div class="gov-cn"><span class="eyebrow">${({ministry:'中央部委',agency:'国家机构与监管部门',law:'司法、执法与安全机构',local:'地方行政机关'})[x.c]}</span><h3>${x.cn}</h3></div><div class="gov-lang"><div><span>Қазақша</span><strong>${x.kk}</strong><button class="gov-audio" type="button" data-t="${x.kk.replace(/"/g,'&quot;')}" data-l="kk-KZ">🔊 听哈语</button></div><div><span>Русский</span><strong>${x.ru}</strong><button class="gov-audio" type="button" data-t="${x.ru.replace(/"/g,'&quot;')}" data-l="ru-RU">🔊 听俄语</button></div></div></article>`).join('') || '<div class="government-empty">没有找到匹配的机构名称。</div>';
+ }
+ draw(); search.addEventListener('input',draw); cat.addEventListener('change',draw); list.addEventListener('click',e=>{const b=e.target.closest('.gov-audio');if(!b)return;govSpeak(b.dataset.t,b.dataset.l);});
+}
+document.addEventListener('DOMContentLoaded',renderGov);
+</script></body></html>
