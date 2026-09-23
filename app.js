@@ -655,10 +655,23 @@ function init(){
   const page=document.body.dataset.page;
   if(page==='home') renderHome();
   if(page==='scene-list') renderSceneList();
-  if(page==='course') renderCoursePage();
+  if(page==='course'){
+    const c=courseById(qs('id')||'daily-kz')||courses[0];
+    if(c.kind==='sentence' && window.GrammarFlow) window.GrammarFlow.renderCoursePage(c);
+    else renderCoursePage();
+  }
   if(page==='scene') renderScenePage();
-  if(page==='learn') renderLearnPage();
-  if(page==='test' && qs('grammar')!=='1') renderTestPage();
+  if(page==='learn'){
+    const c=courseById(qs('id')||'daily-kz')||courses[0];
+    if(c.kind==='sentence' && window.GrammarFlow) window.GrammarFlow.renderLearnPage(c);
+    else renderLearnPage();
+  }
+  if(page==='test'){
+    if(qs('grammar')==='1' && window.GrammarFlow){
+      const c=courseById(qs('course')||'sentence-kz')||courses.find(x=>x.kind==='sentence');
+      window.GrammarFlow.renderTestPage(c,Math.max(1,Number(qs('module')||1)));
+    } else renderTestPage();
+  }
   const reset=document.getElementById('resetProgress'); if(reset) reset.addEventListener('click',()=>{if(confirm('确定要清空本机学习进度吗？')){completed=[];localStorage.removeItem('completedLessons');location.reload();}});
 }
 
