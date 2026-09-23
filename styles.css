@@ -238,3 +238,18 @@ a { color: inherit; text-decoration: none; }
 @media(max-width:700px){.course-course-group .course-grid{grid-template-columns:1fr}}
 
 .lesson-grammar{margin-top:14px;padding:10px 12px;border:1px solid #e6ece8;border-radius:10px;background:#f7faf8;font-size:13px;color:#15543f;font-weight:600}
+
+/* V12 course learning UX */
+.course-method-section{padding-top:28px;padding-bottom:28px}
+.method-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.method-card{border:1px solid var(--line,#dfe7e2);border-radius:18px;padding:18px;background:#fff}
+.method-card>b{display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:50%;background:#eef5f1;color:#164b39;font-size:12px;margin-bottom:12px}
+.method-card h3{margin:0 0 7px;font-size:17px}.method-card p{margin:0;color:#68757d;line-height:1.65;font-size:14px}
+.course-study-map{margin:8px 0 28px}.course-map-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.course-map-card{display:flex;gap:12px;align-items:center;border:1px solid var(--line,#dfe7e2);border-radius:16px;padding:14px;background:#fafcfb}
+.course-map-no{font-weight:800;color:#164b39}.course-map-card strong{display:block}.course-map-card small{display:block;margin-top:4px;color:#7a848b}
+.course-group-heading{display:flex;align-items:end;justify-content:space-between;margin:24px 0 10px;padding-top:8px;border-top:1px solid #edf1ef}
+.course-group-heading h3{margin:2px 0 0;font-size:20px}.course-group-heading>span{color:#718087;font-size:13px}
+.course-lesson-item .lesson-item-main{display:flex;flex-direction:column;gap:4px}.course-lesson-item .lesson-item-main em{font-style:normal;color:#7a8a82;font-size:12px;line-height:1.45}
+.lesson-memory{margin:14px 0 10px;padding:12px 14px;border-radius:14px;background:#f2f7f4;border:1px solid #e0ebe5}.lesson-memory span{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#658276;margin-bottom:5px}.lesson-memory strong{font-size:14px;line-height:1.55;color:#1d4a3b}
+@media (max-width:900px){.method-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.course-map-grid{grid-template-columns:1fr}}

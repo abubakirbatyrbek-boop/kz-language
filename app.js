@@ -253,12 +253,12 @@ const lessons = [
 ];
 
 const courses = [
-  { id:'daily-kz', icon:'🔤', title:'哈萨克语｜零基础·字母与发音', desc:'从 42 个字母、特殊音和拼读开始，先把基础读音学扎实', accent:'KZ', kind:'foundation', targetLang:'kk' },
-  { id:'sentence-kz', icon:'📘', title:'哈萨克语｜基础语法课', desc:'正式系统学习人称、否定、疑问、地点、时态、格和句型', accent:'KZ', kind:'sentence', targetLang:'kk' },
-  { id:'speaking-kz', icon:'💬', title:'哈萨克语｜零基础造句与口语', desc:'不要求先学完整语法，从“我、你、他”开始直接开口说', accent:'KZ', kind:'speaking', targetLang:'kk' },
-  { id:'daily-ru', icon:'🔤', title:'俄语｜零基础·字母与发音', desc:'从 33 个字母、发音、重音和拼读开始，先把基础读音学扎实', accent:'RU', kind:'foundation', targetLang:'ru' },
-  { id:'sentence-ru', icon:'📘', title:'俄语｜基础语法课', desc:'正式系统学习人称、否定、疑问、地点、时态、格、前置词和句型', accent:'RU', kind:'sentence', targetLang:'ru' },
-  { id:'speaking-ru', icon:'💬', title:'俄语｜零基础造句与口语', desc:'不要求先学完整语法，从“我、你、他”开始直接开口说', accent:'RU', kind:'speaking', targetLang:'ru' }
+  { id:'daily-kz', icon:'🔤', title:'哈萨克语｜零基础·字母与发音', desc:'从 42 个字母、特殊音和拼读开始。先听、再读、再做辨音练习。', accent:'KZ', kind:'foundation', targetLang:'kk' },
+  { id:'sentence-kz', icon:'📘', title:'哈萨克语｜基础语法课', desc:'把常见语法拆成小块，一个重点一个例子，学完马上组句。', accent:'KZ', kind:'sentence', targetLang:'kk' },
+  { id:'speaking-kz', icon:'💬', title:'哈萨克语｜零基础造句与口语', desc:'不等语法学完，从“我、你、他”开始。先说短句，再一步步扩展。', accent:'KZ', kind:'speaking', targetLang:'kk' },
+  { id:'daily-ru', icon:'🔤', title:'俄语｜零基础·字母与发音', desc:'从 33 个字母、发音、重音和拼读开始。先听、再读、再做辨音练习。', accent:'RU', kind:'foundation', targetLang:'ru' },
+  { id:'sentence-ru', icon:'📘', title:'俄语｜基础语法课', desc:'把俄语语法拆成小块，一个重点一个例子，学完马上组句。', accent:'RU', kind:'sentence', targetLang:'ru' },
+  { id:'speaking-ru', icon:'💬', title:'俄语｜零基础造句与口语', desc:'不等语法学完，从“我、你、他”开始。先说短句，再一步步扩展。', accent:'RU', kind:'speaking', targetLang:'ru' }
 ];
 
 const scenes = [
@@ -462,26 +462,63 @@ function renderHome(){
   const overall=document.getElementById('progressText'); if(overall) overall.textContent=percentFor(lessons)+'%';
 }
 
+function courseGroups(pool){
+  const groups=[]; const seen=new Map();
+  pool.forEach(l=>{ const g=l.group || '基础练习'; if(!seen.has(g)){ const obj={name:g,items:[]}; seen.set(g,obj); groups.push(obj);} seen.get(g).items.push(l); });
+  return groups;
+}
+function memoryMethod(l, c){
+  if(c.kind==='sentence'){
+    const patterns={
+      '人称代词':'先记“谁”，再把同一句换成我/你/他。',
+      '名词谓语':'先记“谁 + 是什么”，再替换最后一个词。',
+      '否定':'把肯定句和否定句成对记，先看差别，再开口。',
+      '疑问句':'先记完整问句，再只替换一个关键词。',
+      '所属关系':'先记“我的/你的 + 名词”，再放回整句。',
+      '存在句':'先记“有/没有”的固定结构，再换人和物。',
+      '地点':'先记“在哪里”，再换家、公司、车站。',
+      '地点与方向':'把“去哪里/从哪里”放成一对记。',
+      '动词现在时':'先记我，再练你、他，比较词尾变化。',
+      '动词否定':'把“做”与“不做”放在一起对比。',
+      '动词疑问':'在已经会说的句子后面练一次疑问。',
+      '时间':'同一句只换今天/明天/现在，反复三次。',
+      '问词':'一次只记一个问题：谁、什么、哪里、什么时候。',
+      '前置词':'先把短语当整体记，再拆开看规则。',
+      '格与变化':'先记一个高频例句，再扩展到相同用法。',
+      '情态表达':'先记“需要/想要/可以”的完整句式，再替换内容。',
+      '连接句':'先说两个短句，再用连接词合成一个长句。',
+      '总结复习':'不看答案先说一遍，再对照纠错。'
+    };
+    return patterns[l.group] || '一个重点只练一次变化：先听，再跟读，再自己说。';
+  }
+  return '先听 2 次 → 跟读 3 次 → 遮住答案自己说 1 次。';
+}
+function courseStudyMap(pool,c){
+  const groups=courseGroups(pool);
+  return `<div class="course-map-grid">${groups.map((g,i)=>`<div class="course-map-card"><span class="course-map-no">${String(i+1).padStart(2,'0')}</span><div><strong>${g.name}</strong><small>${g.items.length} 个小课 · 每次只学一个重点</small></div></div>`).join('')}</div>`;
+}
 function renderCoursePage(){
   const id=qs('id') || 'daily-kz'; const c=courseById(id) || courses[0];
   document.title = `${c.title}｜中亚语言通`;
   const title=document.getElementById('courseTitle'); if(title) title.textContent=c.title;
   const desc=document.getElementById('courseDesc'); if(desc) desc.textContent=c.desc;
-  const list=document.getElementById('lessonList');
   const pool=courseLessons(c.id);
-  const detailLead=document.querySelector('.course-detail');
-  if(detailLead){
-    const intro=document.getElementById('courseIntroNote');
-    if(intro && c.kind==='sentence') intro.textContent='正式语法路线：和“零基础·字母与发音”分开，不重复教字母。按体系学习人称、名词性谓语、否定、疑问、所属、存在句、地点与方向、动词时态、情态表达、连接句，再进入组句、翻译和独立造句。';
-    if(intro && c.kind==='speaking') intro.textContent='零基础口语路线：不要求先学完整语法，从“我、你、他”开始，先把短句说出来，再逐步扩展到提问、回应、请求、时间和生活/工作场景。';
+  const intro=document.getElementById('courseIntroNote');
+  if(intro){
+    if(c.kind==='foundation') intro.textContent='这是独立的基础课：从字母、特殊音和拼读开始。每一步都配听音练习，不急着背句子。';
+    if(c.kind==='sentence') intro.textContent='正式语法课：把语法拆成小块。每节只讲一个结构，再用一个简单例句固定下来，最后自己换词练一次。';
+    if(c.kind==='speaking') intro.textContent='零基础口语课：不要求先懂一大堆术语，从“我、你、他”开始，用短句直接练开口。';
   }
+  const map=document.getElementById('courseStudyMap'); if(map) map.innerHTML=courseStudyMap(pool,c);
+  const list=document.getElementById('lessonList');
   if(list){
     let lastGroup='';
-    list.forEach(l=>{});
     list.innerHTML=pool.map((l,i)=>{
-      const group=l.group&&l.group!==lastGroup ? (lastGroup=l.group, `<div class="course-group-label">${l.group}</div>`) : '';
-      const target = c.targetLang==='kk' ? l.kz : c.targetLang==='ru' ? l.ru : (l.kz||l.ru);
-      return `${group}<a class="list-item" href="learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${i}"><span class="num">${String(i+1).padStart(2,'0')}</span><span><strong>${l.title}</strong><small>${l.cn}${target?` · ${target}`:''}</small></span><span class="arrow">→</span></a>`;
+      const group=l.group || '基础练习';
+      const heading=group!==lastGroup ? (lastGroup=group, `<div class="course-group-heading"><div><span class="eyebrow">模块</span><h3>${group}</h3></div><span>${pool.filter(x=>(x.group||'基础练习')===group).length} 课</span></div>`) : '';
+      const target=c.targetLang==='kk'?l.kz:c.targetLang==='ru'?l.ru:(l.kz||l.ru);
+      const memory=memoryMethod(l,c);
+      return `${heading}<a class="list-item course-lesson-item" href="learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${i}"><span class="num">${String(i+1).padStart(2,'0')}</span><span class="lesson-item-main"><strong>${l.title}</strong><small>${l.cn}${target?` · ${target}`:''}</small><em>记忆：${memory}</em></span><span class="arrow">→</span></a>`;
     }).join('');
   }
   const pct=document.getElementById('courseProgress'); if(pct) pct.textContent=percentFor(pool)+'%';
@@ -518,7 +555,7 @@ function renderLearnPage(){
   else { const c=courseById(qs('id')||'daily-kz')||courses[0]; pool=courseLessons(c.id); label=c.title; }
   const courseForLearn=qs('pool')==='scene' ? null : (courseById(qs('id')||'daily-kz')||courses[0]);
   let current=Math.max(0,Math.min(Number(qs('start')||0),pool.length-1));
-  const title=document.getElementById('learnTitle'); const count=document.getElementById('learnCount'); const cn=document.getElementById('learnCn'); const kz=document.getElementById('learnKz'); const ru=document.getElementById('learnRu'); const tip=document.getElementById('learnTip'); const grammar=document.getElementById('learnGrammar'); const tag=document.getElementById('learnTag'); const path=document.getElementById('learnPath');
+  const title=document.getElementById('learnTitle'); const count=document.getElementById('learnCount'); const cn=document.getElementById('learnCn'); const kz=document.getElementById('learnKz'); const ru=document.getElementById('learnRu'); const tip=document.getElementById('learnTip'); const memory=document.getElementById('learnMemory'); const grammar=document.getElementById('learnGrammar'); const tag=document.getElementById('learnTag'); const path=document.getElementById('learnPath');
   const kzRow=document.getElementById('learnKzRow'), ruRow=document.getElementById('learnRuRow');
   if(courseForLearn?.kind==='sentence' || courseForLearn?.kind==='speaking'){
     if(kzRow) kzRow.style.display=courseForLearn.targetLang==='kk'?'flex':'none';
@@ -527,7 +564,7 @@ function renderLearnPage(){
   } else { if(kzRow) kzRow.style.display='flex'; if(ruRow) ruRow.style.display='flex'; }
   function draw(){
     const l=pool[current]; if(!l) return;
-    title.textContent=l.title; count.textContent=`${current+1} / ${pool.length}`; cn.textContent=l.cn; kz.textContent=l.kz; ru.textContent=l.ru; tip.textContent=l.tip; if(grammar) grammar.textContent=l.group ? `语法模块：${l.group}` : ''; tag.textContent=l.tag; path.textContent=`当前内容：${label}`;
+    title.textContent=l.title; count.textContent=`${current+1} / ${pool.length}`; cn.textContent=l.cn; kz.textContent=l.kz; ru.textContent=l.ru; tip.textContent=l.tip; if(grammar) grammar.textContent=l.group ? `语法模块：${l.group}` : ''; if(memory) memory.innerHTML=`<span>记忆方法</span><strong>${courseForLearn ? memoryMethod(l,courseForLearn) : '先听 2 次 → 跟读 3 次 → 遮住答案自己说 1 次。'}</strong>`; tag.textContent=l.tag; path.textContent=`当前内容：${label}`;
     document.getElementById('prevLink').href = learnUrl(current-1<0?pool.length-1:current-1);
     document.getElementById('nextLink').href = learnUrl((current+1)%pool.length);
     document.getElementById('markBtn').textContent = completed.includes(l.id) ? '已记住 ✓' : '记住了，下一句';
