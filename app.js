@@ -63,14 +63,202 @@ const lessons = [
   { id:'business-02', course:'work-kz', title:'我们什么时候开会', tag:'商务', level:'工作', cn:'我们什么时候开会？', kz:'Біз қашан жиналамыз?', ru:'Когда у нас будет совещание?', tip:'安排商务会议。' },
   { id:'business-03', course:'work-kz', title:'请把合同发给我', tag:'商务', level:'工作', cn:'请把合同发给我。', kz:'Шартты маған жіберіңізші.', ru:'Отправьте мне договор, пожалуйста.', tip:'合同文件往来。' },
   { id:'business-04', course:'work-kz', title:'请发一份报价', tag:'商务', level:'工作', cn:'请发一份报价。', kz:'Баға ұсынысын жіберіңізші.', ru:'Пришлите коммерческое предложение, пожалуйста.', tip:'索取商务报价。' },
-  { id:'business-05', course:'work-kz', title:'我们明天再讨论', tag:'商务', level:'工作', cn:'我们明天再讨论。', kz:'Ертең қайта талқылаймыз.', ru:'Обсудим завтра.', tip:'结束当次讨论并约定后续。' }
+  { id:'business-05', course:'work-kz', title:'我们明天再讨论', tag:'商务', level:'工作', cn:'我们明天再讨论。', kz:'Ертең қайта талқылаймыз.', ru:'Обсудим завтра.', tip:'结束当次讨论并约定后续。' },
+  { id:"sentence-kz-01", course:"sentence-kz", title:"人称：我、你、他、我们、你们、他们", tag:'语法与造句', level:'基础语法', cn:"我 / 你 / 他 / 我们 / 你们 / 他们", kz:"Мен / Сен / Ол / Біз / Сендер / Олар", ru:"", tip:"认识基本人称代词，为后面的句子主语打基础。", group:"人称代词" },
+  { id:"sentence-kz-02", course:"sentence-kz", title:"第一、二、三人称的使用", tag:'语法与造句', level:'基础语法', cn:"我工作。你工作。他工作。", kz:"Мен жұмыс істеймін. Сен жұмыс істейсің. Ол жұмыс істейді.", ru:"", tip:"根据人称变化选择正确的动词形式。", group:"人称代词" },
+  { id:"sentence-kz-03", course:"sentence-kz", title:"我是……", tag:'语法与造句', level:'基础语法', cn:"我是中国人。", kz:"Мен қытаймын.", ru:"", tip:"在哈萨克语中，身份或类别可以直接用名词性谓语表达。", group:"名词谓语" },
+  { id:"sentence-kz-04", course:"sentence-kz", title:"你是……", tag:'语法与造句', level:'基础语法', cn:"你是学生。", kz:"Сен студентсің.", ru:"", tip:"第二人称名词性谓语出现相应的人称形式。", group:"名词谓语" },
+  { id:"sentence-kz-05", course:"sentence-kz", title:"他是……", tag:'语法与造句', level:'基础语法', cn:"他是老师。", kz:"Ол мұғалім.", ru:"", tip:"第三人称名词性谓语通常不加人称词尾。", group:"名词谓语" },
+  { id:"sentence-kz-06", course:"sentence-kz", title:"这是……", tag:'语法与造句', level:'基础语法', cn:"这是公司。", kz:"Бұл компания.", ru:"", tip:"用“Бұл + 名词”介绍或指认事物。", group:"名词谓语" },
+  { id:"sentence-kz-07", course:"sentence-kz", title:"我不是……", tag:'语法与造句', level:'基础语法', cn:"我不是学生。", kz:"Мен студент емеспін.", ru:"", tip:"名词性谓语的否定使用“емес”。", group:"否定" },
+  { id:"sentence-kz-08", course:"sentence-kz", title:"你不是……吗？", tag:'语法与造句', level:'基础语法', cn:"你不是老师吗？", kz:"Сен мұғалім емессің бе?", ru:"", tip:"把名词性谓语变成否定疑问句。", group:"否定" },
+  { id:"sentence-kz-09", course:"sentence-kz", title:"你是……吗？", tag:'语法与造句', level:'基础语法', cn:"你是中国人吗？", kz:"Сен қытайсың ба?", ru:"", tip:"一般疑问句常用句尾疑问词“ба/бе/па/пе”。", group:"疑问句" },
+  { id:"sentence-kz-10", course:"sentence-kz", title:"这是我的……", tag:'语法与造句', level:'基础语法', cn:"这是我的车。", kz:"Бұл менің көлігім.", ru:"", tip:"学习人称所属形式：менің + 名词的人称所属形式。", group:"所属关系" },
+  { id:"sentence-kz-11", course:"sentence-kz", title:"你的……在哪里？", tag:'语法与造句', level:'基础语法', cn:"你的车在哪里？", kz:"Сенің көлігің қайда?", ru:"", tip:"把所属结构与地点问句结合起来。", group:"所属关系" },
+  { id:"sentence-kz-12", course:"sentence-kz", title:"我有……", tag:'语法与造句', level:'基础语法', cn:"我有车。", kz:"Менің көлігім бар.", ru:"", tip:"表达“有”时使用“бар”，并结合所属结构。", group:"存在句" },
+  { id:"sentence-kz-13", course:"sentence-kz", title:"我没有……", tag:'语法与造句', level:'基础语法', cn:"我没有钱。", kz:"Менде ақша жоқ.", ru:"", tip:"“没有”常用“жоқ”表达。", group:"存在句" },
+  { id:"sentence-kz-14", course:"sentence-kz", title:"你有……吗？", tag:'语法与造句', level:'基础语法', cn:"你有时间吗？", kz:"Сенде уақыт бар ма?", ru:"", tip:"把存在句变成一般疑问句。", group:"存在句" },
+  { id:"sentence-kz-15", course:"sentence-kz", title:"这里有……", tag:'语法与造句', level:'基础语法', cn:"这里有人。", kz:"Бұл жерде адам бар.", ru:"", tip:"“有”可以用于地点存在。", group:"存在句" },
+  { id:"sentence-kz-16", course:"sentence-kz", title:"我在家。", tag:'语法与造句', level:'基础语法', cn:"我在家。", kz:"Мен үйдемін.", ru:"", tip:"地点常通过处所格表达，如 үйде。", group:"地点" },
+  { id:"sentence-kz-17", course:"sentence-kz", title:"我在公司。", tag:'语法与造句', level:'基础语法', cn:"我在公司。", kz:"Мен кеңседемін.", ru:"", tip:"地点结构与人称形式结合。", group:"地点" },
+  { id:"sentence-kz-18", course:"sentence-kz", title:"你在哪里？", tag:'语法与造句', level:'基础语法', cn:"你在哪里？", kz:"Сен қай жердесің?", ru:"", tip:"用“қай жерде”询问所在位置。", group:"地点" },
+  { id:"sentence-kz-19", course:"sentence-kz", title:"我去公司。", tag:'语法与造句', level:'基础语法', cn:"我去公司。", kz:"Мен кеңсеге барамын.", ru:"", tip:"去某地使用方向格形式，如 кеңсеге。", group:"地点与方向" },
+  { id:"sentence-kz-20", course:"sentence-kz", title:"我从公司回来。", tag:'语法与造句', level:'基础语法', cn:"我从公司回来。", kz:"Мен кеңседен қайтып келдім.", ru:"", tip:"从某地使用出发/离开方向的格形式。", group:"地点与方向" },
+  { id:"sentence-kz-21", course:"sentence-kz", title:"我工作。", tag:'语法与造句', level:'基础语法', cn:"我工作。", kz:"Мен жұмыс істеймін.", ru:"", tip:"学习第一人称现在/习惯动作。", group:"动词现在时" },
+  { id:"sentence-kz-22", course:"sentence-kz", title:"你工作。", tag:'语法与造句', level:'基础语法', cn:"你工作。", kz:"Сен жұмыс істейсің.", ru:"", tip:"学习第二人称动词变化。", group:"动词现在时" },
+  { id:"sentence-kz-23", course:"sentence-kz", title:"他工作。", tag:'语法与造句', level:'基础语法', cn:"他工作。", kz:"Ол жұмыс істейді.", ru:"", tip:"学习第三人称动词变化。", group:"动词现在时" },
+  { id:"sentence-kz-24", course:"sentence-kz", title:"我不工作。", tag:'语法与造句', level:'基础语法', cn:"我不工作。", kz:"Мен жұмыс істемеймін.", ru:"", tip:"现在时否定形式。", group:"动词否定" },
+  { id:"sentence-kz-25", course:"sentence-kz", title:"你工作吗？", tag:'语法与造句', level:'基础语法', cn:"你工作吗？", kz:"Сен жұмыс істейсің бе?", ru:"", tip:"把动词句改成一般疑问句。", group:"动词疑问" },
+  { id:"sentence-kz-26", course:"sentence-kz", title:"我今天工作。", tag:'语法与造句', level:'基础语法', cn:"我今天工作。", kz:"Мен бүгін жұмыс істеймін.", ru:"", tip:"时间词通常放在动作之前或句首。", group:"时间" },
+  { id:"sentence-kz-27", course:"sentence-kz", title:"我明天去公司。", tag:'语法与造句', level:'基础语法', cn:"我明天去公司。", kz:"Мен ертең кеңсеге барамын.", ru:"", tip:"“барамын”可以根据上下文表达计划或将要发生的动作。", group:"时间" },
+  { id:"sentence-kz-28", course:"sentence-kz", title:"谁？什么？", tag:'语法与造句', level:'基础语法', cn:"谁来了？这是什么？", kz:"Кім келді? Бұл не?", ru:"", tip:"认识基本问词 кім / не。", group:"问词" },
+  { id:"sentence-kz-29", course:"sentence-kz", title:"哪里？从哪里？", tag:'语法与造句', level:'基础语法', cn:"你在哪里？你从哪里来？", kz:"Сен қайдасың? Сен қайдан келдің?", ru:"", tip:"比较 қайда 与 қайдан 的方向差别。", group:"问词" },
+  { id:"sentence-kz-30", course:"sentence-kz", title:"什么时候？多少钱？", tag:'语法与造句', level:'基础语法', cn:"什么时候到？多少钱？", kz:"Қашан келеді? Қанша тұрады?", ru:"", tip:"高频时间与数量问句。", group:"问词" },
+  { id:"sentence-kz-31", course:"sentence-kz", title:"我需要……", tag:'语法与造句', level:'基础语法', cn:"我需要帮助。", kz:"Маған көмек керек.", ru:"", tip:"“керек”表示需要、必要。", group:"情态" },
+  { id:"sentence-kz-32", course:"sentence-kz", title:"我想……", tag:'语法与造句', level:'基础语法', cn:"我想去车站。", kz:"Мен вокзалға барғым келеді.", ru:"", tip:"用 -ғым/-гім/-қым/-кім келеді 表达愿望。", group:"情态" },
+  { id:"sentence-kz-33", course:"sentence-kz", title:"可以……吗？", tag:'语法与造句', level:'基础语法', cn:"我可以进去吗？", kz:"Мен кірсем бола ма?", ru:"", tip:"用“бола ма”表达许可或可行性。", group:"情态" },
+  { id:"sentence-kz-34", course:"sentence-kz", title:"不可以……", tag:'语法与造句', level:'基础语法', cn:"这里不能停车。", kz:"Бұл жерде көлік қоюға болмайды.", ru:"", tip:"“болмайды”表达禁止或不允许。", group:"情态" },
+  { id:"sentence-kz-35", course:"sentence-kz", title:"我去了……", tag:'语法与造句', level:'基础语法', cn:"我昨天去了公司。", kz:"Мен кеше кеңсеге бардым.", ru:"", tip:"学习过去时第一人称形式。", group:"过去时" },
+  { id:"sentence-kz-36", course:"sentence-kz", title:"他来了。", tag:'语法与造句', level:'基础语法', cn:"他来了。", kz:"Ол келді.", ru:"", tip:"学习过去时第三人称形式。", group:"过去时" },
+  { id:"sentence-kz-37", course:"sentence-kz", title:"明天我们去……", tag:'语法与造句', level:'基础语法', cn:"明天我们去车站。", kz:"Ертең біз вокзалға барамыз.", ru:"", tip:"用上下文和动词形式表达计划或将来动作。", group:"未来与计划" },
+  { id:"sentence-kz-38", course:"sentence-kz", title:"我工作，但是他休息。", tag:'语法与造句', level:'基础语法', cn:"我工作，但是他休息。", kz:"Мен жұмыс істеймін, бірақ ол демалады.", ru:"", tip:"学习基本连接词 бірақ。", group:"连接句" },
+  { id:"sentence-kz-39", course:"sentence-kz", title:"因为……所以……", tag:'语法与造句', level:'基础语法', cn:"因为下雨，我不去。", kz:"Жаңбыр жауып тұрғандықтан, мен бармаймын.", ru:"", tip:"先建立因果关系的基本表达。", group:"连接句" },
+  { id:"sentence-kz-40", course:"sentence-kz", title:"三个词组句", tag:'语法与造句', level:'基础语法', cn:"我 / 公司 / 工作", kz:"Мен кеңседе жұмыс істеймін.", ru:"", tip:"把人称、地点和动词组合成完整句子。", group:"组句" },
+  { id:"sentence-kz-41", course:"sentence-kz", title:"四个词组句", tag:'语法与造句', level:'基础语法', cn:"我 / 明天 / 公司 / 去", kz:"Мен ертең кеңсеге барамын.", ru:"", tip:"把时间、地点和动作按正确顺序组合。", group:"组句" },
+  { id:"sentence-kz-42", course:"sentence-kz", title:"中文 → 哈萨克语", tag:'语法与造句', level:'基础语法', cn:"我没有车。", kz:"Менде көлік жоқ.", ru:"", tip:"根据句型自己写出完整句子。", group:"造句" },
+  { id:"sentence-kz-43", course:"sentence-kz", title:"中文 → 哈萨克语", tag:'语法与造句', level:'基础语法', cn:"他在家。", kz:"Ол үйде.", ru:"", tip:"独立完成地点句。", group:"造句" },
+  { id:"sentence-kz-44", course:"sentence-kz", title:"场景：办公室", tag:'语法与造句', level:'基础语法', cn:"请把文件给我。", kz:"Құжатты маған беріңізші.", ru:"", tip:"把基础语法迁移到工作交流。", group:"场景造句" },
+  { id:"sentence-kz-45", course:"sentence-kz", title:"场景：物流", tag:'语法与造句', level:'基础语法', cn:"货物明天到。", kz:"Жүк ертең келеді.", ru:"", tip:"把时间和动作句用于物流场景。", group:"场景造句" },
+  { id:"sentence-ru-01", course:"sentence-ru", title:"人称：我、你、他、我们、你们、他们", tag:'语法与造句', level:'基础语法', cn:"我 / 你 / 他 / 我们 / 你们 / 他们", kz:"", ru:"Я / Ты / Он / Мы / Вы / Они", tip:"认识基本人称代词，为后面的句子主语打基础。", group:"人称代词" },
+  { id:"sentence-ru-02", course:"sentence-ru", title:"第一、二、三人称的使用", tag:'语法与造句', level:'基础语法', cn:"我工作。你工作。他工作。", kz:"", ru:"Я работаю. Ты работаешь. Он работает.", tip:"根据人称变化选择正确的动词形式。", group:"人称与动词" },
+  { id:"sentence-ru-03", course:"sentence-ru", title:"我是……", tag:'语法与造句', level:'基础语法', cn:"我是中国人。", kz:"", ru:"Я из Китая.", tip:"用“Я + 身份/来源”表达基本身份信息。", group:"名词谓语" },
+  { id:"sentence-ru-04", course:"sentence-ru", title:"你是……", tag:'语法与造句', level:'基础语法', cn:"你是学生。", kz:"", ru:"Ты студент.", tip:"名词作表语，注意性别和形式。", group:"名词谓语" },
+  { id:"sentence-ru-05", course:"sentence-ru", title:"他是……", tag:'语法与造句', level:'基础语法', cn:"他是老师。", kz:"", ru:"Он учитель.", tip:"第三人称身份句。", group:"名词谓语" },
+  { id:"sentence-ru-06", course:"sentence-ru", title:"这是……", tag:'语法与造句', level:'基础语法', cn:"这是公司。", kz:"", ru:"Это компания.", tip:"用“Это + 名词”介绍事物。", group:"指示句" },
+  { id:"sentence-ru-07", course:"sentence-ru", title:"我不是……", tag:'语法与造句', level:'基础语法', cn:"我不是学生。", kz:"", ru:"Я не студент.", tip:"俄语名词性谓语常用 не 构成否定。", group:"否定" },
+  { id:"sentence-ru-08", course:"sentence-ru", title:"你是……吗？", tag:'语法与造句', level:'基础语法', cn:"你是中国人吗？", kz:"", ru:"Ты из Китая?", tip:"俄语一般疑问句主要靠语调，不需要单独的“吗”。", group:"疑问句" },
+  { id:"sentence-ru-09", course:"sentence-ru", title:"这是我的……", tag:'语法与造句', level:'基础语法', cn:"这是我的车。", kz:"", ru:"Это моя машина.", tip:"掌握人称物主词与名词性数的基本搭配。", group:"所有关系" },
+  { id:"sentence-ru-10", course:"sentence-ru", title:"你的……在哪里？", tag:'语法与造句', level:'基础语法', cn:"你的车在哪里？", kz:"", ru:"Где твоя машина?", tip:"把所有关系与地点问句结合。", group:"所有关系" },
+  { id:"sentence-ru-11", course:"sentence-ru", title:"我有……", tag:'语法与造句', level:'基础语法', cn:"我有车。", kz:"", ru:"У меня есть машина.", tip:"俄语表达“有”常用 у + 人 + есть。", group:"存在句" },
+  { id:"sentence-ru-12", course:"sentence-ru", title:"我没有……", tag:'语法与造句', level:'基础语法', cn:"我没有钱。", kz:"", ru:"У меня нет денег.", tip:"“没有”使用 нет，并注意后面的格变化。", group:"存在句" },
+  { id:"sentence-ru-13", course:"sentence-ru", title:"你有……吗？", tag:'语法与造句', level:'基础语法', cn:"你有时间吗？", kz:"", ru:"У тебя есть время?", tip:"把“有”结构变成疑问句。", group:"存在句" },
+  { id:"sentence-ru-14", course:"sentence-ru", title:"我在家。", tag:'语法与造句', level:'基础语法', cn:"我在家。", kz:"", ru:"Я дома.", tip:"домой / дома 区别要逐步建立。", group:"地点" },
+  { id:"sentence-ru-15", course:"sentence-ru", title:"我在公司。", tag:'语法与造句', level:'基础语法', cn:"我在公司。", kz:"", ru:"Я в офисе.", tip:"地点常用 в + 前置格。", group:"地点与前置词" },
+  { id:"sentence-ru-16", course:"sentence-ru", title:"你在哪里？", tag:'语法与造句', level:'基础语法', cn:"你在哪里？", kz:"", ru:"Где ты?", tip:"基本地点问句。", group:"地点与前置词" },
+  { id:"sentence-ru-17", course:"sentence-ru", title:"我去公司。", tag:'语法与造句', level:'基础语法', cn:"我去公司。", kz:"", ru:"Я иду в офис.", tip:"去某地常用 в + 宾格。", group:"方向" },
+  { id:"sentence-ru-18", course:"sentence-ru", title:"我从公司回来。", tag:'语法与造句', level:'基础语法', cn:"我从公司回来。", kz:"", ru:"Я возвращаюсь из офиса.", tip:"从某处出来常用 из + 第二格。", group:"来源" },
+  { id:"sentence-ru-19", course:"sentence-ru", title:"我工作。", tag:'语法与造句', level:'基础语法', cn:"我工作。", kz:"", ru:"Я работаю.", tip:"第一人称现在时。", group:"现在时" },
+  { id:"sentence-ru-20", course:"sentence-ru", title:"你工作。", tag:'语法与造句', level:'基础语法', cn:"你工作。", kz:"", ru:"Ты работаешь.", tip:"第二人称现在时。", group:"现在时" },
+  { id:"sentence-ru-21", course:"sentence-ru", title:"他工作。", tag:'语法与造句', level:'基础语法', cn:"他工作。", kz:"", ru:"Он работает.", tip:"第三人称现在时。", group:"现在时" },
+  { id:"sentence-ru-22", course:"sentence-ru", title:"我不工作。", tag:'语法与造句', level:'基础语法', cn:"我不工作。", kz:"", ru:"Я не работаю.", tip:"现在时否定使用 не。", group:"否定" },
+  { id:"sentence-ru-23", course:"sentence-ru", title:"你工作吗？", tag:'语法与造句', level:'基础语法', cn:"你工作吗？", kz:"", ru:"Ты работаешь?", tip:"语调和语序共同表达疑问。", group:"疑问句" },
+  { id:"sentence-ru-24", course:"sentence-ru", title:"我今天工作。", tag:'语法与造句', level:'基础语法', cn:"我今天工作。", kz:"", ru:"Я сегодня работаю.", tip:"时间副词放入基本句型。", group:"时间" },
+  { id:"sentence-ru-25", course:"sentence-ru", title:"我明天去公司。", tag:'语法与造句', level:'基础语法', cn:"我明天去公司。", kz:"", ru:"Я завтра поеду в офис.", tip:"通过 завтра + 将来形式表达计划。", group:"时间" },
+  { id:"sentence-ru-26", course:"sentence-ru", title:"谁？什么？", tag:'语法与造句', level:'基础语法', cn:"谁来了？这是什么？", kz:"", ru:"Кто пришёл? Что это?", tip:"基本问词 кто / что。", group:"问词" },
+  { id:"sentence-ru-27", course:"sentence-ru", title:"哪里？从哪里？", tag:'语法与造句', level:'基础语法', cn:"你在哪里？你从哪里来？", kz:"", ru:"Где ты? Откуда ты?", tip:"比较 где 与 откуда。", group:"问词" },
+  { id:"sentence-ru-28", course:"sentence-ru", title:"什么时候？多少钱？", tag:'语法与造句', level:'基础语法', cn:"什么时候到？多少钱？", kz:"", ru:"Когда прибудет? Сколько стоит?", tip:"高频时间与价格问句。", group:"问词" },
+  { id:"sentence-ru-29", course:"sentence-ru", title:"我需要……", tag:'语法与造句', level:'基础语法', cn:"我需要帮助。", kz:"", ru:"Мне нужна помощь.", tip:"нужен / нужна / нужно / нужны 需与名词性配合。", group:"情态" },
+  { id:"sentence-ru-30", course:"sentence-ru", title:"我想……", tag:'语法与造句', level:'基础语法', cn:"我想去车站。", kz:"", ru:"Я хочу поехать на вокзал.", tip:"хотеть 后面常接不定式。", group:"情态" },
+  { id:"sentence-ru-31", course:"sentence-ru", title:"可以……吗？", tag:'语法与造句', level:'基础语法', cn:"我可以进去吗？", kz:"", ru:"Можно мне войти?", tip:"можно 表达许可或可能。", group:"情态" },
+  { id:"sentence-ru-32", course:"sentence-ru", title:"不能……", tag:'语法与造句', level:'基础语法', cn:"这里不能停车。", kz:"", ru:"Здесь нельзя парковаться.", tip:"нельзя 表达禁止。", group:"情态" },
+  { id:"sentence-ru-33", course:"sentence-ru", title:"我去了……", tag:'语法与造句', level:'基础语法', cn:"我昨天去了公司。", kz:"", ru:"Я вчера ездил в офис.", tip:"过去时要根据说话者性别变化。", group:"过去时" },
+  { id:"sentence-ru-34", course:"sentence-ru", title:"他来了。", tag:'语法与造句', level:'基础语法', cn:"他来了。", kz:"", ru:"Он пришёл.", tip:"第三人称过去时。", group:"过去时" },
+  { id:"sentence-ru-35", course:"sentence-ru", title:"明天我们去……", tag:'语法与造句', level:'基础语法', cn:"明天我们去车站。", kz:"", ru:"Завтра мы поедем на вокзал.", tip:"用复合将来时表达计划动作。", group:"将来时" },
+  { id:"sentence-ru-36", course:"sentence-ru", title:"我工作，但是他休息。", tag:'语法与造句', level:'基础语法', cn:"我工作，但是他休息。", kz:"", ru:"Я работаю, но он отдыхает.", tip:"学习基本连接词 но。", group:"连接句" },
+  { id:"sentence-ru-37", course:"sentence-ru", title:"因为……所以……", tag:'语法与造句', level:'基础语法', cn:"因为下雨，我不去。", kz:"", ru:"Я не иду, потому что идёт дождь.", tip:"建立原因关系。", group:"连接句" },
+  { id:"sentence-ru-38", course:"sentence-ru", title:"三个词组句", tag:'语法与造句', level:'基础语法', cn:"我 / 公司 / 工作", kz:"", ru:"Я работаю в офисе.", tip:"把主语、地点、动词组合成完整句子。", group:"组句" },
+  { id:"sentence-ru-39", course:"sentence-ru", title:"四个词组句", tag:'语法与造句', level:'基础语法', cn:"我 / 明天 / 公司 / 去", kz:"", ru:"Я завтра поеду в офис.", tip:"把时间、地点和动作组合。", group:"组句" },
+  { id:"sentence-ru-40", course:"sentence-ru", title:"中文 → 俄语", tag:'语法与造句', level:'基础语法', cn:"我没有车。", kz:"", ru:"У меня нет машины.", tip:"根据句型独立写句子。", group:"造句" },
+  { id:"sentence-ru-41", course:"sentence-ru", title:"中文 → 俄语", tag:'语法与造句', level:'基础语法', cn:"他在家。", kz:"", ru:"Он дома.", tip:"独立完成地点句。", group:"造句" },
+  { id:"sentence-ru-42", course:"sentence-ru", title:"场景：办公室", tag:'语法与造句', level:'基础语法', cn:"请把文件给我。", kz:"", ru:"Дайте мне документы, пожалуйста.", tip:"把基础语法迁移到工作交流。", group:"场景造句" },
+  { id:"sentence-ru-43", course:"sentence-ru", title:"场景：物流", tag:'语法与造句', level:'基础语法', cn:"货物明天到。", kz:"", ru:"Груз прибудет завтра.", tip:"把时间和动作句用于物流场景。", group:"场景造句" },
+  {"id":"speaking-kz-01","course":"speaking-kz","title":"我","tag":"造句与口语","level":"零基础口语","cn":"我","kz":"Мен","ru":"","tip":"从一个词开始开口。","group":"口语起步"},
+  {"id":"speaking-kz-02","course":"speaking-kz","title":"你","tag":"造句与口语","level":"零基础口语","cn":"你","kz":"Сен","ru":"","tip":"认识对方。","group":"口语起步"},
+  {"id":"speaking-kz-03","course":"speaking-kz","title":"他","tag":"造句与口语","level":"零基础口语","cn":"他","kz":"Ол","ru":"","tip":"谈论第三个人。","group":"口语起步"},
+  {"id":"speaking-kz-04","course":"speaking-kz","title":"我们","tag":"造句与口语","level":"零基础口语","cn":"我们","kz":"Біз","ru":"","tip":"表达一起做事。","group":"口语起步"},
+  {"id":"speaking-kz-05","course":"speaking-kz","title":"你们","tag":"造句与口语","level":"零基础口语","cn":"你们","kz":"Сендер","ru":"","tip":"对多人说话。","group":"口语起步"},
+  {"id":"speaking-kz-06","course":"speaking-kz","title":"他们","tag":"造句与口语","level":"零基础口语","cn":"他们","kz":"Олар","ru":"","tip":"谈论多人。","group":"口语起步"},
+  {"id":"speaking-kz-07","course":"speaking-kz","title":"我是中国人。","tag":"造句与口语","level":"零基础口语","cn":"我是中国人。","kz":"Мен қытаймын.","ru":"","tip":"直接练一条完整口语句。","group":"基础表达"},
+  {"id":"speaking-kz-08","course":"speaking-kz","title":"你是中国人吗？","tag":"造句与口语","level":"零基础口语","cn":"你是中国人吗？","kz":"Сен қытайсың ба?","ru":"","tip":"直接练提问。","group":"基础表达"},
+  {"id":"speaking-kz-09","course":"speaking-kz","title":"他是我的同事。","tag":"造句与口语","level":"零基础口语","cn":"他是我的同事。","kz":"Ол менің әріптесім.","ru":"","tip":"把人称词放进真实表达。","group":"基础表达"},
+  {"id":"speaking-kz-10","course":"speaking-kz","title":"我是新员工。","tag":"造句与口语","level":"零基础口语","cn":"我是新员工。","kz":"Мен жаңадан келген қызметкермін.","ru":"","tip":"工作场景自我介绍。","group":"基础表达"},
+  {"id":"speaking-kz-11","course":"speaking-kz","title":"我在这里。","tag":"造句与口语","level":"零基础口语","cn":"我在这里。","kz":"Мен осындамын.","ru":"","tip":"表达所在位置。","group":"基础表达"},
+  {"id":"speaking-kz-12","course":"speaking-kz","title":"你在哪里？","tag":"造句与口语","level":"零基础口语","cn":"你在哪里？","kz":"Сен қайдасың?","ru":"","tip":"高频口语问位置。","group":"基础表达"},
+  {"id":"speaking-kz-13","course":"speaking-kz","title":"他在办公室。","tag":"造句与口语","level":"零基础口语","cn":"他在办公室。","kz":"Ол кеңседе.","ru":"","tip":"描述别人所在地点。","group":"基础表达"},
+  {"id":"speaking-kz-14","course":"speaking-kz","title":"我有车。","tag":"造句与口语","level":"零基础口语","cn":"我有车。","kz":"Менің көлігім бар.","ru":"","tip":"直接掌握“我有”。","group":"基础表达"},
+  {"id":"speaking-kz-15","course":"speaking-kz","title":"你有时间吗？","tag":"造句与口语","level":"零基础口语","cn":"你有时间吗？","kz":"Сенің уақытың бар ма?","ru":"","tip":"询问对方是否有时间。","group":"基础表达"},
+  {"id":"speaking-kz-16","course":"speaking-kz","title":"我没有钱。","tag":"造句与口语","level":"零基础口语","cn":"我没有钱。","kz":"Менде ақша жоқ.","ru":"","tip":"直接表达“没有”。","group":"基础表达"},
+  {"id":"speaking-kz-17","course":"speaking-kz","title":"这是我的手机。","tag":"造句与口语","level":"零基础口语","cn":"这是我的手机。","kz":"Бұл менің телефоным.","ru":"","tip":"指着物品开口说。","group":"基础表达"},
+  {"id":"speaking-kz-18","course":"speaking-kz","title":"这是什么？","tag":"造句与口语","level":"零基础口语","cn":"这是什么？","kz":"Бұл не?","ru":"","tip":"最常用的确认句。","group":"基础表达"},
+  {"id":"speaking-kz-19","course":"speaking-kz","title":"谁？","tag":"造句与口语","level":"零基础口语","cn":"谁？","kz":"Кім?","ru":"","tip":"问人。","group":"高频交流"},
+  {"id":"speaking-kz-20","course":"speaking-kz","title":"什么？","tag":"造句与口语","level":"零基础口语","cn":"什么？","kz":"Не?","ru":"","tip":"问事物。","group":"高频交流"},
+  {"id":"speaking-kz-21","course":"speaking-kz","title":"在哪里？","tag":"造句与口语","level":"零基础口语","cn":"在哪里？","kz":"Қай жерде?","ru":"","tip":"问地点。","group":"高频交流"},
+  {"id":"speaking-kz-22","course":"speaking-kz","title":"我去公司。","tag":"造句与口语","level":"零基础口语","cn":"我去公司。","kz":"Мен кеңсеге барамын.","ru":"","tip":"练习“我 + 去”。","group":"高频交流"},
+  {"id":"speaking-kz-23","course":"speaking-kz","title":"我要回家。","tag":"造句与口语","level":"零基础口语","cn":"我要回家。","kz":"Мен үйге қайтқым келеді.","ru":"","tip":"表达想做什么。","group":"高频交流"},
+  {"id":"speaking-kz-24","course":"speaking-kz","title":"我来了。","tag":"造句与口语","level":"零基础口语","cn":"我来了。","kz":"Мен келдім.","ru":"","tip":"到场时直接说。","group":"高频交流"},
+  {"id":"speaking-kz-25","course":"speaking-kz","title":"我看到了。","tag":"造句与口语","level":"零基础口语","cn":"我看到了。","kz":"Мен көрдім.","ru":"","tip":"告诉对方自己看到了。","group":"高频交流"},
+  {"id":"speaking-kz-26","course":"speaking-kz","title":"我知道。","tag":"造句与口语","level":"零基础口语","cn":"我知道。","kz":"Мен білемін.","ru":"","tip":"表示知道。","group":"高频交流"},
+  {"id":"speaking-kz-27","course":"speaking-kz","title":"我不知道。","tag":"造句与口语","level":"零基础口语","cn":"我不知道。","kz":"Мен білмеймін.","ru":"","tip":"不知道时直接说。","group":"高频交流"},
+  {"id":"speaking-kz-28","course":"speaking-kz","title":"我懂了。","tag":"造句与口语","level":"零基础口语","cn":"我懂了。","kz":"Түсіндім.","ru":"","tip":"听懂后回应。","group":"高频交流"},
+  {"id":"speaking-kz-29","course":"speaking-kz","title":"我没听懂。","tag":"造句与口语","level":"零基础口语","cn":"我没听懂。","kz":"Мен түсінбедім.","ru":"","tip":"没听懂时回应。","group":"高频交流"},
+  {"id":"speaking-kz-30","course":"speaking-kz","title":"请再说一次。","tag":"造句与口语","level":"零基础口语","cn":"请再说一次。","kz":"Қайта айтып жіберіңізші.","ru":"","tip":"请求对方重复。","group":"高频交流"},
+  {"id":"speaking-kz-31","course":"speaking-kz","title":"请说慢一点。","tag":"造句与口语","level":"零基础口语","cn":"请说慢一点。","kz":"Баяуырақ сөйлеңізші.","ru":"","tip":"对方说快时使用。","group":"高频交流"},
+  {"id":"speaking-kz-32","course":"speaking-kz","title":"请帮我。","tag":"造句与口语","level":"零基础口语","cn":"请帮我。","kz":"Маған көмектесіңізші.","ru":"","tip":"请求帮助。","group":"高频交流"},
+  {"id":"speaking-kz-33","course":"speaking-kz","title":"我需要帮助。","tag":"造句与口语","level":"零基础口语","cn":"我需要帮助。","kz":"Маған көмек керек.","ru":"","tip":"表达需要帮助。","group":"高频交流"},
+  {"id":"speaking-kz-34","course":"speaking-kz","title":"我想喝水。","tag":"造句与口语","level":"零基础口语","cn":"我想喝水。","kz":"Мен су ішкім келеді.","ru":"","tip":"从“我想”开始说。","group":"高频交流"},
+  {"id":"speaking-kz-35","course":"speaking-kz","title":"我想吃饭。","tag":"造句与口语","level":"零基础口语","cn":"我想吃饭。","kz":"Мен тамақ жегім келеді.","ru":"","tip":"日常吃饭表达。","group":"高频交流"},
+  {"id":"speaking-kz-36","course":"speaking-kz","title":"我喜欢这个。","tag":"造句与口语","level":"零基础口语","cn":"我喜欢这个。","kz":"Маған бұл ұнайды.","ru":"","tip":"表达喜欢。","group":"实用场景"},
+  {"id":"speaking-kz-37","course":"speaking-kz","title":"我不喜欢这个。","tag":"造句与口语","level":"零基础口语","cn":"我不喜欢这个。","kz":"Маған бұл ұнамайды.","ru":"","tip":"表达不喜欢。","group":"实用场景"},
+  {"id":"speaking-kz-38","course":"speaking-kz","title":"多少钱？","tag":"造句与口语","level":"零基础口语","cn":"多少钱？","kz":"Қанша тұрады?","ru":"","tip":"购物和服务高频句。","group":"实用场景"},
+  {"id":"speaking-kz-39","course":"speaking-kz","title":"什么时候？","tag":"造句与口语","level":"零基础口语","cn":"什么时候？","kz":"Қашан?","ru":"","tip":"问时间。","group":"实用场景"},
+  {"id":"speaking-kz-40","course":"speaking-kz","title":"今天我上班。","tag":"造句与口语","level":"零基础口语","cn":"今天我上班。","kz":"Мен бүгін жұмыс істеймін.","ru":"","tip":"加入今天。","group":"实用场景"},
+  {"id":"speaking-kz-41","course":"speaking-kz","title":"明天我不来。","tag":"造句与口语","level":"零基础口语","cn":"明天我不来。","kz":"Мен ертең келмеймін.","ru":"","tip":"表达明天的计划。","group":"实用场景"},
+  {"id":"speaking-kz-42","course":"speaking-kz","title":"现在可以吗？","tag":"造句与口语","level":"零基础口语","cn":"现在可以吗？","kz":"Қазір бола ма?","ru":"","tip":"询问现在是否可以。","group":"实用场景"},
+  {"id":"speaking-kz-43","course":"speaking-kz","title":"这里可以坐吗？","tag":"造句与口语","level":"零基础口语","cn":"这里可以坐吗？","kz":"Бұл жерде отыруға бола ма?","ru":"","tip":"生活中的许可表达。","group":"实用场景"},
+  {"id":"speaking-kz-44","course":"speaking-kz","title":"这里不能停车。","tag":"造句与口语","level":"零基础口语","cn":"这里不能停车。","kz":"Бұл жерде көлік қоюға болмайды.","ru":"","tip":"真实环境中的禁止。","group":"实用场景"},
+  {"id":"speaking-kz-45","course":"speaking-kz","title":"打车：我要去火车站。","tag":"造句与口语","level":"零基础口语","cn":"打车：我要去火车站。","kz":"Мен вокзалға барғым келеді.","ru":"","tip":"把口语带入打车。","group":"实用场景"},
+  {"id":"speaking-kz-46","course":"speaking-kz","title":"商店：我要买这个。","tag":"造句与口语","level":"零基础口语","cn":"商店：我要买这个。","kz":"Мынаны сатып аламын.","ru":"","tip":"把口语带入购物。","group":"实用场景"},
+  {"id":"speaking-kz-47","course":"speaking-kz","title":"餐厅：请给我菜单。","tag":"造句与口语","level":"零基础口语","cn":"餐厅：请给我菜单。","kz":"Мәзірді беріңізші.","ru":"","tip":"把口语带入餐厅。","group":"实用场景"},
+  {"id":"speaking-kz-48","course":"speaking-kz","title":"办公室：请把文件给我。","tag":"造句与口语","level":"零基础口语","cn":"办公室：请把文件给我。","kz":"Құжатты маған беріңізші.","ru":"","tip":"把口语带入办公室。","group":"实用场景"},
+  {"id":"speaking-kz-49","course":"speaking-kz","title":"物流：货物什么时候到？","tag":"造句与口语","level":"零基础口语","cn":"物流：货物什么时候到？","kz":"Жүк қашан келеді?","ru":"","tip":"把口语带入物流。","group":"实用场景"},
+  {"id":"speaking-ru-01","course":"speaking-ru","title":"我","tag":"造句与口语","level":"零基础口语","cn":"我","kz":"","ru":"Я","tip":"从一个词开始开口。","group":"口语起步"},
+  {"id":"speaking-ru-02","course":"speaking-ru","title":"你","tag":"造句与口语","level":"零基础口语","cn":"你","kz":"","ru":"Ты","tip":"认识对方。","group":"口语起步"},
+  {"id":"speaking-ru-03","course":"speaking-ru","title":"他","tag":"造句与口语","level":"零基础口语","cn":"他","kz":"","ru":"Он","tip":"谈论第三个人。","group":"口语起步"},
+  {"id":"speaking-ru-04","course":"speaking-ru","title":"我们","tag":"造句与口语","level":"零基础口语","cn":"我们","kz":"","ru":"Мы","tip":"表达一起做事。","group":"口语起步"},
+  {"id":"speaking-ru-05","course":"speaking-ru","title":"你们","tag":"造句与口语","level":"零基础口语","cn":"你们","kz":"","ru":"Вы","tip":"对多人说话或礼貌称呼。","group":"口语起步"},
+  {"id":"speaking-ru-06","course":"speaking-ru","title":"他们","tag":"造句与口语","level":"零基础口语","cn":"他们","kz":"","ru":"Они","tip":"谈论多人。","group":"口语起步"},
+  {"id":"speaking-ru-07","course":"speaking-ru","title":"我是中国人。","tag":"造句与口语","level":"零基础口语","cn":"我是中国人。","kz":"","ru":"Я из Китая.","tip":"直接练一条完整口语句。","group":"基础表达"},
+  {"id":"speaking-ru-08","course":"speaking-ru","title":"你是中国人吗？","tag":"造句与口语","level":"零基础口语","cn":"你是中国人吗？","kz":"","ru":"Ты из Китая?","tip":"直接练提问。","group":"基础表达"},
+  {"id":"speaking-ru-09","course":"speaking-ru","title":"他是我的同事。","tag":"造句与口语","level":"零基础口语","cn":"他是我的同事。","kz":"","ru":"Он мой коллега.","tip":"把人称词放进真实表达。","group":"基础表达"},
+  {"id":"speaking-ru-10","course":"speaking-ru","title":"我是新员工。","tag":"造句与口语","level":"零基础口语","cn":"我是新员工。","kz":"","ru":"Я новый сотрудник.","tip":"工作场景自我介绍。","group":"基础表达"},
+  {"id":"speaking-ru-11","course":"speaking-ru","title":"我在这里。","tag":"造句与口语","level":"零基础口语","cn":"我在这里。","kz":"","ru":"Я здесь.","tip":"表达所在位置。","group":"基础表达"},
+  {"id":"speaking-ru-12","course":"speaking-ru","title":"你在哪里？","tag":"造句与口语","level":"零基础口语","cn":"你在哪里？","kz":"","ru":"Где ты?","tip":"高频口语问位置。","group":"基础表达"},
+  {"id":"speaking-ru-13","course":"speaking-ru","title":"他在办公室。","tag":"造句与口语","level":"零基础口语","cn":"他在办公室。","kz":"","ru":"Он в офисе.","tip":"描述别人所在地点。","group":"基础表达"},
+  {"id":"speaking-ru-14","course":"speaking-ru","title":"我有车。","tag":"造句与口语","level":"零基础口语","cn":"我有车。","kz":"","ru":"У меня есть машина.","tip":"直接掌握“我有”。","group":"基础表达"},
+  {"id":"speaking-ru-15","course":"speaking-ru","title":"你有时间吗？","tag":"造句与口语","level":"零基础口语","cn":"你有时间吗？","kz":"","ru":"У тебя есть время?","tip":"询问对方是否有时间。","group":"基础表达"},
+  {"id":"speaking-ru-16","course":"speaking-ru","title":"我没有钱。","tag":"造句与口语","level":"零基础口语","cn":"我没有钱。","kz":"","ru":"У меня нет денег.","tip":"直接表达“没有”。","group":"基础表达"},
+  {"id":"speaking-ru-17","course":"speaking-ru","title":"这是我的手机。","tag":"造句与口语","level":"零基础口语","cn":"这是我的手机。","kz":"","ru":"Это мой телефон.","tip":"指着物品开口说。","group":"基础表达"},
+  {"id":"speaking-ru-18","course":"speaking-ru","title":"这是什么？","tag":"造句与口语","level":"零基础口语","cn":"这是什么？","kz":"","ru":"Что это?","tip":"最常用的确认句。","group":"基础表达"},
+  {"id":"speaking-ru-19","course":"speaking-ru","title":"谁？","tag":"造句与口语","level":"零基础口语","cn":"谁？","kz":"","ru":"Кто?","tip":"问人。","group":"高频交流"},
+  {"id":"speaking-ru-20","course":"speaking-ru","title":"什么？","tag":"造句与口语","level":"零基础口语","cn":"什么？","kz":"","ru":"Что?","tip":"问事物。","group":"高频交流"},
+  {"id":"speaking-ru-21","course":"speaking-ru","title":"在哪里？","tag":"造句与口语","level":"零基础口语","cn":"在哪里？","kz":"","ru":"Где?","tip":"问地点。","group":"高频交流"},
+  {"id":"speaking-ru-22","course":"speaking-ru","title":"我去公司。","tag":"造句与口语","level":"零基础口语","cn":"我去公司。","kz":"","ru":"Я иду в офис.","tip":"练习“我 + 去”。","group":"高频交流"},
+  {"id":"speaking-ru-23","course":"speaking-ru","title":"我要回家。","tag":"造句与口语","level":"零基础口语","cn":"我要回家。","kz":"","ru":"Я хочу пойти домой.","tip":"表达想做什么。","group":"高频交流"},
+  {"id":"speaking-ru-24","course":"speaking-ru","title":"我来了。","tag":"造句与口语","level":"零基础口语","cn":"我来了。","kz":"","ru":"Я пришёл.","tip":"到场时直接说。","group":"高频交流"},
+  {"id":"speaking-ru-25","course":"speaking-ru","title":"我看到了。","tag":"造句与口语","level":"零基础口语","cn":"我看到了。","kz":"","ru":"Я видел.","tip":"告诉对方自己看到了。","group":"高频交流"},
+  {"id":"speaking-ru-26","course":"speaking-ru","title":"我知道。","tag":"造句与口语","level":"零基础口语","cn":"我知道。","kz":"","ru":"Я знаю.","tip":"表示知道。","group":"高频交流"},
+  {"id":"speaking-ru-27","course":"speaking-ru","title":"我不知道。","tag":"造句与口语","level":"零基础口语","cn":"我不知道。","kz":"","ru":"Я не знаю.","tip":"不知道时直接说。","group":"高频交流"},
+  {"id":"speaking-ru-28","course":"speaking-ru","title":"我懂了。","tag":"造句与口语","level":"零基础口语","cn":"我懂了。","kz":"","ru":"Я понял.","tip":"听懂后回应。","group":"高频交流"},
+  {"id":"speaking-ru-29","course":"speaking-ru","title":"我没听懂。","tag":"造句与口语","level":"零基础口语","cn":"我没听懂。","kz":"","ru":"Я не понял.","tip":"没听懂时回应。","group":"高频交流"},
+  {"id":"speaking-ru-30","course":"speaking-ru","title":"请再说一次。","tag":"造句与口语","level":"零基础口语","cn":"请再说一次。","kz":"","ru":"Повторите, пожалуйста.","tip":"请求对方重复。","group":"高频交流"},
+  {"id":"speaking-ru-31","course":"speaking-ru","title":"请说慢一点。","tag":"造句与口语","level":"零基础口语","cn":"请说慢一点。","kz":"","ru":"Говорите медленнее, пожалуйста.","tip":"对方说快时使用。","group":"高频交流"},
+  {"id":"speaking-ru-32","course":"speaking-ru","title":"请帮我。","tag":"造句与口语","level":"零基础口语","cn":"请帮我。","kz":"","ru":"Помогите мне, пожалуйста.","tip":"请求帮助。","group":"高频交流"},
+  {"id":"speaking-ru-33","course":"speaking-ru","title":"我需要帮助。","tag":"造句与口语","level":"零基础口语","cn":"我需要帮助。","kz":"","ru":"Мне нужна помощь.","tip":"表达需要帮助。","group":"高频交流"},
+  {"id":"speaking-ru-34","course":"speaking-ru","title":"我想喝水。","tag":"造句与口语","level":"零基础口语","cn":"我想喝水。","kz":"","ru":"Я хочу пить воду.","tip":"从“我想”开始说。","group":"高频交流"},
+  {"id":"speaking-ru-35","course":"speaking-ru","title":"我想吃饭。","tag":"造句与口语","level":"零基础口语","cn":"我想吃饭。","kz":"","ru":"Я хочу поесть.","tip":"日常吃饭表达。","group":"高频交流"},
+  {"id":"speaking-ru-36","course":"speaking-ru","title":"我喜欢这个。","tag":"造句与口语","level":"零基础口语","cn":"我喜欢这个。","kz":"","ru":"Мне это нравится.","tip":"表达喜欢。","group":"实用场景"},
+  {"id":"speaking-ru-37","course":"speaking-ru","title":"我不喜欢这个。","tag":"造句与口语","level":"零基础口语","cn":"我不喜欢这个。","kz":"","ru":"Мне это не нравится.","tip":"表达不喜欢。","group":"实用场景"},
+  {"id":"speaking-ru-38","course":"speaking-ru","title":"多少钱？","tag":"造句与口语","level":"零基础口语","cn":"多少钱？","kz":"","ru":"Сколько стоит?","tip":"购物和服务高频句。","group":"实用场景"},
+  {"id":"speaking-ru-39","course":"speaking-ru","title":"什么时候？","tag":"造句与口语","level":"零基础口语","cn":"什么时候？","kz":"","ru":"Когда?","tip":"问时间。","group":"实用场景"},
+  {"id":"speaking-ru-40","course":"speaking-ru","title":"今天我上班。","tag":"造句与口语","level":"零基础口语","cn":"今天我上班。","kz":"","ru":"Я сегодня работаю.","tip":"加入今天。","group":"实用场景"},
+  {"id":"speaking-ru-41","course":"speaking-ru","title":"明天我不来。","tag":"造句与口语","level":"零基础口语","cn":"明天我不来。","kz":"","ru":"Я завтра не приду.","tip":"表达明天的计划。","group":"实用场景"},
+  {"id":"speaking-ru-42","course":"speaking-ru","title":"现在可以吗？","tag":"造句与口语","level":"零基础口语","cn":"现在可以吗？","kz":"","ru":"Можно сейчас?","tip":"询问现在是否可以。","group":"实用场景"},
+  {"id":"speaking-ru-43","course":"speaking-ru","title":"这里可以坐吗？","tag":"造句与口语","level":"零基础口语","cn":"这里可以坐吗？","kz":"","ru":"Можно здесь сесть?","tip":"生活中的许可表达。","group":"实用场景"},
+  {"id":"speaking-ru-44","course":"speaking-ru","title":"这里不能停车。","tag":"造句与口语","level":"零基础口语","cn":"这里不能停车。","kz":"","ru":"Здесь нельзя парковаться.","tip":"真实环境中的禁止。","group":"实用场景"},
+  {"id":"speaking-ru-45","course":"speaking-ru","title":"打车：我要去火车站。","tag":"造句与口语","level":"零基础口语","cn":"打车：我要去火车站。","kz":"","ru":"Я хочу поехать на вокзал.","tip":"把口语带入打车。","group":"实用场景"},
+  {"id":"speaking-ru-46","course":"speaking-ru","title":"商店：我要买这个。","tag":"造句与口语","level":"零基础口语","cn":"商店：我要买这个。","kz":"","ru":"Я хочу купить это.","tip":"把口语带入购物。","group":"实用场景"},
+  {"id":"speaking-ru-47","course":"speaking-ru","title":"餐厅：请给我菜单。","tag":"造句与口语","level":"零基础口语","cn":"餐厅：请给我菜单。","kz":"","ru":"Дайте меню, пожалуйста.","tip":"把口语带入餐厅。","group":"实用场景"},
+  {"id":"speaking-ru-48","course":"speaking-ru","title":"办公室：请把文件给我。","tag":"造句与口语","level":"零基础口语","cn":"办公室：请把文件给我。","kz":"","ru":"Дайте мне документы, пожалуйста.","tip":"把口语带入办公室。","group":"实用场景"},
+  {"id":"speaking-ru-49","course":"speaking-ru","title":"物流：货物什么时候到？","tag":"造句与口语","level":"零基础口语","cn":"物流：货物什么时候到？","kz":"","ru":"Когда прибудет груз?","tip":"把口语带入物流。","group":"实用场景"},
 ];
 
 const courses = [
-  { id:'daily-kz', icon:'🇰🇿', title:'哈萨克语入门', desc:'从打招呼、问路开始', accent:'KZ' },
-  { id:'daily-ru', icon:'🇷🇺', title:'俄语入门', desc:'生活场景高频表达', accent:'RU' },
-  { id:'work-ru', icon:'🏭', title:'工作俄语', desc:'工厂、物流、商务沟通', accent:'WORK' },
-  { id:'work-kz', icon:'🚛', title:'工作哈语', desc:'铁路、工厂、现场沟通', accent:'WORK' }
+  { id:'daily-kz', icon:'🔤', title:'哈萨克语｜零基础·字母与发音', desc:'从 42 个字母、特殊音和拼读开始，先把基础读音学扎实', accent:'KZ', kind:'foundation', targetLang:'kk' },
+  { id:'sentence-kz', icon:'📘', title:'哈萨克语｜基础语法课', desc:'正式系统学习人称、否定、疑问、地点、时态、格和句型', accent:'KZ', kind:'sentence', targetLang:'kk' },
+  { id:'speaking-kz', icon:'💬', title:'哈萨克语｜零基础造句与口语', desc:'不要求先学完整语法，从“我、你、他”开始直接开口说', accent:'KZ', kind:'speaking', targetLang:'kk' },
+  { id:'daily-ru', icon:'🔤', title:'俄语｜零基础·字母与发音', desc:'从 33 个字母、发音、重音和拼读开始，先把基础读音学扎实', accent:'RU', kind:'foundation', targetLang:'ru' },
+  { id:'sentence-ru', icon:'📘', title:'俄语｜基础语法课', desc:'正式系统学习人称、否定、疑问、地点、时态、格、前置词和句型', accent:'RU', kind:'sentence', targetLang:'ru' },
+  { id:'speaking-ru', icon:'💬', title:'俄语｜零基础造句与口语', desc:'不要求先学完整语法，从“我、你、他”开始直接开口说', accent:'RU', kind:'speaking', targetLang:'ru' }
 ];
 
 const scenes = [
@@ -218,7 +406,6 @@ function readCompleted(){
 let completed = readCompleted();
 
 function courseLessons(id){
-  if(id === 'daily-ru') return lessons.filter(l => l.course === 'daily-kz');
   return lessons.filter(l => l.course === id);
 }
 function sceneLessons(type, sceneId){
@@ -282,7 +469,21 @@ function renderCoursePage(){
   const desc=document.getElementById('courseDesc'); if(desc) desc.textContent=c.desc;
   const list=document.getElementById('lessonList');
   const pool=courseLessons(c.id);
-  if(list){ list.innerHTML=pool.map((l,i)=>`<a class="list-item" href="learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${i}"><span class="num">${String(i+1).padStart(2,'0')}</span><span><strong>${l.title}</strong><small>${l.cn}</small></span><span class="arrow">→</span></a>`).join(''); }
+  const detailLead=document.querySelector('.course-detail');
+  if(detailLead){
+    const intro=document.getElementById('courseIntroNote');
+    if(intro && c.kind==='sentence') intro.textContent='正式语法路线：和“零基础·字母与发音”分开，不重复教字母。按体系学习人称、名词性谓语、否定、疑问、所属、存在句、地点与方向、动词时态、情态表达、连接句，再进入组句、翻译和独立造句。';
+    if(intro && c.kind==='speaking') intro.textContent='零基础口语路线：不要求先学完整语法，从“我、你、他”开始，先把短句说出来，再逐步扩展到提问、回应、请求、时间和生活/工作场景。';
+  }
+  if(list){
+    let lastGroup='';
+    list.forEach(l=>{});
+    list.innerHTML=pool.map((l,i)=>{
+      const group=l.group&&l.group!==lastGroup ? (lastGroup=l.group, `<div class="course-group-label">${l.group}</div>`) : '';
+      const target = c.targetLang==='kk' ? l.kz : c.targetLang==='ru' ? l.ru : (l.kz||l.ru);
+      return `${group}<a class="list-item" href="learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${i}"><span class="num">${String(i+1).padStart(2,'0')}</span><span><strong>${l.title}</strong><small>${l.cn}${target?` · ${target}`:''}</small></span><span class="arrow">→</span></a>`;
+    }).join('');
+  }
   const pct=document.getElementById('courseProgress'); if(pct) pct.textContent=percentFor(pool)+'%';
   const start=document.getElementById('courseStart'); if(start) start.href=`learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=0`;
 }
@@ -315,11 +516,18 @@ function renderLearnPage(){
   let pool=[]; let label='学习';
   if(qs('pool')==='scene'){ pool=sceneLessons(qs('type')||'daily-kz'); label='场景练习'; }
   else { const c=courseById(qs('id')||'daily-kz')||courses[0]; pool=courseLessons(c.id); label=c.title; }
+  const courseForLearn=qs('pool')==='scene' ? null : (courseById(qs('id')||'daily-kz')||courses[0]);
   let current=Math.max(0,Math.min(Number(qs('start')||0),pool.length-1));
-  const title=document.getElementById('learnTitle'); const count=document.getElementById('learnCount'); const cn=document.getElementById('learnCn'); const kz=document.getElementById('learnKz'); const ru=document.getElementById('learnRu'); const tip=document.getElementById('learnTip'); const tag=document.getElementById('learnTag'); const path=document.getElementById('learnPath');
+  const title=document.getElementById('learnTitle'); const count=document.getElementById('learnCount'); const cn=document.getElementById('learnCn'); const kz=document.getElementById('learnKz'); const ru=document.getElementById('learnRu'); const tip=document.getElementById('learnTip'); const grammar=document.getElementById('learnGrammar'); const tag=document.getElementById('learnTag'); const path=document.getElementById('learnPath');
+  const kzRow=document.getElementById('learnKzRow'), ruRow=document.getElementById('learnRuRow');
+  if(courseForLearn?.kind==='sentence' || courseForLearn?.kind==='speaking'){
+    if(kzRow) kzRow.style.display=courseForLearn.targetLang==='kk'?'flex':'none';
+    if(ruRow) ruRow.style.display=courseForLearn.targetLang==='ru'?'flex':'none';
+    const side=document.getElementById('learnModeNote'); if(side) side.textContent=courseForLearn.kind==='speaking' ? (courseForLearn.targetLang==='kk'?'目标语言：哈萨克语。零基础直接从“我、你、他”开始说。':'目标语言：俄语。零基础直接从“我、你、他”开始说。') : (courseForLearn.targetLang==='kk'?'目标语言：哈萨克语。按语法体系从“我、你、他”开始。':'目标语言：俄语。按语法体系从“我、你、他”开始。');
+  } else { if(kzRow) kzRow.style.display='flex'; if(ruRow) ruRow.style.display='flex'; }
   function draw(){
     const l=pool[current]; if(!l) return;
-    title.textContent=l.title; count.textContent=`${current+1} / ${pool.length}`; cn.textContent=l.cn; kz.textContent=l.kz; ru.textContent=l.ru; tip.textContent=l.tip; tag.textContent=l.tag; path.textContent=`当前内容：${label}`;
+    title.textContent=l.title; count.textContent=`${current+1} / ${pool.length}`; cn.textContent=l.cn; kz.textContent=l.kz; ru.textContent=l.ru; tip.textContent=l.tip; if(grammar) grammar.textContent=l.group ? `语法模块：${l.group}` : ''; tag.textContent=l.tag; path.textContent=`当前内容：${label}`;
     document.getElementById('prevLink').href = learnUrl(current-1<0?pool.length-1:current-1);
     document.getElementById('nextLink').href = learnUrl((current+1)%pool.length);
     document.getElementById('markBtn').textContent = completed.includes(l.id) ? '已记住 ✓' : '记住了，下一句';

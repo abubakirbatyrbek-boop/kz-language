@@ -2,12 +2,20 @@
 <html lang="zh-CN"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>课程｜中亚语言通</title><link rel="stylesheet" href="styles.css"/></head>
 <body data-page="course-list">
 <header class="topbar"><div class="container nav-wrap"><a class="brand" href="index.html"><span class="brand-mark">中</span><span><strong>中亚语言通</strong><small>哈萨克语 · 俄语</small></span></a><nav><a class="active" href="courses.html">课程</a><a href="scenes.html">场景</a><a href="learn.html?pool=course&id=daily-kz&start=0">开始学习</a><a href="government.html">国家机关</a><a href="feedback.html">客服反馈</a></nav><div id="authNav" class="auth-nav"><a class="auth-link" href="auth.html">登录 / 注册</a></div></div></header>
-<main><section class="section"><div class="container"><div class="section-head"><div><span class="eyebrow">课程</span><h1>选择你要学的方向</h1><p class="page-lead">每个课程都会进入独立详情页，再从详情页进入连续学习。</p></div></div><div class="course-grid" id="courseGrid"></div></div></section>
+<main><section class="section"><div class="container"><div class="section-head"><div><span class="eyebrow">课程</span><h1>每种语言，三条独立学习路线</h1><p class="page-lead">把“读音基础、正式语法、直接口语”彻底分开。你可以按自己的目标选一条开始，也可以三条配合学习。</p></div></div>
+<div class="course-course-group"><div class="course-group-head"><div><span class="eyebrow">🇰🇿 哈萨克语</span><h2>哈萨克语</h2></div><p>从会读，到会分析句子，再到直接开口。</p></div><div class="course-grid">
+<a class="course course-link" href="path.html?lang=kk"><div class="course-icon">🔤</div><h3>零基础·字母与发音</h3><p>42 个字母、特殊音、拼读、听音和发音练习。</p><div class="meta"><span>基础课</span><span>→</span></div></a>
+<a class="course course-link" href="course.html?id=sentence-kz"><div class="course-icon">📘</div><h3>基础语法课</h3><p>系统学习人称、否定、疑问、地点、时态、格和基本句型。</p><div class="meta"><span>语法课</span><span>→</span></div></a>
+<a class="course course-link" href="course.html?id=speaking-kz"><div class="course-icon">💬</div><h3>零基础造句与口语</h3><p>从“我、你、他”开始，不等语法学完，直接练说和造句。</p><div class="meta"><span>口语课</span><span>→</span></div></a>
+</div></div>
+<div class="course-course-group"><div class="course-group-head"><div><span class="eyebrow">🇷🇺 俄语</span><h2>俄语</h2></div><p>把读音、语法和口语训练分开，学习路线更清楚。</p></div><div class="course-grid">
+<a class="course course-link" href="path.html?lang=ru"><div class="course-icon">🔤</div><h3>零基础·字母与发音</h3><p>33 个字母、发音、重音、拼读、听音和发音练习。</p><div class="meta"><span>基础课</span><span>→</span></div></a>
+<a class="course course-link" href="course.html?id=sentence-ru"><div class="course-icon">📘</div><h3>基础语法课</h3><p>系统学习人称、否定、疑问、地点、时态、格、前置词和基本句型。</p><div class="meta"><span>语法课</span><span>→</span></div></a>
+<a class="course course-link" href="course.html?id=speaking-ru"><div class="course-icon">💬</div><h3>零基础造句与口语</h3><p>从“我、你、他”开始，不等语法学完，直接练说和造句。</p><div class="meta"><span>口语课</span><span>→</span></div></a>
+</div></div></div></section>
 <section class="section soft"><div class="container"><div class="about-grid"><div><span class="eyebrow">学习逻辑</span><h2>先选课程，再逐句学习。</h2></div><p>中文放在最前面，哈萨克语和俄语并排对照。点击发音按钮即可朗读。</p></div></div></section></main>
 <footer class="footer"><div class="container footer-wrap"><span>中亚语言通</span><a href="index.html">返回首页</a></div></footer><script src="app.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
 <script src="auth.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded',()=>{const el=document.getElementById('courseGrid'); const cs=[['🇰🇿','哈萨克语入门','从打招呼、问路开始','daily-kz'],['🇷🇺','俄语入门','生活场景高频表达','daily-ru'],['🏭','工作俄语','工厂、物流、商务沟通','work-ru'],['🚛','工作哈语','铁路、工厂、现场沟通','work-kz']]; el.innerHTML=cs.map(c=>`<a class="course course-link" href="course.html?id=${c[3]}"><div class="course-icon">${c[0]}</div><h3>${c[1]}</h3><p>${c[2]}</p><div class="meta"><span>进入课程</span><span>→</span></div></a>`).join('')})
-</script></body></html>
+</body></html>
