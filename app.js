@@ -658,7 +658,7 @@ function init(){
   if(page==='course') renderCoursePage();
   if(page==='scene') renderScenePage();
   if(page==='learn') renderLearnPage();
-  if(page==='test') renderTestPage();
+  if(page==='test' && qs('grammar')!=='1') renderTestPage();
   const reset=document.getElementById('resetProgress'); if(reset) reset.addEventListener('click',()=>{if(confirm('确定要清空本机学习进度吗？')){completed=[];localStorage.removeItem('completedLessons');location.reload();}});
 }
 
