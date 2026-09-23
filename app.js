@@ -650,6 +650,168 @@ function renderTestPage(){
   render();
 }
 
+// Speaking courses use the existing course/learn pages and completedLessons IDs.
+const SpeakingFlow = (() => {
+  const PASS = 70;
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const courseUrl = c => 'course.html?id=' + encodeURIComponent(c.id);
+  const lessonUrl = (c, i) => 'learn.html?pool=course&id=' + encodeURIComponent(c.id) + '&start=' + i;
+  const examUrl = (c, i) => courseUrl(c) + '&exam=' + (i + 1);
+  const loginUrl = next => 'auth.html?next=' + encodeURIComponent(next);
+  const scoreKey = (c, m) => 'speakingModuleBest:' + c.id + ':' + encodeURIComponent(m.name);
+  function best(c, m) {
+    const n = Number(localStorage.getItem(scoreKey(c, m)));
+    return Number.isFinite(n) && n >= 0 && n <= 100 ? n : 0;
+  }
+  function modules(c) { return courseGroups(courseLessons(c.id)); }
+  function done(m) {
+    const ids = readCompleted();
+    return Array.isArray(ids) && m.items.every(l => ids.includes(l.id));
+  }
+  function unlocked(c, ms, i, user) {
+    return i >= 0 && i < ms.length && (i === 0 || !!user) &&
+      ms.slice(0, i).every(m => done(m) && best(c, m) >= PASS);
+  }
+  async function userNow() {
+    try {
+      const client = window.KZAuth?.getClient?.();
+      if (!client) return null;
+      const {data, error} = await client.auth.getSession();
+      return error ? null : data?.session?.user || null;
+    } catch { return null; }
+  }
+  function gate(c, ms, i, user, next) {
+    if (i > 0 && !user) return '<p>第 2 模块开始必须注册 / 登录；前面模块的考试也须达到 70%。本浏览器已有学习进度会保留。</p><a class="primary-btn" href="' + esc(loginUrl(next)) + '">注册 / 登录</a>';
+    return '<p>请先完成前面模块的全部小课，并通过各模块考试（≥70%）。</p><a class="primary-btn" href="' + esc(courseUrl(c)) + '">返回模块列表</a>';
+  }
+  function questions(c, m) {
+    const target = l => c.targetLang === 'kk' ? l.kz : l.ru;
+    const shuffle = a => a.map(v => [Math.random(), v]).sort((a,b) => a[0]-b[0]).map(x => x[1]);
+    return shuffle(m.items).map(l => ({
+      prompt:l.cn, answer:target(l),
+      options:shuffle([target(l), ...shuffle([...new Set(courseLessons(c.id).map(target).filter(v => v && v !== target(l))) ]).slice(0,3)])
+    }));
+  }
+  async function renderCourse(c) {
+    const user = await userNow(), ms = modules(c), pool = courseLessons(c.id);
+    document.title = c.title + '｜中亚语言通';
+    document.getElementById('courseTitle').textContent = c.title;
+    document.getElementById('courseDesc').textContent = c.desc;
+    document.getElementById('courseIntroNote').textContent = '按模块闯关：完成全部小课 → 模块考试达到 70% → 解锁下一模块。第 1 模块可游客体验，第 2 模块起需注册 / 登录。';
+    document.getElementById('courseProgress').textContent = percentFor(pool) + '%';
+    document.getElementById('courseStudyMap').innerHTML = courseStudyMap(pool, c);
+    const root = document.getElementById('lessonList'), start = document.getElementById('courseStart');
+    start.hidden = true;
+    start.style.display = 'none';
+    if (qs('exam') !== null) {
+      const index = Number(qs('exam')) - 1;
+      if (!Number.isInteger(index) || !ms[index]) {
+        root.innerHTML = '<p>没有这个模块。</p><a class="secondary-btn" href="' + esc(courseUrl(c)) + '">返回模块列表</a>';
+        return;
+      }
+      if (!unlocked(c, ms, index, user)) { root.innerHTML = gate(c, ms, index, user, examUrl(c,index)); return; }
+      if (!done(ms[index])) { root.innerHTML = '<p>完成本模块全部小课后才能参加考试。</p><a class="primary-btn" href="' + esc(courseUrl(c)) + '">继续学习</a>'; return; }
+      renderExam(c, ms, index, root);
+      return;
+    }
+    root.innerHTML = ms.map((m,i) => {
+      const open = unlocked(c,ms,i,user), finished = done(m), score = best(c,m);
+      const status = score >= PASS && finished ? '考试已通过 · ' + Math.floor(score) + '%' : open ? '已解锁' : '未解锁';
+      const heading = '<div class="course-group-heading"><div><span class="eyebrow">模块 ' + (i+1) + ' · ' + status + '</span><h3>' + esc(m.name) + '</h3></div><span>' + m.items.filter(l => completed.includes(l.id)).length + ' / ' + m.items.length + ' 课</span></div>';
+      if (!open) return heading + gate(c,ms,i,user,courseUrl(c));
+      return heading + m.items.map(l => '<a class="list-item course-lesson-item" href="' + esc(lessonUrl(c,pool.indexOf(l))) + '"><span class="num">' + (completed.includes(l.id)?'✓':pool.indexOf(l)+1) + '</span><span class="lesson-item-main"><strong>' + esc(l.title) + '</strong><small>' + esc(l.cn) + ' · ' + esc(c.targetLang==='kk'?l.kz:l.ru) + '</small></span><span class="arrow">→</span></a>').join('') +
+        (finished ? '<a class="primary-btn" href="' + esc(examUrl(c,i)) + '">' + (score>=PASS?'重新考试':'参加模块考试') + '（≥70%通过）</a>' : '<p>完成本模块全部小课后开放考试。</p>');
+    }).join('');
+  }
+  function renderExam(c, ms, index, root) {
+    const bank = questions(c,ms[index]);
+    let current = 0, correct = 0, answered = false, submitting = false;
+    function draw() {
+      const q = bank[current]; answered = false;
+      root.innerHTML = '<div class="lesson-card"><h2>模块 ' + (index+1) + ' · ' + esc(ms[index].name) + '考试</h2><p>第 ' + (current+1) + ' / ' + bank.length + ' 题 · ≥70%通过</p><h3>' + esc(q.prompt) + '</h3><p>请选择正确的' + (c.targetLang==='kk'?'哈萨克语':'俄语') + '：</p><div id="speakingOptions">' + q.options.map((v,i)=>'<button type="button" class="answer-option" data-choice="' + i + '">' + esc(v) + '</button>').join('') + '</div><p id="speakingFeedback" role="status"></p><button type="button" id="speakingNext" class="primary-btn" disabled>' + (current===bank.length-1?'提交考试':'下一题') + '</button><a class="secondary-btn" href="' + esc(courseUrl(c)) + '">返回模块列表</a></div>';
+      root.querySelectorAll('[data-choice]').forEach(button => button.onclick = () => {
+        if (answered) return;
+        answered = true;
+        const ok = q.options[Number(button.dataset.choice)] === q.answer;
+        if (ok) correct++;
+        root.querySelectorAll('[data-choice]').forEach(b => { b.disabled = true; if(q.options[Number(b.dataset.choice)]===q.answer)b.classList.add('correct'); });
+        if(!ok)button.classList.add('wrong');
+        root.querySelector('#speakingFeedback').textContent = ok?'回答正确！':'正确答案：' + q.answer;
+        root.querySelector('#speakingNext').disabled = false;
+      });
+      root.querySelector('#speakingNext').onclick = async () => {
+        if (!answered || submitting) return;
+        if (current < bank.length-1) { current++; draw(); return; }
+        submitting = true;
+        root.querySelector('#speakingNext').disabled = true;
+        const user = await userNow();
+        if (!unlocked(c,ms,index,user) || !done(ms[index])) { root.innerHTML = gate(c,ms,index,user,examUrl(c,index)); return; }
+        // Keep exact score: rounding 69.5% up to 70 must never unlock a module.
+        const score = correct / bank.length * 100;
+        try { localStorage.setItem(scoreKey(c,ms[index]),String(Math.max(best(c,ms[index]),score))); }
+        catch {
+          root.querySelector('#speakingFeedback').textContent = '成绩未能保存，请允许浏览器存储后重新提交。';
+          submitting = false; root.querySelector('#speakingNext').disabled = false; return;
+        }
+        const passed = score >= PASS;
+        root.innerHTML = '<div class="lesson-card"><h2>' + (passed?'考试通过！':'暂未通过，请复习后重试。') + '</h2><p>答对 ' + correct + ' / ' + bank.length + ' 题 · ' + Math.floor(score) + '%</p><p>' + (passed?(index===ms.length-1?'你已完成全部模块！':index===0&&!user?'注册 / 登录后可进入第 2 模块，当前进度已保留。':'下一模块已解锁。'):'本次未达到 70%。已取得的历史通过成绩会保留。') + '</p><a class="primary-btn" href="' + esc(courseUrl(c)) + '">返回模块列表</a><a class="secondary-btn" href="' + esc(examUrl(c,index)) + '">重新考试</a>' + (passed&&index===0&&!user?'<a class="primary-btn" href="'+esc(loginUrl(courseUrl(c)))+'">注册 / 登录，继续学习</a>':'') + '</div>';
+      };
+    }
+    draw();
+  }
+  async function renderLearn(c) {
+    const host = document.getElementById('protectedContent'), pool = courseLessons(c.id), ms = modules(c);
+    const raw = Number(qs('start') || 0);
+    const current = Number.isInteger(raw) && raw >= 0 && raw < pool.length ? raw : 0;
+    const index = ms.findIndex(m => m.items.includes(pool[current]));
+    const user = await userNow();
+    if (!unlocked(c,ms,index,user)) { host.innerHTML = '<section class="section"><div class="container">' + gate(c,ms,index,user,lessonUrl(c,current)) + '</div></section>'; host.hidden = false; return; }
+    // Normalize malformed URLs before invoking the existing lesson renderer.
+    const url = new URL(location.href); url.searchParams.set('start',String(current)); history.replaceState(null,'',url);
+    renderLearnPage();
+    const m = ms[index], position = m.items.indexOf(pool[current]);
+    const next = document.getElementById('nextLink'), prev = document.getElementById('prevLink');
+    prev.href = position === 0 ? courseUrl(c) : lessonUrl(c,pool.indexOf(m.items[position-1]));
+    if(position===0)prev.textContent = '返回模块列表';
+    const destination = position===m.items.length-1 ? examUrl(c,index) : lessonUrl(c,pool.indexOf(m.items[position+1]));
+    next.href = destination;
+    document.getElementById('markBtn').textContent = position===m.items.length-1?'完成本课，参加模块考试':'记住了，下一句';
+    let saving = false;
+    next.onclick = async event => {
+      event.preventDefault();
+      if(saving)return; saving=true;
+      const freshUser = await userNow();
+      if(!unlocked(c,ms,index,freshUser)){ saving=false; await renderLearn(c); return; }
+      try {
+        completed = [...new Set([...readCompleted(),pool[current].id])];
+        saveCompleted(); location.href = destination;
+      } catch { saving=false; alert('学习进度未能保存，请允许浏览器存储后重试。'); }
+    };
+    host.hidden = false;
+  }
+  function start(c, page) {
+    const host = page==='learn' ? document.getElementById('protectedContent') : null;
+    if(host)host.hidden = true;
+    // auth.js initializes its client in its own DOMContentLoaded callback.
+    setTimeout(async () => {
+      try {
+        completed = readCompleted();
+        if(!Array.isArray(completed))completed=[];
+        if(page==='learn')await renderLearn(c); else await renderCourse(c);
+        window.KZAuth?.getClient?.()?.auth.onAuthStateChange((event) => {
+          if(event==='SIGNED_OUT' || event==='SIGNED_IN')setTimeout(()=>location.reload(),0);
+        });
+      } catch {
+        const root = host || document.getElementById('lessonList');
+        root.innerHTML = '<p>暂时无法读取学习进度，请刷新重试，并检查浏览器是否允许本地存储。</p>';
+        root.hidden = false;
+      }
+    },0);
+  }
+  return {start, modules, done, unlocked, questions, best};
+})();
+
+
 function init(){
   bindSounds();
   const page=document.body.dataset.page;
@@ -657,13 +819,15 @@ function init(){
   if(page==='scene-list') renderSceneList();
   if(page==='course'){
     const c=courseById(qs('id')||'daily-kz')||courses[0];
-    if(c.kind==='sentence' && window.GrammarFlow) window.GrammarFlow.renderCoursePage(c);
+    if(c.kind==='speaking') SpeakingFlow.start(c,'course');
+    else if(c.kind==='sentence' && window.GrammarFlow) window.GrammarFlow.renderCoursePage(c);
     else renderCoursePage();
   }
   if(page==='scene') renderScenePage();
   if(page==='learn'){
     const c=courseById(qs('id')||'daily-kz')||courses[0];
-    if(c.kind==='sentence' && window.GrammarFlow) window.GrammarFlow.renderLearnPage(c);
+    if(c.kind==='speaking' && qs('pool')!=='scene') SpeakingFlow.start(c,'learn');
+    else if(c.kind==='sentence' && window.GrammarFlow) window.GrammarFlow.renderLearnPage(c);
     else renderLearnPage();
   }
   if(page==='test'){
@@ -672,7 +836,7 @@ function init(){
       window.GrammarFlow.renderTestPage(c,Math.max(1,Number(qs('module')||1)));
     } else renderTestPage();
   }
-  const reset=document.getElementById('resetProgress'); if(reset) reset.addEventListener('click',()=>{if(confirm('确定要清空本机学习进度吗？')){completed=[];localStorage.removeItem('completedLessons');location.reload();}});
+  const reset=document.getElementById('resetProgress'); if(reset) reset.addEventListener('click',()=>{if(confirm('确定要清空本机学习进度吗？')){completed=[];localStorage.removeItem('completedLessons');Object.keys(localStorage).filter(key=>key.startsWith('speakingModuleBest:')).forEach(key=>localStorage.removeItem(key));location.reload();}});
 }
 
 document.addEventListener('DOMContentLoaded', init);
