@@ -546,6 +546,7 @@ function renderScenePage(){
   }
   const titleText=scene.title+'场景';
   document.title = `${titleText}｜中亚语言通`;
+  if(!document.getElementById('sceneTitle')) return;
   document.getElementById('sceneTitle').textContent=titleText;
   document.getElementById('sceneDesc').textContent=scene.desc;
   const pool=sceneLessons(scene.type, scene.id);
@@ -609,6 +610,7 @@ function buildTestQuestions(sceneId){
 function renderTestPage(){
   const sceneId=qs('scene')||'rail';
   const scene=sceneById(sceneId)||scenes[0];
+  if(!document.getElementById('testTitle')) return;
   document.getElementById('testTitle').textContent=scene.title+'场景考试';
   document.getElementById('testDesc').textContent=`${scene.desc} 每次考试 5 题，答对越多，成绩越高。`;
   document.title=`${scene.title}场景考试｜中亚语言通`;
@@ -673,6 +675,7 @@ const SpeakingFlow = (() => {
       ms.slice(0, i).every(m => done(m) && best(c, m) >= PASS);
   }
   async function userNow() {
+    await window.KZLearning.ready();
     const client = window.KZAuth?.getClient?.();
     // An unavailable auth service is not proof that the visitor is signed out.
     if (!client) throw new Error('登录服务尚未就绪，请刷新重试。');
@@ -719,9 +722,9 @@ const SpeakingFlow = (() => {
       const open = unlocked(c,ms,i,user), finished = done(m), score = best(c,m);
       const status = score >= PASS && finished ? '考试已通过 · ' + Math.floor(score) + '%' : open ? '已解锁' : '未解锁';
       const heading = '<div class="course-group-heading"><div><span class="eyebrow">模块 ' + (i+1) + ' · ' + status + '</span><h3>' + esc(m.name) + '</h3></div><span>' + m.items.filter(l => completed.includes(l.id)).length + ' / ' + m.items.length + ' 课</span></div>';
-      if (!open) return heading + gate(c,ms,i,user,courseUrl(c));
-      return heading + m.items.map(l => '<a class="list-item course-lesson-item" href="' + esc(lessonUrl(c,pool.indexOf(l))) + '"><span class="num">' + (completed.includes(l.id)?'✓':pool.indexOf(l)+1) + '</span><span class="lesson-item-main"><strong>' + esc(l.title) + '</strong><small>' + esc(l.cn) + ' · ' + esc(c.targetLang==='kk'?l.kz:l.ru) + '</small></span><span class="arrow">→</span></a>').join('') +
-        (finished ? '<a class="primary-btn" href="' + esc(examUrl(c,i)) + '">' + (score>=PASS?'重新考试':'参加模块考试') + '（≥70%通过）</a>' : '<p>完成本模块全部小课后开放考试。</p>');
+      if (!open) return '<details class="study-module"><summary>'+heading+'</summary>'+gate(c,ms,i,user,courseUrl(c))+'</details>';
+      return '<details class="study-module" '+(score<PASS?'open':'')+'><summary>'+heading+'</summary>' + m.items.map(l => '<a class="list-item course-lesson-item" href="' + esc(lessonUrl(c,pool.indexOf(l))) + '"><span class="num">' + (completed.includes(l.id)?'✓':pool.indexOf(l)+1) + '</span><span class="lesson-item-main"><strong>' + esc(l.title) + '</strong><small>' + esc(l.cn) + ' · ' + esc(c.targetLang==='kk'?l.kz:l.ru) + '</small></span><span class="arrow">→</span></a>').join('') +
+        (finished ? '<a class="primary-btn" href="' + esc(examUrl(c,i)) + '">' + (score>=PASS?'重新考试':'参加模块考试') + '（≥70%通过）</a>' : '<p>还差 '+m.items.filter(l=>!completed.includes(l.id)).length+' 课，完成后可考试。</p>')+'</details>';
     }).join('');
   }
   function renderExam(c, ms, index, root) {
@@ -788,6 +791,7 @@ const SpeakingFlow = (() => {
         saveCompleted(); location.href = destination;
       } catch { saving=false; alert('学习进度未能保存，请允许浏览器存储后重试。'); }
     };
+    window.KZLearning.attachLesson(c,pool[current],pool);
     host.hidden = false;
   }
   function start(c, page) {
@@ -796,6 +800,7 @@ const SpeakingFlow = (() => {
     // auth.js initializes its client in its own DOMContentLoaded callback.
     setTimeout(async () => {
       try {
+        await window.KZLearning.ready();
         const client = window.KZAuth?.getClient?.();
         if (!client) throw new Error('登录服务尚未就绪');
         // Subscribe before the first session read so sign-in/out cannot be missed.
@@ -852,3 +857,39 @@ function init(){
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+
+(function(){
+  const foundation = {"kk":{"id":"kk-u1","lessons":[{"id":"kk-u1-l1","title":"先认识字母和声音"},{"id":"kk-u1-l2","title":"听音认字"},{"id":"kk-u1-l3","title":"拼读短词"},{"id":"kk-u1-l4","title":"发音小练习"}]},"ru":{"id":"ru-u1","lessons":[{"id":"ru-u1-l1","title":"先认识字母和声音"},{"id":"ru-u1-l2","title":"听音认字"},{"id":"ru-u1-l3","title":"拼读短词"},{"id":"ru-u1-l4","title":"发音小练习"}]}};
+  async function draw(){
+    const host=document.getElementById('learningHub');if(!host)return;
+    try{
+      await window.KZLearning.ready();
+      const user=window.KZAuth.getUser(),esc=window.KZLearning.esc;
+      const read=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')}catch{return {}}};
+      let basic=read(user?'v5_progress_user_'+user.id:'v5_progress_guest');
+      if(!user && !Object.keys(basic).length)basic=read('v5_progress');
+      if(user){
+        try{const {data,error}=await window.KZAuth.getClient().from('learning_progress').select('node_id,status,score').eq('user_id',user.id).like('node_id','v5:%').limit(2000);if(!error){for(const row of data||[]){if(!basic[row.node_id]||row.status==='done'||row.status==='passed')basic[row.node_id]=row;}localStorage.setItem('v5_progress_user_'+user.id,JSON.stringify(basic));}}catch{}
+      }
+      let html='';
+      for(const [lang,label,flag,suffix] of [['kk','哈萨克语','🇰🇿','kz'],['ru','俄语','🇷🇺','ru']]){
+        const first=foundation[lang];const fd=first.lessons.filter(l=>(basic['v5:'+l.id]||basic[l.id])?.status==='done').length;
+        const states=[{id:'foundation-'+lang,title:'字母与发音',desc:lang==='kk'?'从 42 个字母、特殊音和拼读开始。':'从 33 个字母、重音和拼读开始。',done:fd,total:first.lessons.length,passed:(basic['v5:'+first.id]||basic[first.id])?.status==='passed'?1:0,modules:1,url:`unit.html?lang=${lang}&unit=${first.id}`,storage:'已完成的小课与原字母课程保持一致。'}];
+        const gc=courseById('sentence-'+suffix);const gs=await window.GrammarFlow.summary(gc);
+        states.push({...gs,id:gc.id,title:'基础语法',desc:'一个结构、一个例句，逐模块掌握句子规律。',url:'course.html?id='+gc.id,storage:'登录后尝试同步账号的语法记录。'});
+        const sc=courseById('speaking-'+suffix),ms=SpeakingFlow.modules(sc),ids=readCompleted();
+        states.push({id:sc.id,title:'造句与口语',desc:'从第一句开始，听音、跟读、录音回放。',done:courseLessons(sc.id).filter(l=>ids.includes(l.id)).length,total:courseLessons(sc.id).length,passed:ms.filter(m=>SpeakingFlow.done(m)&&SpeakingFlow.best(sc,m)>=70).length,modules:ms.length,url:'course.html?id='+sc.id,storage:'口语进度保存在本设备。'});
+        html+=`<section class="study-language" id="${lang}"><div class="study-language-head"><h2>${flag} ${label}</h2><a href="level-test.html?lang=${lang}">选做起点测试 →</a></div><div class="study-course-grid">`;
+        for(const s of states){const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);html+=`<article class="study-course-card"><span class="eyebrow">${label}</span><h3>${s.title}</h3><p>${s.desc}</p><div class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><p class="study-count">${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</p><div class="study-actions"><a class="primary-btn" href="${esc(last?.url||s.url)}">${last||s.done?'继续学习':'开始学习'} →</a>${last?`<a class="study-text-link" href="${s.url}">课程目录</a>`:''}</div><small>${s.storage}</small></article>`;}
+        html+=`</div><a class="study-legacy" href="path.html?lang=${lang}">综合单元练习 →</a></section>`;
+      }
+      host.innerHTML=html;
+      const account=document.getElementById('progressUser');if(account)account.textContent=user?'当前账号：'+(user.email||'已登录')+'。语法与字母课程读取已有学习记录；口语、继续学习位置和错题保存在本设备。':'游客可体验各课程第 1 模块；从第 2 模块开始需登录，并通过前面模块考试（≥70%）。';
+      const review=document.getElementById('dailyReview');if(review)window.KZLearning.renderReview(review);
+      window.KZLearning.updateLinks();
+      if(location.hash)document.getElementById(location.hash.slice(1))?.scrollIntoView();
+    }catch(error){console.warn('learning hub failed',error);host.innerHTML='<p role="status">暂时无法读取学习状态，请刷新重试。</p><a href="unit.html?lang=kk&unit=kk-u1">哈语字母课程</a> · <a href="unit.html?lang=ru&unit=ru-u1">俄语字母课程</a>';}
+  }
+  document.addEventListener('DOMContentLoaded',draw);
+})();

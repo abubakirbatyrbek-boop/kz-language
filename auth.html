@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>登录 / 注册｜中亚语言通</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?rev=5b190e87147a" />
 </head>
 <body data-page="auth">
 <header class="topbar">
@@ -13,7 +13,7 @@
       <span class="brand-mark">中</span>
       <span><strong>中亚语言通</strong><small>哈萨克语 · 俄语</small></span>
     </a>
-    <nav><a href="courses.html">课程</a><a href="scenes.html">场景</a><a href="learn.html?pool=course&id=daily-kz&start=0">开始学习</a><a href="government.html">国家机关</a></nav>
+    <nav aria-label="主导航"><a href="courses.html">课程</a><a data-continue href="courses.html">继续学习</a><a href="progress.html">我的学习</a><a href="scenes.html">场景</a><a href="government.html">国家机关</a><a href="feedback.html">反馈</a></nav>
     <div id="authNav" class="auth-nav"><a class="auth-link" href="auth.html">登录 / 注册</a></div>
   </div>
 </header>
@@ -63,8 +63,9 @@
 </main>
 <footer class="footer"><div class="container footer-wrap"><span>中亚语言通</span><a href="index.html">返回首页</a></div></footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
-<script src="auth.js"></script>
+<script src="supabase-config.js?rev=1d5d1a5b77e6"></script>
+<script src="auth.js?rev=fde6b6dea1ba"></script>
 </body>
 </html>
+
 

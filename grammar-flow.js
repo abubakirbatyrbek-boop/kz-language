@@ -67,6 +67,7 @@
           if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',afterBoot,{once:true});
           else afterBoot();
         });
+        await window.KZLearning.ready();
         client = window.KZAuth?.getClient?.() || null;
         if(!client) throw new Error('登录服务尚未就绪，请刷新重试。');
         let observedId;
@@ -176,7 +177,8 @@
   async function saveTest(c,no,score,answers){
     const s = read(c);
     s.tests = s.tests || {};
-    s.tests['m'+no] = {score,passed:score>=PASS,at:new Date().toISOString()};
+    const best=Math.max(Number(s.tests['m'+no]?.score)||0,score);
+    s.tests['m'+no] = {score:best,passed:best>=PASS,at:new Date().toISOString()};
     write(c,s);
 
     if(user && client){
@@ -262,7 +264,8 @@
       const pass=passed(c,m.no);
       const t=test(c,m.no);
 
-      const card=document.createElement('section');
+      const card=document.createElement('details');
+      card.open=isOpen && !pass;
       card.className=`grammar-v22-module ${!isOpen?'locked':''} ${pass?'passed':''}`;
 
       let status=pass ? `✅ 已通过 ${t?.score||0}%`
@@ -287,14 +290,14 @@
       }else if(pass){
         action=`<span class="grammar-lock-copy">模块考试 ${t.score}% · 已通过</span>`;
       }else{
-        action=`<span class="grammar-lock-copy">按顺序完成全部小课</span>`;
+        action=`<span class="grammar-lock-copy">还差 ${m.lessons.length-d} 课，完成后可考试</span>`;
       }
 
       card.innerHTML=`
-        <div class="grammar-v22-head">
+        <summary class="grammar-v22-head">
           <div><span class="eyebrow">模块 ${String(m.no).padStart(2,'0')}</span><h3>${esc(m.title)}</h3></div>
           <span class="grammar-v22-status ${(!isOpen&&mi>0&&!user)?'login':(!isOpen?'lock':'')}">${status}</span>
-        </div>
+        </summary>
         <div class="grammar-v22-stats"><span>${d} / ${m.lessons.length} 课完成</span><span>${pct}%</span></div>
         <div class="grammar-v22-bar"><span style="width:${pct}%"></span></div>
         <div class="grammar-v22-lessons">${rows}</div>
@@ -305,7 +308,7 @@
             ? '本模块已经全部完成。参加考试，答对 ≥70% 才能进入下一模块。'
             : (!isOpen&&mi>0&&!user
               ? '第 2 模块开始必须注册 / 登录。登录后会继续保存你的学习数据。'
-              : '上一课完成后才开放下一课。'))}</div>`;
+              : (!isOpen?'等待上一模块通过。':'上一课完成后才开放下一课。')))}</div>`;
 
       root.appendChild(card);
     });
@@ -353,12 +356,13 @@
       const lang=codeOf(c);
       document.querySelectorAll('[data-text]').forEach(b=>{b.onclick=()=>speak(b.dataset.text,b.dataset.lang||lang)});
       const prev=document.getElementById('prevLink'),next=document.getElementById('nextLink');
-      if(prev)prev.href=`learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${Math.max(0,idx-1)}`;
+      if(prev){prev.href=idx===0?`course.html?id=${encodeURIComponent(c.id)}`:`learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${idx-1}`;if(idx===0)prev.textContent='返回课程';}
       if(next)next.href=`learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${Math.min(pool.length-1,idx+1)}`;
       const markBtn=document.getElementById('markBtn');if(markBtn)markBtn.textContent=done(c,l.id)?'已记住 ✓':'记住了，下一句';
       if(next)next.onclick=async(e)=>{e.preventDefault();await mark(c,l);location.href=complete(c,m)
         ? `grammar-test.html?grammar=1&course=${encodeURIComponent(c.id)}&module=${m.no}`
         : `learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=${Math.min(pool.length-1,idx+1)}`;};
+      window.KZLearning.attachLesson(c,l,pool);
     },
 
     renderTestPage: async function(c,mNo){
@@ -388,7 +392,7 @@
           root.querySelector('#gFeedback').textContent=ok?'回答正确！':'回答错误。正确答案：'+q.answer;
           root.querySelector('#gNext').disabled=false;
         });
-        root.querySelector('#gNext').onclick=async()=>{if(!answered)return;if(i<questions.length-1){i++;draw()}else{const pct=Math.round(score/questions.length*100);await saveTest(c,m.no,pct,questions.map(q=>({q:q.question,a:q.answer})));root.innerHTML=`<div class="grammar-v22-gate" style="text-align:center"><span class="eyebrow">模块 ${m.no} 考试</span><div class="grammar-v22-score">${pct}%</div><h2>${pct>=PASS?'通过！':'需要再练一次'}</h2><p>${pct>=PASS?'达到 70% 通过线。下一模块已经解锁。':'没有达到 70%，回去复习本模块后再测试。'}</p>${pct>=PASS?(m.no<ms.length?`<a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">查看下一模块 →</a>`:`<a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">完成课程 →</a>`):`<button class="primary-btn" id="gRetry">重新测试 →</button>`}</div>`;if(root.querySelector('#gRetry'))root.querySelector('#gRetry').onclick=()=>G.renderTestPage(c,m.no);}};};
+        root.querySelector('#gNext').onclick=async()=>{if(!answered)return;if(i<questions.length-1){i++;draw()}else{const pct=Math.round(score/questions.length*100);await saveTest(c,m.no,pct,questions.map(q=>({q:q.question,a:q.answer})));root.innerHTML=`<div class="grammar-v22-gate" style="text-align:center"><span class="eyebrow">模块 ${m.no} 考试</span><div class="grammar-v22-score">${pct}%</div><h2>${pct>=PASS?'通过！':'需要再练一次'}</h2><p>${pct>=PASS?(m.no===ms[ms.length-1].no?'全部模块已完成，可以继续复习。':user?'达到 70% 通过线。下一模块已经解锁。':'达到 70% 通过线。注册 / 登录后可进入下一模块。'):'没有达到 70%，回去复习本模块后再测试。'}</p>${pct>=PASS?(m.no<ms.length?`<a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">查看下一模块 →</a>`:`<a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">完成课程 →</a>`):`<button class="primary-btn" id="gRetry">重新测试 →</button>`}</div>`;if(root.querySelector('#gRetry'))root.querySelector('#gRetry').onclick=()=>G.renderTestPage(c,m.no);}};};
       draw();
     }
   };
@@ -436,6 +440,8 @@
       }
     };
   }
-  window.GrammarFlow = { renderCoursePage:guarded(G.renderCoursePage,'lessonList'), renderLearnPage:guarded(G.renderLearnPage,'protectedContent'), renderTestPage:guarded(G.renderTestPage,'grammarTestRoot'), TEST_PASS:PASS };
+  async function summary(c){await initUser();migrateGuest(c);const ms=allModules(c);return {done:ms.reduce((n,m)=>n+m.lessons.filter(l=>done(c,l.id)).length,0),total:ms.reduce((n,m)=>n+m.lessons.length,0),passed:ms.filter(m=>complete(c,m)&&passed(c,m.no)).length,modules:ms.length};}
+  window.GrammarFlow = {summary, renderCoursePage:guarded(G.renderCoursePage,'lessonList'), renderLearnPage:guarded(G.renderLearnPage,'protectedContent'), renderTestPage:guarded(G.renderTestPage,'grammarTestRoot'), TEST_PASS:PASS };
 
 })();
+
