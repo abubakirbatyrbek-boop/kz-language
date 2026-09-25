@@ -59,6 +59,18 @@ const lessons = [
   { id:'customs-03', course:'work-kz', title:'什么时候查验', tag:'海关', level:'工作', cn:'什么时候查验？', kz:'Кедендік тексеру қашан болады?', ru:'Когда будет досмотр?', tip:'询问查验时间。' },
   { id:'customs-04', course:'work-kz', title:'货物什么时候放行', tag:'海关', level:'工作', cn:'货物什么时候放行？', kz:'Жүк қашан шығарылады?', ru:'Когда груз будет выпущен?', tip:'确认货物放行时间。' },
   { id:'customs-05', course:'work-kz', title:'这是过境货物', tag:'海关', level:'工作', cn:'这是过境货物。', kz:'Бұл транзиттік жүк.', ru:'Это транзитный груз.', tip:'说明货物运输性质。' },
+  { id:'documents-01', course:'work-kz', title:'开付款发票', tag:'单据', level:'工作', cn:'请给我们开一张付款发票。', kz:'Бізге төлемге шот жазып беріңізші.', ru:'Выставьте нам, пожалуйста, счёт на оплату.', tip:'付款发票：俄语 счёт на оплату，哈语 төлемге шот。对方凭它付款。' },
+  { id:'documents-02', course:'work-kz', title:'开税务发票', tag:'单据', level:'工作', cn:'请开具税务发票。', kz:'Шот-фактураны жазып беріңізші.', ru:'Выпишите, пожалуйста, счёт-фактуру.', tip:'税务发票：счёт-фактура / шот-фактура，用于增值税抵扣，和付款发票不是一回事。' },
+  { id:'documents-03', course:'work-kz', title:'电子发票开了吗', tag:'单据', level:'工作', cn:'电子发票开了吗？', kz:'Электрондық шот-фактура жазылды ма?', ru:'Электронный счёт-фактура уже выписан?', tip:'哈萨克斯坦的税务发票必须在电子系统里开，俗称 ЭСФ（ЭШФ）。' },
+  { id:'documents-04', course:'work-kz', title:'确认电子发票', tag:'单据', level:'工作', cn:'请在系统里确认电子发票。', kz:'Жүйеде электрондық шот-фактураны растаңызшы.', ru:'Подтвердите, пожалуйста, электронный счёт-фактуру в системе.', tip:'растаңызшы / подтвердите = 请确认。' },
+  { id:'documents-05', course:'work-kz', title:'签完工单', tag:'单据', level:'工作', cn:'请签一下完工单。', kz:'Орындалған жұмыстар актісіне қол қойыңызшы.', ru:'Подпишите, пожалуйста, акт выполненных работ.', tip:'完工单：акт выполненных работ（常简称 АВР），哈语 орындалған жұмыстар актісі。' },
+  { id:'documents-06', course:'work-kz', title:'完工单什么时候签', tag:'单据', level:'工作', cn:'完工单什么时候能签好？', kz:'Орындалған жұмыстар актісіне қашан қол қойылады?', ru:'Когда будет подписан акт выполненных работ?', tip:'催对方签单时用。' },
+  { id:'documents-07', course:'work-kz', title:'发一下发货单', tag:'单据', level:'工作', cn:'请把发货单发给我。', kz:'Жүкқұжатты маған жіберіңізші.', ru:'Отправьте мне, пожалуйста, накладную.', tip:'发货单：накладная，哈语 жүкқұжат。' },
+  { id:'documents-08', course:'work-kz', title:'发货单数量不对', tag:'单据', level:'工作', cn:'发货单上的数量不对。', kz:'Жүкқұжаттағы саны дұрыс емес.', ru:'В накладной неверное количество.', tip:'дұрыс емес / неверное = 不对、不正确。' },
+  { id:'documents-09', course:'work-kz', title:'发一份商业报价', tag:'单据', level:'工作', cn:'请给我们发一份商业报价。', kz:'Бізге коммерциялық ұсыныс жіберіңізші.', ru:'Пришлите нам, пожалуйста, коммерческое предложение.', tip:'商业报价：коммерческое предложение（常简称 КП），哈语 коммерциялық ұсыныс。' },
+  { id:'documents-10', course:'work-kz', title:'价格含增值税吗', tag:'单据', level:'工作', cn:'价格包含增值税吗？', kz:'Бағаға ҚҚС кіре ме?', ru:'Цена включает НДС?', tip:'增值税：俄语 НДС，哈语 ҚҚС。' },
+  { id:'documents-11', course:'work-kz', title:'盖章签字', tag:'单据', level:'工作', cn:'请盖章并签字。', kz:'Мөр басып, қол қойыңызшы.', ru:'Поставьте, пожалуйста, печать и подпись.', tip:'мөр / печать = 公章，қол / подпись = 签字。' },
+  { id:'documents-12', course:'work-kz', title:'发银行信息', tag:'单据', level:'工作', cn:'请把你们的银行信息发给我。', kz:'Банк деректемелеріңізді маған жіберіңізші.', ru:'Отправьте мне, пожалуйста, ваши банковские реквизиты.', tip:'银行信息（收款账户、公司税号 БИН 等）：реквизиты / деректемелер。' },
   { id:'business-01', course:'work-kz', title:'这个价格太高了', tag:'商务', level:'工作', cn:'这个价格太高了。', kz:'Бұл баға тым жоғары.', ru:'Эта цена слишком высокая.', tip:'谈价时使用。' },
   { id:'business-02', course:'work-kz', title:'我们什么时候开会', tag:'商务', level:'工作', cn:'我们什么时候开会？', kz:'Біз қашан жиналамыз?', ru:'Когда у нас будет совещание?', tip:'安排商务会议。' },
   { id:'business-03', course:'work-kz', title:'请把合同发给我', tag:'商务', level:'工作', cn:'请把合同发给我。', kz:'Шартты маған жіберіңізші.', ru:'Отправьте мне договор, пожалуйста.', tip:'合同文件往来。' },
@@ -271,6 +283,7 @@ const courses = [
 ];
 
 const scenes = [
+  { id:'documents', icon:'🧾', title:'单据与发票', desc:'发票、电子发票、完工单、发货单、报价', type:'documents', category:'docs' },
   { id:'taxi', icon:'🚕', title:'打车', desc:'问价、目的地、下车', type:'daily-kz', category:'life' },
   { id:'rent', icon:'🏠', title:'租房', desc:'看房、合同、水电', type:'daily-kz', category:'life' },
   { id:'bank', icon:'🏦', title:'银行', desc:'开户、转账、咨询', type:'daily-kz', category:'life' },
@@ -289,6 +302,18 @@ const scenes = [
 ];
 
 const sceneTestBank = {
+  documents:[
+    ['请给我们开一张付款发票。','Бізге төлемге шот жазып беріңізші.','Выставьте нам, пожалуйста, счёт на оплату.'],
+    ['请开具税务发票。','Шот-фактураны жазып беріңізші.','Выпишите, пожалуйста, счёт-фактуру.'],
+    ['电子发票开了吗？','Электрондық шот-фактура жазылды ма?','Электронный счёт-фактура уже выписан?'],
+    ['请签一下完工单。','Орындалған жұмыстар актісіне қол қойыңызшы.','Подпишите, пожалуйста, акт выполненных работ.'],
+    ['请把发货单发给我。','Жүкқұжатты маған жіберіңізші.','Отправьте мне, пожалуйста, накладную.'],
+    ['发货单上的数量不对。','Жүкқұжаттағы саны дұрыс емес.','В накладной неверное количество.'],
+    ['请给我们发一份商业报价。','Бізге коммерциялық ұсыныс жіберіңізші.','Пришлите нам, пожалуйста, коммерческое предложение.'],
+    ['价格包含增值税吗？','Бағаға ҚҚС кіре ме?','Цена включает НДС?'],
+    ['请盖章并签字。','Мөр басып, қол қойыңызшы.','Поставьте, пожалуйста, печать и подпись.'],
+    ['请把你们的银行信息发给我。','Банк деректемелеріңізді маған жіберіңізші.','Отправьте мне, пожалуйста, ваши банковские реквизиты.']
+  ],
   taxi:[
     ['我要去火车站。','Мен вокзалға барғым келеді.','Я хочу поехать на вокзал.'],
     ['多少钱？','Қанша тұрады?','Сколько стоит?'],
@@ -404,7 +429,7 @@ const sceneTestBank = {
 };
 
 const sceneTestInfo = {
-  taxi:{title:'打车场景考试'}, rent:{title:'租房场景考试'}, bank:{title:'银行场景考试'},
+  documents:{title:'单据与发票场景考试'}, taxi:{title:'打车场景考试'}, rent:{title:'租房场景考试'}, bank:{title:'银行场景考试'},
   restaurant:{title:'餐厅场景考试'}, factory:{title:'工厂场景考试'}, rail:{title:'铁路场景考试'},
   customs:{title:'海关场景考试'}, business:{title:'商务场景考试'}
 };
@@ -454,9 +479,9 @@ function bindSounds(){
 
 function renderSceneList(){
   const grid=document.getElementById('sceneGrid'); if(!grid) return;
-  const group=(title,sub,items)=>`<section class="scene-group"><div class="scene-group-head"><div><span class="eyebrow">${title==='生活场景'?'LIFE':'WORK'}</span><h2>${title}</h2></div><p>${sub}</p></div><div class="scene-grid">${items.map(s=>`<a class="scene scene-link" href="scene.html?id=${s.id}"><div><div class="scene-icon">${s.icon}</div><h3>${s.title}</h3><p>${s.desc}</p></div><div class="tagline">练习 → <span class="test-pill">场景小测</span></div></a>`).join('')}</div></section>`;
-  const life=scenes.filter(s=>s.category==='life'),work=scenes.filter(s=>s.category==='work');
-  grid.outerHTML=group('生活场景','先学在哈萨克斯坦生活时最常遇到的表达。',life)+group('工作场景','再按岗位和现场分类学习：工厂、物流、铁路、销售、办公室、安保、工程等。',work);
+  const group=(title,sub,items)=>`<section class="scene-group"><div class="scene-group-head"><div><span class="eyebrow">${title==='生活场景'?'LIFE':title==='单据与发票'?'DOCS':'WORK'}</span><h2>${title}</h2></div><p>${sub}</p></div><div class="scene-grid">${items.map(s=>`<a class="scene scene-link" href="scene.html?id=${s.id}"><div><div class="scene-icon">${s.icon}</div><h3>${s.title}</h3><p>${s.desc}</p></div><div class="tagline">练习 → <span class="test-pill">场景小测</span></div></a>`).join('')}</div></section>`;
+  const docs=scenes.filter(s=>s.category==='docs'),life=scenes.filter(s=>s.category==='life'),work=scenes.filter(s=>s.category==='work');
+  grid.outerHTML=group('单据与发票','工作中每天都要问的单据：发票、电子发票（ЭСФ）、完工单、发货单、商业报价。',docs)+group('生活场景','先学在哈萨克斯坦生活时最常遇到的表达。',life)+group('工作场景','再按岗位和现场分类学习：工厂、物流、铁路、销售、办公室、安保、工程等。',work);
 }
 
 function renderHome(){
@@ -561,7 +586,7 @@ function renderScenePage(){
 
 function renderLearnPage(){
   let pool=[]; let label='学习';
-  if(qs('pool')==='scene'){ pool=sceneLessons(qs('type')||'daily-kz'); label='场景练习'; }
+  if(qs('pool')==='scene'){ pool=sceneLessons(qs('type')||'daily-kz', qs('scene')); label='场景练习'; }
   else { const c=courseById(qs('id')||'daily-kz')||courses[0]; pool=courseLessons(c.id); label=c.title; }
   const courseForLearn=qs('pool')==='scene' ? null : (courseById(qs('id')||'daily-kz')||courses[0]);
   let current=Math.max(0,Math.min(Number(qs('start')||0),pool.length-1));
