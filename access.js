@@ -18,13 +18,7 @@
     host.innerHTML=gateHtml(title,text,location.href);
     return false;
   }
+  // Scenes, scene tests and the government glossary are open to guests; the login
+  // link in the header stays available. protect() is kept for any future page that needs it.
   window.KZProtect={protect,getUser};
-  document.addEventListener('DOMContentLoaded', async ()=>{
-    const page=document.body.dataset.page;
-    if(page==='scene-list') await protect('protectedContent','场景练习需要注册 / 登录','登录后才能进入生活场景和工作场景，并保存你的场景学习与考试数据。');
-    if(page==='government') await protect('protectedContent','国家机关词库需要注册 / 登录','登录后才能进入国家机关词库，并在之后继续查看学习数据。');
-    if(page==='scene') await protect('protectedContent','场景练习需要注册 / 登录','注册或登录后才能进入这个场景的课程、练习和场景考试。');
-    if(page==='test') await protect('protectedContent','场景考试需要注册 / 登录','注册或登录后才能参加场景考试，成绩会和你的账号关联。');
-    if(page==='learn' && new URLSearchParams(location.search).get('pool')==='scene') await protect('protectedContent','场景练习需要注册 / 登录','登录后才能进入场景练习，并保存你的学习进度。');
-  });
 })();
