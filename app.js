@@ -470,7 +470,10 @@ function courseById(id){ return courses.find(c=>c.id===id); }
 function qs(name){ return new URLSearchParams(location.search).get(name); }
 function go(url){ location.href = url; }
 
+let soundsBound=false;
 function bindSounds(){
+  // Called from init() and again by page renderers; one listener is enough.
+  if(soundsBound) return; soundsBound=true;
   document.addEventListener('click', e=>{
     const btn=e.target.closest('[data-text]');
     if(btn) speak(btn.dataset.text, btn.dataset.lang);
@@ -599,7 +602,9 @@ function renderLearnPage(){
   } else { if(kzRow) kzRow.style.display='flex'; if(ruRow) ruRow.style.display='flex'; }
   function draw(){
     const l=pool[current]; if(!l) return;
-    title.textContent=l.title; count.textContent=`${current+1} / ${pool.length}`; cn.textContent=l.cn; kz.textContent=l.kz; ru.textContent=l.ru; tip.textContent=l.tip; if(grammar) grammar.textContent=l.group ? `语法模块：${l.group}` : ''; if(memory) memory.innerHTML=`<span>记忆方法</span><strong>${courseForLearn ? memoryMethod(l,courseForLearn) : '先听 2 次 → 跟读 3 次 → 遮住答案自己说 1 次。'}</strong>`; tag.textContent=l.tag; path.textContent=`当前内容：${label}`;
+    title.textContent=l.title; count.textContent=`${current+1} / ${pool.length}`; cn.textContent=l.cn; kz.textContent=l.kz; ru.textContent=l.ru;
+    // learn.html ships placeholder data-text ("您好") on the 🔊 buttons; point them at this sentence.
+    kzRow?.querySelector('[data-text]')?.setAttribute('data-text', l.kz||''); ruRow?.querySelector('[data-text]')?.setAttribute('data-text', l.ru||''); tip.textContent=l.tip; if(grammar) grammar.textContent=l.group ? `语法模块：${l.group}` : ''; if(memory) memory.innerHTML=`<span>记忆方法</span><strong>${courseForLearn ? memoryMethod(l,courseForLearn) : '先听 2 次 → 跟读 3 次 → 遮住答案自己说 1 次。'}</strong>`; tag.textContent=l.tag; path.textContent=`当前内容：${label}`;
     document.getElementById('prevLink').href = learnUrl(current-1<0?pool.length-1:current-1);
     document.getElementById('nextLink').href = learnUrl((current+1)%pool.length);
     document.getElementById('markBtn').textContent = completed.includes(l.id) ? '已记住 ✓' : '记住了，下一句';

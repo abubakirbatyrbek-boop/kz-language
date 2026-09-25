@@ -6,6 +6,8 @@
   'use strict';
 
   const PASS = 70;
+  // The exam page does not load v5.js, whose global shuffle() this file used to rely on.
+  const shuffle = a => a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(x => x[1]);
   const MODULES = [
     {no:1, title:'人称与基本句子', groups:['人称代词','名词谓语','指示句']},
     {no:2, title:'否定与疑问', groups:['否定','疑问句']},
