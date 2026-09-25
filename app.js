@@ -674,6 +674,57 @@ const SpeakingFlow = (() => {
     return i >= 0 && i < ms.length && (i === 0 || !!user) &&
       ms.slice(0, i).every(m => done(m) && best(c, m) >= PASS);
   }
+  // Account sync: lessons live in learning_progress (speaking:<course>:<lesson>),
+  // module exams in test_results (speaking-test:<course>:m<n>), same tables as grammar.
+  const lessonNode = (c, l) => 'speaking:' + c.id + ':' + l.id;
+  const examNode = (c, i) => 'speaking-test:' + c.id + ':m' + (i + 1);
+  const synced = {};
+  function sync(c, user) {
+    if (!user) return Promise.resolve();
+    return synced[c.id + user.id] ||= (async () => {
+      const client = window.KZAuth?.getClient?.();
+      if (!client) return;
+      try {
+        const ms = modules(c), pool = courseLessons(c.id);
+        const [{data:lp}, {data:tr}] = await Promise.all([
+          client.from('learning_progress').select('node_id,status').eq('user_id', user.id).like('node_id', 'speaking:' + c.id + ':%').limit(2000),
+          client.from('test_results').select('node_id,score').eq('user_id', user.id).like('node_id', 'speaking-test:' + c.id + ':%').limit(1000)
+        ]);
+        const remoteDone = new Set((lp || []).filter(r => r.status === 'done').map(r => r.node_id));
+        const local = readCompleted();
+        const merged = new Set(local);
+        pool.forEach(l => { if (remoteDone.has(lessonNode(c, l))) merged.add(l.id); });
+        completed = [...merged]; saveCompleted();
+        const remoteBest = {};
+        (tr || []).forEach(r => { remoteBest[r.node_id] = Math.max(remoteBest[r.node_id] || 0, Number(r.score) || 0); });
+        ms.forEach((m, i) => {
+          const r = remoteBest[examNode(c, i)] || 0;
+          if (r > best(c, m)) localStorage.setItem(scoreKey(c, m), String(r));
+        });
+        // Upload progress made on this device (e.g. as a guest) that the account does not have yet.
+        const now = new Date().toISOString();
+        const up = pool.filter(l => local.includes(l.id) && !remoteDone.has(lessonNode(c, l)))
+          .map(l => ({user_id:user.id, node_id:lessonNode(c, l), language:c.targetLang, status:'done', score:100, updated_at:now}));
+        if (up.length) await client.from('learning_progress').upsert(up, {onConflict:'user_id,node_id'});
+        const tests = ms.map((m, i) => ({m, i, s:best(c, m)})).filter(x => Math.floor(x.s) > (remoteBest[examNode(c, x.i)] || 0))
+          .map(x => ({user_id:user.id, node_id:examNode(c, x.i), language:c.targetLang, score:Math.floor(x.s), passed:x.s >= PASS, answers:[]}));
+        if (tests.length) await client.from('test_results').insert(tests);
+      } catch (e) { console.warn('speaking sync failed', e); }
+    })();
+  }
+  async function saveLesson(c, l, user) {
+    const client = window.KZAuth?.getClient?.();
+    if (!user || !client) return;
+    const write = client.from('learning_progress').upsert({user_id:user.id, node_id:lessonNode(c, l), language:c.targetLang, status:'done', score:100, updated_at:new Date().toISOString()}, {onConflict:'user_id,node_id'});
+    // Never hold the learner on the page for a slow network; the next sync uploads anything missed.
+    await Promise.race([write.then(() => {}, e => console.warn('speaking progress save failed', e)), new Promise(r => setTimeout(r, 1500))]);
+  }
+  function saveExam(c, i, score, user) {
+    const client = window.KZAuth?.getClient?.();
+    if (!user || !client) return;
+    client.from('test_results').insert({user_id:user.id, node_id:examNode(c, i), language:c.targetLang, score:Math.floor(score), passed:score >= PASS, answers:[]})
+      .then(() => {}, e => console.warn('speaking exam save failed', e));
+  }
   async function userNow() {
     await window.KZLearning.ready();
     const client = window.KZAuth?.getClient?.();
@@ -757,6 +808,7 @@ const SpeakingFlow = (() => {
           root.querySelector('#speakingFeedback').textContent = '成绩未能保存，请允许浏览器存储后重新提交。';
           submitting = false; root.querySelector('#speakingNext').disabled = false; return;
         }
+        saveExam(c, index, score, user);
         const passed = score >= PASS;
         root.innerHTML = '<div class="lesson-card"><h2>' + (passed?'考试通过！':'暂未通过，请复习后重试。') + '</h2><p>答对 ' + correct + ' / ' + bank.length + ' 题 · ' + Math.floor(score) + '%</p><p>' + (passed?(index===ms.length-1?'你已完成全部模块！':index===0&&!user?'注册 / 登录后可进入第 2 模块，当前进度已保留。':'下一模块已解锁。'):'本次未达到 70%。已取得的历史通过成绩会保留。') + '</p><a class="primary-btn" href="' + esc(courseUrl(c)) + '">返回模块列表</a><a class="secondary-btn" href="' + esc(examUrl(c,index)) + '">重新考试</a>' + (passed&&index===0&&!user?'<a class="primary-btn" href="'+esc(loginUrl(courseUrl(c)))+'">注册 / 登录，继续学习</a>':'') + '</div>';
       };
@@ -788,7 +840,7 @@ const SpeakingFlow = (() => {
       if(!unlocked(c,ms,index,freshUser)){ saving=false; await renderLearn(c); return; }
       try {
         completed = [...new Set([...readCompleted(),pool[current].id])];
-        saveCompleted(); location.href = destination;
+        saveCompleted(); await saveLesson(c, pool[current], freshUser); location.href = destination;
       } catch { saving=false; alert('学习进度未能保存，请允许浏览器存储后重试。'); }
     };
     window.KZLearning.attachLesson(c,pool[current],pool);
@@ -815,6 +867,7 @@ const SpeakingFlow = (() => {
         });
         const user = await userNow();
         if (observedUserId === undefined) observedUserId = user?.id || null;
+        await sync(c, user);
         completed = readCompleted();
         if(!Array.isArray(completed))completed=[];
         if(page==='learn')await renderLearn(c); else await renderCourse(c);
@@ -825,13 +878,18 @@ const SpeakingFlow = (() => {
       }
     },0);
   }
-  return {start, modules, done, unlocked, questions, best};
+  return {start, modules, done, unlocked, questions, best, sync};
 })();
 
 
 function init(){
-  bindSounds();
   const page=document.body.dataset.page;
+  // The old "字母与发音" course ids hold greeting phrases, not letters; old links go to the real alphabet unit.
+  if((page==='course'||page==='learn') && qs('pool')!=='scene'){
+    const c=courseById(qs('id')||'daily-kz')||courses[0];
+    if(c.kind==='foundation'){ const lang=c.targetLang==='ru'?'ru':'kk'; location.replace(`unit.html?lang=${lang}&unit=${lang}-u1`); return; }
+  }
+  bindSounds();
   if(page==='home') renderHome();
   if(page==='scene-list') renderSceneList();
   if(page==='course'){
@@ -860,7 +918,7 @@ document.addEventListener('DOMContentLoaded', init);
 
 
 (function(){
-  const foundation = {"kk":{"id":"kk-u1","lessons":[{"id":"kk-u1-l1","title":"先认识字母和声音"},{"id":"kk-u1-l2","title":"听音认字"},{"id":"kk-u1-l3","title":"拼读短词"},{"id":"kk-u1-l4","title":"发音小练习"}]},"ru":{"id":"ru-u1","lessons":[{"id":"ru-u1-l1","title":"先认识字母和声音"},{"id":"ru-u1-l2","title":"听音认字"},{"id":"ru-u1-l3","title":"拼读短词"},{"id":"ru-u1-l4","title":"发音小练习"}]}};
+  const foundation = {"kk":{"id":"kk-u1","lessons":[{"id":"kk-u1-l1"},{"id":"kk-u1-l5"},{"id":"kk-u1-l2"},{"id":"kk-u1-l6"},{"id":"kk-u1-l7"},{"id":"kk-u1-l8"},{"id":"kk-u1-l9"},{"id":"kk-u1-l3"},{"id":"kk-u1-l4"}]},"ru":{"id":"ru-u1","lessons":[{"id":"ru-u1-l1"},{"id":"ru-u1-l5"},{"id":"ru-u1-l2"},{"id":"ru-u1-l6"},{"id":"ru-u1-l7"},{"id":"ru-u1-l8"},{"id":"ru-u1-l3"},{"id":"ru-u1-l4"}]}};
   async function draw(){
     const host=document.getElementById('learningHub');if(!host)return;
     try{
@@ -877,15 +935,18 @@ document.addEventListener('DOMContentLoaded', init);
         const first=foundation[lang];const fd=first.lessons.filter(l=>(basic['v5:'+l.id]||basic[l.id])?.status==='done').length;
         const states=[{id:'foundation-'+lang,title:'字母与发音',desc:lang==='kk'?'从 42 个字母、特殊音和拼读开始。':'从 33 个字母、重音和拼读开始。',done:fd,total:first.lessons.length,passed:(basic['v5:'+first.id]||basic[first.id])?.status==='passed'?1:0,modules:1,url:`unit.html?lang=${lang}&unit=${first.id}`,storage:'已完成的小课与原字母课程保持一致。'}];
         const gc=courseById('sentence-'+suffix);const gs=await window.GrammarFlow.summary(gc);
-        states.push({...gs,id:gc.id,title:'基础语法',desc:'一个结构、一个例句，逐模块掌握句子规律。',url:'course.html?id='+gc.id,storage:'登录后尝试同步账号的语法记录。'});
-        const sc=courseById('speaking-'+suffix),ms=SpeakingFlow.modules(sc),ids=readCompleted();
-        states.push({id:sc.id,title:'造句与口语',desc:'从第一句开始，听音、跟读、录音回放。',done:courseLessons(sc.id).filter(l=>ids.includes(l.id)).length,total:courseLessons(sc.id).length,passed:ms.filter(m=>SpeakingFlow.done(m)&&SpeakingFlow.best(sc,m)>=70).length,modules:ms.length,url:'course.html?id='+sc.id,storage:'口语进度保存在本设备。'});
+        const synced=user?'进度已同步到账号，换设备登录可继续。':'登录后进度会同步到账号。';
+        states.forEach(s=>s.storage=synced);
+        states.push({...gs,id:gc.id,title:'基础语法',desc:'一个结构、一个例句，逐模块掌握句子规律。',url:'course.html?id='+gc.id,storage:synced});
+        const sc=courseById('speaking-'+suffix);await SpeakingFlow.sync(sc,user);
+        const ms=SpeakingFlow.modules(sc),ids=readCompleted();
+        states.push({id:sc.id,title:'造句与口语',desc:'从第一句开始，听音、跟读、录音回放。',done:courseLessons(sc.id).filter(l=>ids.includes(l.id)).length,total:courseLessons(sc.id).length,passed:ms.filter(m=>SpeakingFlow.done(m)&&SpeakingFlow.best(sc,m)>=70).length,modules:ms.length,url:'course.html?id='+sc.id,storage:synced});
         html+=`<section class="study-language" id="${lang}"><div class="study-language-head"><h2>${flag} ${label}</h2><a href="level-test.html?lang=${lang}">选做起点测试 →</a></div><div class="study-course-grid">`;
         for(const s of states){const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);html+=`<article class="study-course-card"><span class="eyebrow">${label}</span><h3>${s.title}</h3><p>${s.desc}</p><div class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><p class="study-count">${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</p><div class="study-actions"><a class="primary-btn" href="${esc(last?.url||s.url)}">${last||s.done?'继续学习':'开始学习'} →</a>${last?`<a class="study-text-link" href="${s.url}">课程目录</a>`:''}</div><small>${s.storage}</small></article>`;}
-        html+=`</div><a class="study-legacy" href="path.html?lang=${lang}">综合单元练习 →</a></section>`;
+        html+=`</div><a class="study-legacy" href="path.html?lang=${lang}">学完字母后：拼读、问候、句型到工作场景的 6 个单元 →</a></section>`;
       }
       host.innerHTML=html;
-      const account=document.getElementById('progressUser');if(account)account.textContent=user?'当前账号：'+(user.email||'已登录')+'。语法与字母课程读取已有学习记录；口语、继续学习位置和错题保存在本设备。':'游客可体验各课程第 1 模块；从第 2 模块开始需登录，并通过前面模块考试（≥70%）。';
+      const account=document.getElementById('progressUser');if(account)account.textContent=user?'当前账号：'+(user.email||'已登录')+'。字母、语法、口语进度，继续学习位置和错题复习都会同步到账号。':'游客可体验各课程第 1 模块；从第 2 模块开始需登录，并通过前面模块考试（≥70%）。';
       const review=document.getElementById('dailyReview');if(review)window.KZLearning.renderReview(review);
       window.KZLearning.updateLinks();
       if(location.hash)document.getElementById(location.hash.slice(1))?.scrollIntoView();

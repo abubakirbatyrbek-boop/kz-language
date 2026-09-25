@@ -4,33 +4,89 @@ const V5_PATHS = {
     label: '哈萨克语', flag: '🇰🇿',
     desc: '从字母与发音开始，先学会读，再学词、句型、造句，最后进入真实场景。',
     units: [
-      {id:'kk-u1',num:1,title:'字母与发音',desc:'认识哈萨克语字母、特殊音、拼读方法',level:'入门',lessons:[
-        {id:'kk-u1-l1',title:'先认识字母和声音',type:'intro',items:[
-          {symbol:'А а',example:'ана',meaning:'妈妈',note:'和中文“啊”的开头音相近。'},
-          {symbol:'Ә ә',example:'әке',meaning:'爸爸',note:'这是哈萨克语很重要的特殊元音，口形比“а”更前。'},
-          {symbol:'Ө ө',example:'өзен',meaning:'河流',note:'类似圆唇的“ö”音。'},
-          {symbol:'Ү ү',example:'үй',meaning:'房子',note:'类似圆唇的“ü”音。'},
-          {symbol:'Қ қ',example:'қала',meaning:'城市',note:'比普通“к”更靠后、更厚。'},
-          {symbol:'Ғ ғ',example:'ғалым',meaning:'学者',note:'喉部摩擦音。'},
-          {symbol:'Ң ң',example:'аң',meaning:'野兽',note:'类似英语 sing 结尾的 ng 音。'},
-          {symbol:'І і',example:'тіл',meaning:'语言',note:'短而清晰的元音。'}
+      {id:'kk-u1',num:1,title:'字母与发音',desc:'42 个字母：特殊元音、特殊辅音、常用字母、外来词字母和拼读',level:'入门',lessons:[
+        {id:'kk-u1-l1',title:'特殊元音 Ә Ө Ұ Ү І',type:'intro',items:[
+          {symbol:'Ә ә',example:'әке',meaning:'爸爸',note:'哈萨克语最常见的特殊元音。嘴张开、舌头靠前，介于“啊”和“哎”之间。'},
+          {symbol:'Ө ө',example:'өзен',meaning:'河流',note:'圆唇、舌头靠前，像德语 ö。先发“哦”，嘴形不变把舌头往前推。'},
+          {symbol:'Ұ ұ',example:'ұл',meaning:'儿子',note:'短促的圆唇“乌”，舌头靠后。'},
+          {symbol:'Ү ү',example:'үй',meaning:'房子',note:'圆唇、舌头靠前，接近汉语拼音 ü（“鱼”的韵母）。'},
+          {symbol:'І і',example:'тіл',meaning:'语言',note:'短而轻的“衣”，比俄语的 и 更短、更松。'}
         ]},
-        {id:'kk-u1-l2',title:'听音认字',type:'listen',items:[
-          ['先听例词“әке”，找出其中的特殊元音。','Ә ә',['Ә ә','Ө ө','Ү ү'],0,'Ә ә'],
-          ['先听例词“өзен”，找出其中的特殊元音。','Ө ө',['Ә ә','Ө ө','Ү ү'],1,'Ө ө'],
-          ['先听例词“үй”，找出其中的特殊元音。','Ү ү',['Ү ү','Ұ ұ','І і'],0,'Ү ү'],
-          ['先听例词“қала”，找出开头的特殊辅音。','Қ қ',['К к','Қ қ','Ғ ғ'],1,'Қ қ']
+        {id:'kk-u1-l5',title:'特殊辅音 Қ Ғ Ң Һ',type:'intro',items:[
+          {symbol:'Қ қ',example:'қала',meaning:'城市',note:'比普通 к 更靠后，在喉咙深处发出，声音更厚。'},
+          {symbol:'Ғ ғ',example:'ғасыр',meaning:'世纪',note:'喉咙后部的浊摩擦音，像轻轻漱口的声音。'},
+          {symbol:'Ң ң',example:'таң',meaning:'黎明',note:'后鼻音，像汉语“昂”的尾音 ng，不要发成 н。'},
+          {symbol:'Һ һ',example:'жиһаз',meaning:'家具',note:'轻的“h”气音，比 х 更轻。只在少数词里出现。'}
+        ]},
+        {id:'kk-u1-l2',title:'听音认特殊元音',type:'listen',items:[
+          ['听单词，找出其中的特殊元音。','әке',['Ә ә','Ө ө','Ү ү'],0,'Ә ә'],
+          ['听单词，找出其中的特殊元音。','өзен',['Ә ә','Ө ө','Ү ү'],1,'Ө ө'],
+          ['听单词，找出其中的特殊元音。','үй',['Ү ү','Ұ ұ','І і'],0,'Ү ү'],
+          ['听单词，找出其中的特殊元音。','ұл',['Ү ү','Ұ ұ','У у'],1,'Ұ ұ'],
+          ['听单词，找出开头的辅音。','қала',['К к','Қ қ','Ғ ғ'],1,'Қ қ']
+        ]},
+        {id:'kk-u1-l6',title:'常用元音 А Е И О У Ы',type:'intro',items:[
+          {symbol:'А а',example:'ана',meaning:'妈妈',note:'和汉语“啊”接近。'},
+          {symbol:'Е е',example:'ел',meaning:'国家',note:'像“耶”的韵母，不要读成俄语的“ye”。'},
+          {symbol:'И и',example:'ине',meaning:'针',note:'读作长的“衣”，实际带一点滑音。'},
+          {symbol:'О о',example:'от',meaning:'火',note:'圆唇“哦”。'},
+          {symbol:'У у',example:'су',meaning:'水',note:'读作“乌”；在元音后面时接近 w。'},
+          {symbol:'Ы ы',example:'қыз',meaning:'女孩',note:'舌头后缩、不圆唇，接近汉语“思”的韵母。'}
+        ]},
+        {id:'kk-u1-l7',title:'常用辅音',type:'intro',items:[
+          {symbol:'Б б',example:'бала',meaning:'孩子',note:'像汉语 b，但声带要振动。'},
+          {symbol:'Г г',example:'гүл',meaning:'花',note:'靠前的 g，常和前元音一起出现。'},
+          {symbol:'Д д',example:'дос',meaning:'朋友',note:'浊的 d。'},
+          {symbol:'Ж ж',example:'жол',meaning:'路',note:'哈萨克语读作“zh”，比汉语 zh 更软、声带振动。'},
+          {symbol:'З з',example:'зат',meaning:'东西',note:'浊的 z，像蜜蜂嗡嗡声。'},
+          {symbol:'Й й',example:'ай',meaning:'月亮',note:'短促的 y 音，常在词尾。'},
+          {symbol:'К к',example:'кітап',meaning:'书',note:'靠前的 k，和 қ 对比着练。'},
+          {symbol:'Л л',example:'көл',meaning:'湖',note:'l 音。'},
+          {symbol:'М м',example:'мектеп',meaning:'学校',note:'m 音。'},
+          {symbol:'Н н',example:'нан',meaning:'面包',note:'前鼻音 n，和 ң 区分开。'},
+          {symbol:'П п',example:'пияз',meaning:'洋葱',note:'p 音。'},
+          {symbol:'Р р',example:'рақмет',meaning:'谢谢',note:'舌尖颤音，练不出来可以先轻轻弹一下舌尖。'},
+          {symbol:'С с',example:'сабақ',meaning:'课',note:'s 音。'},
+          {symbol:'Т т',example:'тау',meaning:'山',note:'t 音。'},
+          {symbol:'Ш ш',example:'шай',meaning:'茶',note:'sh 音，像汉语“诗”的声母。'}
+        ]},
+        {id:'kk-u1-l8',title:'外来词里的字母',type:'intro',items:[
+          {symbol:'В в',example:'вагон',meaning:'车厢',note:'主要出现在俄语借词中，像英语 v。'},
+          {symbol:'Ф ф',example:'фото',meaning:'照片',note:'f 音，多见于外来词。'},
+          {symbol:'Х х',example:'хат',meaning:'信',note:'喉部的 h，比汉语 h 更用力。'},
+          {symbol:'Ц ц',example:'цирк',meaning:'马戏团',note:'ts 音，只在外来词中出现。'},
+          {symbol:'Ч ч',example:'чемпион',meaning:'冠军',note:'ch 音，只在外来词中出现。'},
+          {symbol:'Щ щ',example:'щётка',meaning:'刷子',note:'长而软的 sh 音，只在外来词中出现。'},
+          {symbol:'Ё ё',example:'ёлка',meaning:'新年枞树',note:'读作“yo”，只在外来词中出现。'},
+          {symbol:'Ъ ъ',example:'подъезд',meaning:'楼门口',note:'硬音符号，本身不发音，把前后隔开。'},
+          {symbol:'Ь ь',example:'фильм',meaning:'电影',note:'软音符号，本身不发音，让前面的辅音变软。'},
+          {symbol:'Э э',example:'экран',meaning:'屏幕',note:'读作“e”，多见于外来词。'},
+          {symbol:'Ю ю',example:'аю',meaning:'熊',note:'读作“yu”。'},
+          {symbol:'Я я',example:'аяқ',meaning:'脚',note:'读作“ya”。'}
+        ]},
+        {id:'kk-u1-l9',title:'易混字母对比',type:'listen',items:[
+          ['听单词，开头是哪个字母？','кітап',['К к','Қ қ','Г г'],0,'К к'],
+          ['听单词，开头是哪个字母？','ғасыр',['Г г','Ғ ғ','Қ қ'],1,'Ғ ғ'],
+          ['听单词，结尾是哪个字母？','нан',['Н н','Ң ң','М м'],0,'Н н'],
+          ['听单词，结尾是哪个字母？','таң',['Н н','Ң ң','Г г'],1,'Ң ң'],
+          ['听单词，其中的元音是哪个？','ұл',['Ү ү','Ұ ұ','У у'],1,'Ұ ұ'],
+          ['听单词，其中的元音是哪个？','қыз',['І і','И и','Ы ы'],2,'Ы ы']
         ]},
         {id:'kk-u1-l3',title:'拼读短词',type:'select',items:[
           ['“ана”是什么意思？',['妈妈','爸爸','语言'],0,'妈妈'],
           ['“үй”是什么意思？',['城市','房子','河流'],1,'房子'],
           ['“тіл”是什么意思？',['朋友','语言','学者'],1,'语言'],
-          ['“қала”是什么意思？',['城市','野兽','车站'],0,'城市']
+          ['“қала”是什么意思？',['城市','野兽','车站'],0,'城市'],
+          ['“су”是什么意思？',['火','水','山'],1,'水'],
+          ['“нан”是什么意思？',['面包','茶','花'],0,'面包'],
+          ['“дос”是什么意思？',['路','朋友','孩子'],1,'朋友']
         ]},
         {id:'kk-u1-l4',title:'发音小练习',type:'listen',items:[
-          ['听例词“тіл”，找出开头的字母。','І і',['И и','І і','Й й'],1,'І і'],
-          ['听例词“аң”，找出结尾的字母。','Ң ң',['Н н','Ң ң','Г г'],1,'Ң ң'],
-          ['听例词“ғалым”，找出开头的字母。','Ғ ғ',['Қ қ','Ғ ғ','Г г'],1,'Ғ ғ']
+          ['听单词，找出开头的字母。','тіл',['И и','Т т','Й й'],1,'Т т'],
+          ['听单词，找出结尾的字母。','аң',['Н н','Ң ң','Г г'],1,'Ң ң'],
+          ['听单词，找出开头的字母。','ғасыр',['Қ қ','Ғ ғ','Г г'],1,'Ғ ғ'],
+          ['听单词，找出开头的字母。','шай',['Ш ш','Щ щ','Ж ж'],0,'Ш ш'],
+          ['听单词，选出它的意思。','бала',['孩子','学校','山'],0,'孩子']
         ]}
       ]},
       {id:'kk-u2',num:2,title:'拼读与基础词',desc:'先会认、会读，再积累最常用的人称、地点和日常词',level:'入门+',lessons:[
@@ -161,35 +217,76 @@ const V5_PATHS = {
     label: '俄语', flag:'🇷🇺',
     desc: '从字母、发音和拼读开始，逐步进入词汇、句型、造句和真实交流。',
     units: [
-      {id:'ru-u1',num:1,title:'字母与发音',desc:'认识俄文字母、元音辅音、重音和常见发音',level:'入门',lessons:[
-        {id:'ru-u1-l1',title:'先认识字母和声音',type:'intro',items:[
-          {symbol:'А а',example:'мама',meaning:'妈妈',note:'基础元音，先把声音读清楚。'},
-          {symbol:'О о',example:'он',meaning:'他',note:'重读时口形明显；非重读时会弱化，先记重读读法。'},
-          {symbol:'У у',example:'утро',meaning:'早晨',note:'圆唇“u”音。'},
-          {symbol:'Э э',example:'это',meaning:'这/这是',note:'清楚的“e”音，不是软化音。'},
-          {symbol:'Ы ы',example:'мы',meaning:'我们',note:'俄语学习者常见难点，舌位更靠后。'},
-          {symbol:'И и',example:'мир',meaning:'世界/和平',note:'“i”音，同时会让前面的辅音变软。'},
-          {symbol:'Й й',example:'чай',meaning:'茶',note:'短促的 y/j 近似音。'},
-          {symbol:'Ж ж',example:'жить',meaning:'生活',note:'浊辅音“zh”音。'},
-          {symbol:'Ш ш',example:'шар',meaning:'球',note:'硬的“sh”音。'},
-          {symbol:'Ч ч',example:'чай',meaning:'茶',note:'清晰的“ch”音。'}
+      {id:'ru-u1',num:1,title:'字母与发音',desc:'33 个字母：元音、形似拉丁字母的“假朋友”、辅音、软硬音符号和重音',level:'入门',lessons:[
+        {id:'ru-u1-l1',title:'元音与难点辅音',type:'intro',items:[
+          {symbol:'А а',example:'мама',meaning:'妈妈',note:'基础元音，和汉语“啊”接近。'},
+          {symbol:'О о',example:'он',meaning:'他',note:'重读时是圆唇“哦”；不重读时会弱化成接近“啊”。'},
+          {symbol:'У у',example:'утро',meaning:'早晨',note:'圆唇“乌”。'},
+          {symbol:'Э э',example:'это',meaning:'这/这是',note:'清楚的“e”音，前面没有 y。'},
+          {symbol:'Ы ы',example:'мы',meaning:'我们',note:'俄语难点：舌头后缩、嘴角向两边，接近汉语“思”的韵母再拉长。'},
+          {symbol:'И и',example:'мир',meaning:'世界/和平',note:'“衣”音，同时让前面的辅音变软。'},
+          {symbol:'Й й',example:'чай',meaning:'茶',note:'短促的 y 音，常在元音后。'},
+          {symbol:'Ж ж',example:'жить',meaning:'生活',note:'浊的“zh”，舌头比汉语 r 更靠后、更硬。'},
+          {symbol:'Ш ш',example:'шар',meaning:'球',note:'硬的“sh”。'},
+          {symbol:'Ч ч',example:'час',meaning:'小时',note:'软的“ch”，像汉语“七”的声母。'}
+        ]},
+        {id:'ru-u1-l5',title:'形似拉丁字母的“假朋友”',type:'intro',items:[
+          {symbol:'В в',example:'вода',meaning:'水',note:'长得像 B，读作 v。'},
+          {symbol:'Н н',example:'нет',meaning:'不/没有',note:'长得像 H，读作 n。'},
+          {symbol:'Р р',example:'рыба',meaning:'鱼',note:'长得像 P，读作舌尖颤音 r。'},
+          {symbol:'С с',example:'сок',meaning:'果汁',note:'长得像 C，读作 s。'},
+          {symbol:'Х х',example:'хлеб',meaning:'面包',note:'长得像 X，读作喉部的 h，像汉语“喝”的声母。'},
+          {symbol:'Е е',example:'есть',meaning:'有/吃',note:'长得像 E，读作“ye”。'},
+          {symbol:'Б б',example:'брат',meaning:'兄弟',note:'像数字 6，读作 b。'}
         ]},
         {id:'ru-u1-l2',title:'听音认字',type:'listen',items:[
-          ['听例词“мы”，找出特殊元音。','Ы ы',['И и','Ы ы','У у'],1,'Ы ы'],
-          ['听例词“чай”，找出开头的辅音。','Ч ч',['Ш ш','Ч ч','Щ щ'],1,'Ч ч'],
-          ['听例词“жить”，找出开头的辅音。','Ж ж',['Ж ж','Ш ш','Ч ч'],0,'Ж ж'],
-          ['听例词“шар”，找出开头的辅音。','Ш ш',['С с','Ш ш','Ж ж'],1,'Ш ш']
+          ['听单词，找出其中的元音。','мы',['И и','Ы ы','У у'],1,'Ы ы'],
+          ['听单词，找出开头的辅音。','час',['Ш ш','Ч ч','Щ щ'],1,'Ч ч'],
+          ['听单词，找出开头的辅音。','жить',['Ж ж','Ш ш','Ч ч'],0,'Ж ж'],
+          ['听单词，找出开头的辅音。','шар',['С с','Ш ш','Ж ж'],1,'Ш ш'],
+          ['听单词，找出开头的辅音。','вода',['Б б','В в','Ф ф'],1,'В в']
+        ]},
+        {id:'ru-u1-l6',title:'其余辅音',type:'intro',items:[
+          {symbol:'Г г',example:'город',meaning:'城市',note:'g 音。'},
+          {symbol:'Д д',example:'дом',meaning:'家/房子',note:'浊的 d。'},
+          {symbol:'З з',example:'зима',meaning:'冬天',note:'浊的 z。'},
+          {symbol:'К к',example:'кот',meaning:'猫',note:'k 音，不送气。'},
+          {symbol:'Л л',example:'лето',meaning:'夏天',note:'l 音；在 а、о、у 前舌头更靠后。'},
+          {symbol:'М м',example:'молоко',meaning:'牛奶',note:'m 音。'},
+          {symbol:'П п',example:'папа',meaning:'爸爸',note:'p 音，不送气。'},
+          {symbol:'Т т',example:'там',meaning:'那里',note:'t 音，不送气。'},
+          {symbol:'Ф ф',example:'фото',meaning:'照片',note:'f 音。'},
+          {symbol:'Ц ц',example:'цирк',meaning:'马戏团',note:'ts 音，像汉语“次”的声母。'},
+          {symbol:'Щ щ',example:'щи',meaning:'菜汤',note:'长而软的“sh”，比 ш 更软、更长。'}
+        ]},
+        {id:'ru-u1-l7',title:'带 y 的元音和软硬音符号',type:'intro',items:[
+          {symbol:'Ё ё',example:'ёж',meaning:'刺猬',note:'读作“yo”，含 ё 的音节总是重读。'},
+          {symbol:'Ю ю',example:'юг',meaning:'南方',note:'读作“yu”。'},
+          {symbol:'Я я',example:'я',meaning:'我',note:'读作“ya”，单独就是“我”。'},
+          {symbol:'Ь ь',example:'день',meaning:'天/日子',note:'软音符号，本身不发音，让前面的辅音变软。'},
+          {symbol:'Ъ ъ',example:'подъезд',meaning:'楼门口',note:'硬音符号，本身不发音，把前后隔开。'}
+        ]},
+        {id:'ru-u1-l8',title:'易混字母对比',type:'listen',items:[
+          ['听单词，开头是哪个字母？','щи',['Ш ш','Щ щ','Ч ч'],1,'Щ щ'],
+          ['听单词，开头是哪个字母？','это',['Е е','Э э','Ё ё'],1,'Э э'],
+          ['听单词，其中的元音是哪个？','мир',['И и','Ы ы','Й й'],0,'И и'],
+          ['听单词，开头是哪个字母？','хлеб',['Х х','К к','Г г'],0,'Х х'],
+          ['听单词，开头是哪个字母？','юг',['У у','Ю ю','Я я'],1,'Ю ю']
         ]},
         {id:'ru-u1-l3',title:'拼读短词',type:'select',items:[
           ['“мама”是什么意思？',['妈妈','爸爸','世界'],0,'妈妈'],
           ['“чай”是什么意思？',['茶','水','早晨'],0,'茶'],
           ['“утро”是什么意思？',['晚上','早晨','道路'],1,'早晨'],
-          ['“мир”是什么意思？',['工作','语言','世界/和平'],2,'世界/和平']
+          ['“мир”是什么意思？',['工作','语言','世界/和平'],2,'世界/和平'],
+          ['“вода”是什么意思？',['水','面包','鱼'],0,'水'],
+          ['“дом”是什么意思？',['猫','家/房子','城市'],1,'家/房子'],
+          ['“хлеб”是什么意思？',['牛奶','果汁','面包'],2,'面包']
         ]},
-        {id:'ru-u1-l4',title:'发音小练习',type:'listen',items:[
-          ['听“мы”，找出开头字母。','М м',['М м','Н н','В в'],0,'М м'],
-          ['听“чай”，找出结尾字母。','Й й',['Й й','И и','Л л'],0,'Й й'],
-          ['听“это”，找出开头字母。','Э э',['Е е','Э э','А а'],1,'Э э']
+        {id:'ru-u1-l4',title:'重音与弱化',type:'select',items:[
+          ['“молоко”里只有最后一个 о 重读。前两个 о 读起来接近？',['а','о','у'],0,'а'],
+          ['俄语单词里一般有几个重读音节？',['一个','两个','每个音节都重读'],0,'一个'],
+          ['“вода”的重音在哪里？',['во','да','没有重音'],1,'да'],
+          ['含有 ё 的音节是否重读？',['总是重读','从不重读','看情况'],0,'总是重读']
         ]}
       ]},
       {id:'ru-u2',num:2,title:'拼读与基础词',desc:'先读准最常用词，再学人称、地点和日常表达',level:'入门+',lessons:[
@@ -427,7 +524,7 @@ function renderLesson(){
   const area=document.getElementById('exerciseArea');let i=0,score=0;const items=lesson.items;function finish(){const pct=Math.round(score/items.length*100);saveRemoteProgress(lesson.id,{language:langKey(),status:'done',score:pct});area.innerHTML=`<div class="result-card"><span class="eyebrow">完成</span><h2>本小课完成！</h2><div class="score-big">${pct}%</div><p>你完成了 ${items.length} 个练习。${getUser()?'进度已保存在本设备。联网后会尝试同步到账号。':'当前为游客模式，进度仅保存在本设备。'}</p><a class="primary-btn" href="unit.html?lang=${langKey()}&unit=${unit.id}">返回单元 →</a></div>`}
   function next(){if(i>=items.length){finish();return}const it=items[i];const meta=`<div class="exercise-meta"><span>${i+1} / ${items.length}</span><div class="progress-track"><span style="width:${Math.round(i/items.length*100)}%"></span></div></div>`;
   if(lesson.type==='intro'){area.innerHTML=meta+`<div class="exercise-card pronunciation-card"><span class="eyebrow">认识发音</span><div class="pronunciation-item"><div class="sound-symbol">${it.symbol}</div><button class="pronunciation-audio" id="playSymbol" type="button">🔊 听字母</button></div><div class="pronunciation-item"><h2>${it.example}</h2><button class="pronunciation-audio" id="playExample" type="button">🔊 听单词</button></div><p class="meaning">${it.meaning}</p><p class="hint">${it.note}</p><div class="pronunciation-actions"><button class="secondary-btn" id="knowIt">我会了，下一张 →</button></div></div>`;area.querySelector('#playSymbol').onclick=()=>speak(it.symbol.replace(/\s+/g,' '),langKey());area.querySelector('#playExample').onclick=()=>speak(it.example,langKey());area.querySelector('#knowIt').onclick=()=>{score++;i++;next()};return}
-  if(lesson.type==='listen'||lesson.type==='select'){const prompt=it[0],audioText=lesson.type==='listen'?it[1]:null,options=Array.isArray(it[2])?it[2]:it[1],correct=Number.isInteger(it[3])?it[3]:0;area.innerHTML=meta+`<div class="exercise-card"><span class="eyebrow">${lesson.type==='listen'?'先听再选':'认识词语'}</span><h2>${prompt}</h2>${audioText?`<button class="audio-btn" id="playAudio">🔊 播放 ${audioText}</button>`:''}${options.map((x,j)=>`<button class="answer-option" data-j="${j}">${x}</button>`).join('')}</div>`;if(audioText)area.querySelector('#playAudio').onclick=()=>speak(audioText,langKey());area.querySelectorAll('.answer-option').forEach(b=>b.onclick=()=>{const ok=+b.dataset.j===correct;if(ok)score++;area.querySelectorAll('.answer-option').forEach(x=>x.disabled=true);b.classList.add(ok?'correct':'wrong');if(!ok){const right=area.querySelector(`[data-j="${correct}"]`);if(right)right.classList.add('correct')}const fb=document.createElement('div');fb.className='feedback-box '+(ok?'good':'bad');fb.textContent=ok?'正确！':'看看绿色的正确答案。';area.querySelector('.exercise-card').appendChild(fb);setTimeout(()=>{i++;next()},650)});return}
+  if(lesson.type==='listen'||lesson.type==='select'){const prompt=it[0],audioText=lesson.type==='listen'?it[1]:null,options=Array.isArray(it[2])?it[2]:it[1],correct=Number.isInteger(it[3])?it[3]:0;area.innerHTML=meta+`<div class="exercise-card"><span class="eyebrow">${lesson.type==='listen'?'先听再选':'认识词语'}</span><h2>${prompt}</h2>${audioText?`<button class="audio-btn" id="playAudio">🔊 播放发音</button>`:''}${options.map((x,j)=>`<button class="answer-option" data-j="${j}">${x}</button>`).join('')}</div>`;if(audioText)area.querySelector('#playAudio').onclick=()=>speak(audioText,langKey());area.querySelectorAll('.answer-option').forEach(b=>b.onclick=()=>{const ok=+b.dataset.j===correct;if(ok)score++;area.querySelectorAll('.answer-option').forEach(x=>x.disabled=true);b.classList.add(ok?'correct':'wrong');if(!ok){const right=area.querySelector(`[data-j="${correct}"]`);if(right)right.classList.add('correct')}const fb=document.createElement('div');fb.className='feedback-box '+(ok?'good':'bad');fb.textContent=ok?'正确！':'看看绿色的正确答案。';area.querySelector('.exercise-card').appendChild(fb);setTimeout(()=>{i++;next()},650)});return}
   if(lesson.type==='translate'||lesson.type==='write'){const answer=it[1];const title=lesson.type==='translate'?`中文 → ${path.label}`:'自己造句';area.innerHTML=meta+`<div class="exercise-card"><span class="eyebrow">${title}</span><h2>${it[0]}</h2><textarea id="textAnswer" class="answer-input" rows="3" placeholder="写出你的答案"></textarea><button id="submitText" class="primary-btn">提交答案</button><p class="hint">初学阶段先用标准答案帮助建立正确句型；可以参考例句修改后再练。</p></div>`;area.querySelector('#submitText').onclick=()=>{const v=area.querySelector('#textAnswer').value.trim();const ok=v===answer;if(ok)score++;area.querySelector('#textAnswer').disabled=true;area.querySelector('#submitText').disabled=true;const fb=document.createElement('div');fb.className='feedback-box '+(ok?'good':'bad');fb.textContent=ok?'正确！':`参考表达：${answer}`;area.querySelector('.exercise-card').appendChild(fb);setTimeout(()=>{i++;next()},900)};return}
   if(lesson.type==='reorder'){const phrase=shuffle(it[1]);area.innerHTML=meta+`<div class="exercise-card"><span class="eyebrow">组句</span><h2>${it[0]}</h2><div id="chips" class="chip-bank">${phrase.map((x,j)=>`<button class="word-chip" data-word="${x}" data-id="${j}">${x}</button>`).join('')}</div><div id="chosen" class="chosen-line"></div><button id="checkOrder" class="primary-btn" disabled>检查句子</button></div>`;const chosen=[];area.querySelectorAll('.word-chip').forEach(b=>b.onclick=()=>{if(b.disabled)return;chosen.push(b.dataset.word);b.disabled=true;area.querySelector('#chosen').textContent=chosen.join(' ');area.querySelector('#checkOrder').disabled=false});area.querySelector('#checkOrder').onclick=()=>{const expected=it[2],got=chosen.join(' '),ok=got===expected;if(ok)score++;const fb=document.createElement('div');fb.className='feedback-box '+(ok?'good':'bad');fb.textContent=ok?'组句正确！':`正确顺序：${expected}`;area.querySelector('.exercise-card').appendChild(fb);area.querySelector('#checkOrder').disabled=true;setTimeout(()=>{i++;next()},900)};return}
   }
@@ -451,8 +548,6 @@ function renderProgress(){initUser().then(()=>{const p=localProgress(),paths=[V5
 
 /* ========================= V7 ========================= */
 const V7_PLACEMENT = { kk: {questions: [["选出正确的特殊元音。",["Ә ә","Е е","И и","А а"],0],["“үй”是什么意思？",["房子","语言","朋友","车站"],0],["“Рақмет.”是什么意思？",["你好","谢谢","再见","对不起"],1],["“Сәлеметсіз бе.”是什么意思？",["谢谢","对不起","你好/您好","请等一下"],2],["“Мен”是什么意思？",["我","你","他","我们"],0],["“Мен Қазақстанда жұмыс істеймін.”是什么意思？",["我住在中国。","我在哈萨克斯坦工作。","我去火车站。","我需要帮助。"],1],["“Қазір сағат неше?”是什么意思？",["多少钱？","在哪里？","现在几点？","什么时候到？"],2],["“Қанша тұрады?”是什么意思？",["多少钱？","在哪里？","几点？","什么时候？"],0],["“Күте тұрыңызшы.”是什么意思？",["请坐下。","请等一下。","请进来。","请签字。"],1],["“Маған көмек керек.”是什么意思？",["我要走了。","我需要帮助。","我有时间。","我在工作。"],1],["哪一句表示“货物明天到”？",["Жүк ертең келеді.","Жүк қашан келеді?","Жүк әлі келген жоқ.","Жүк қайда?"],0],["哪一句表示“火车什么时候发车”？",["Вагон нөмірін тексеріңізші.","Пойыз қашан жөнеледі?","Пойыз қайда?","Пойызды күтіңіз."],1],["“Құжаттарды маған беріңізші.”是什么意思？",["请把单据给我。","请确认车厢。","请等一下。","请开始装货。"],0],["“Жүкті қай жерде түсіреміз?”是什么意思？",["什么时候装货？","在哪里卸货？","货物到了吗？","谁负责运输？"],1],["“Жүк әлі келген жоқ.”是什么意思？",["货物已经到了。","货物还没到。","货物明天到。","货物在哪里？"],1],["哪一句表示“我需要帮助”？",["Мен жұмыс істеймін.","Маған көмек керек.","Көмек қашан болады?","Мен үйдемін."],1],["哪一句表示“我在哈萨克斯坦工作”？",["Мен Қазақстанда жұмыс істеймін.","Мен Қазақстанға барамын.","Мен Қазақстанды білемін.","Мен үйде жұмыс істеймін."],0],["你看到“Вагон нөмірін тексеріңізші.”，它最可能用于什么场景？",["餐厅点菜","铁路现场","租房","医院"],1]]}, ru: {questions: [["选出正确的特殊元音。",["Ы ы","И и","У у","Э э"],0],["“чай”是什么意思？",["茶","水","早晨","道路"],0],["“Спасибо.”是什么意思？",["谢谢","你好","对不起","再见"],0],["“Здравствуйте.”是什么意思？",["谢谢","你好/您好","请等一下","明天见"],1],["“Я”是什么意思？",["我","你","他","我们"],0],["“Я работаю в Казахстане.”是什么意思？",["我住在俄罗斯。","我在哈萨克斯坦工作。","我去车站。","我需要帮助。"],1],["“Который сейчас час?”是什么意思？",["多少钱？","现在几点？","在哪里？","什么时候到？"],1],["“Сколько стоит?”是什么意思？",["多少钱？","在哪里？","几点？","怎么走？"],0],["“Подождите, пожалуйста.”是什么意思？",["请进来。","请等一下。","请签字。","请停车。"],1],["“Мне нужна помощь.”是什么意思？",["我需要帮助。","我有时间。","我要回家。","我在工作。"],0],["哪一句表示“货物明天到”？",["Груз прибудет завтра.","Когда прибудет груз?","Груз ещё не приехал.","Где груз?"],0],["哪一句表示“货物什么时候到”？",["Груз завтра.","Когда прибудет груз?","Дайте документы.","Где водитель?"],1],["“Дайте мне документы, пожалуйста.”是什么意思？",["请把单据给我。","请关闭门。","请等一下。","请开始装货。"],0],["“Оборудование сломалось.”是什么意思？",["设备坏了。","设备到了。","设备很新。","设备在仓库。"],0],["“Машина ещё не приехала.”是什么意思？",["车还没到。","车已经到了。","车在这里。","车要出发了。"],0],["哪一句表示“这里不能停车”？",["Здесь можно парковаться.","Здесь нельзя парковаться.","Здесь стоит машина.","Здесь парковка."],1],["哪一句表示“我在哈萨克斯坦工作”？",["Я работаю в Казахстане.","Я еду в Казахстан.","Я живу дома.","Я знаю Казахстан."],0],["你看到“Когда начнётся погрузка?”，它最可能用于什么场景？",["餐厅点菜","货物装运","医院问诊","租房"],1]]} };
-const V7_KK_ALPHABET = [["А а","ана","妈妈","基础元音。"],["Ә ә","әке","爸爸","哈萨克语特殊元音。"],["Б б","бала","孩子","普通 b 音。"],["В в","вагон","车厢","多见于借词。"],["Г г","гүл","花","基础 g 音。"],["Ғ ғ","ғалым","学者","喉部摩擦音。"],["Д д","дос","朋友","基础 d 音。"],["Е е","ел","国家","词首常读作 y+e，具体读法随位置变化。"],["Ё ё","ёлка","圣诞树","主要见于俄语等借词。"],["Ж ж","жол","路","浊的 zh 音。"],["З з","заң","法律","基础 z 音。"],["И и","ине","针","i 音。"],["Й й","ай","月亮","短促的 y 近似音。"],["К к","күн","太阳/天","较前的 k 音。"],["Қ қ","қала","城市","比 к 更靠后的清辅音。"],["Л л","лақ","小山羊","基础 l 音。"],["М м","мал","牲畜","基础 m 音。"],["Н н","нан","面包","基础 n 音。"],["Ң ң","аң","野兽","类似英语 sing 结尾的 ng 音。"],["О о","от","火","基础 o 音。"],["Ө ө","өзен","河流","圆唇前元音 ö。"],["П п","піл","大象","基础 p 音。"],["Р р","радио","收音机","颤音 r。"],["С с","су","水","基础 s 音。"],["Т т","тіл","语言","基础 t 音。"],["У у","тау","山","哈萨克语中常作为半元音/音节组成部分出现。"],["Ұ ұ","ұн","面粉","后元音，嘴唇不圆。"],["Ү ү","үй","房子","圆唇前元音 ü。"],["Ф ф","футбол","足球","主要见于借词。"],["Х х","хат","信","摩擦音，多见于借词。"],["Һ һ","қаһарман","英雄","较少见，常见于部分词和借词。"],["Ц ц","цирк","马戏团","主要见于俄语借词。"],["Ч ч","чемпион","冠军","主要见于借词。"],["Ш ш","шай","茶","硬的 sh 音。"],["Щ щ","щетка","刷子","主要见于俄语借词。"],["Ъ ъ","объект","对象","硬音符号，本身不独立发音。"],["Ы ы","ыдыс","器皿","后元音。"],["І і","тіл","语言","短而清晰的 i 类元音。"],["Ь ь","рельс","铁轨","软音符号，本身不独立发音。"],["Э э","экран","屏幕","主要见于借词。"],["Ю ю","аю","熊","常由 y + u 类声音组成。"],["Я я","аяз","霜","常由 y + a 类声音组成。"]];
-const V7_RU_ALPHABET = [["А а","мама","妈妈","基础元音。"],["Б б","брат","兄弟","b 音。"],["В в","вагон","车厢","v 音。"],["Г г","груз","货物","g 音。"],["Д д","дом","房子","d 音。"],["Е е","еда","食物","词首常带 y 起音。"],["Ё ё","ёлка","圣诞树","yo 音。"],["Ж ж","жизнь","生活","浊的 zh 音。"],["З з","зима","冬天","z 音。"],["И и","имя","名字","i 音。"],["Й й","чай","茶","短促的 y 音。"],["К к","книга","书","k 音。"],["Л л","лук","洋葱","l 音。"],["М м","мама","妈妈","m 音。"],["Н н","нос","鼻子","n 音。"],["О о","окно","窗户","o 音。"],["П п","поезд","火车","p 音。"],["Р р","работа","工作","颤音 r。"],["С с","самолёт","飞机","s 音。"],["Т т","транспорт","交通","t 音。"],["У у","утро","早晨","u 音。"],["Ф ф","факт","事实","f 音，多见于借词。"],["Х х","хлеб","面包","喉部摩擦音。"],["Ц ц","цена","价格","ts 音。"],["Ч ч","чай","茶","ch 音。"],["Ш ш","шар","球","硬 sh 音。"],["Щ щ","щётка","刷子","较软的 shch 音。"],["Ъ ъ","объект","对象","硬音符号，本身不发音。"],["Ы ы","мы","我们","俄语后元音，舌位靠后。"],["Ь ь","день","天","软音符号，本身不发音。"],["Э э","это","这/这是","清晰 e 音。"],["Ю ю","юг","南方","yu 音。"],["Я я","яблоко","苹果","ya 音。"]];
 
 function v7PlacementKey(lang, userId){ return `v7_placement_${lang}_${userId || 'guest'}`; }
 function v7GetPlacement(lang){ try { return JSON.parse(localStorage.getItem(v7PlacementKey(lang, getUser()?.id)) || 'null'); } catch { return null; } }
@@ -505,9 +600,6 @@ function v7LoginGate(path,unit,idx){
   return `<div class="login-gate"><span class="eyebrow">免费体验到这里</span><h2>从第 2 单元开始，请先注册 / 登录</h2><p>你已经可以免费体验第 1 单元。注册后，系统会把你的学习进度和考试成绩绑定到账号。</p><div class="gate-stats"><span>✅ 第 1 单元免费体验</span><span>☁️ 云端保存进度</span><span>📊 保存考试成绩</span></div><div class="result-actions"><a class="secondary-btn" href="path.html?lang=${langKey()}">返回学习路径</a><a class="primary-btn" href="auth.html?mode=signup&next=${next}">注册 / 登录</a></div></div>`;
 }
 
-// Replace Unit 1 alphabet lessons with the full alphabet.
-V5_PATHS.kk.units[0].lessons[0].items = V7_KK_ALPHABET.map(x=>({symbol:x[0],example:x[1],meaning:x[2],note:x[3]}));
-V5_PATHS.ru.units[0].lessons[0].items = V7_RU_ALPHABET.map(x=>({symbol:x[0],example:x[1],meaning:x[2],note:x[3]}));
 
 function renderPath(){
   const path=getPath(), p=v7GetPlacement(langKey()); document.title=`${path.label}学习路径｜中亚语言通`;
@@ -567,7 +659,7 @@ function v7RenderLessonBody(path,unit,lesson){
     area.innerHTML=`<div class="result-card"><span class="eyebrow">完成</span><h2>本小课完成！</h2><div class="score-big">${pct}%</div><p>你完成了 ${items.length} 个练习。${getUser()?'进度已保存在本设备。联网后会尝试同步到账号。':'当前为游客模式，进度仅保存在本设备。'}</p><div class="result-actions">${next?`<a class="primary-btn" href="lesson-v4.html?lang=${langKey()}&unit=${unit.id}&lesson=${next.id}">下一小课 →</a>`:''}<a class="secondary-btn" href="unit.html?lang=${langKey()}&unit=${unit.id}">返回单元</a></div></div>`;
   }
   function meta(){return `<div class="exercise-meta"><span>${i+1} / ${items.length}</span><div class="progress-track"><span style="width:${Math.round((i)/items.length*100)}%"></span></div></div>`}
-  function next(){ if(i>=items.length)return finish(); const it=items[i]; area.innerHTML=meta()+`<div class="exercise-card"><span class="eyebrow">${lesson.type==='intro'?'认识发音':lesson.type==='listen'?'先听再选':lesson.type==='select'?'认识词语':lesson.type==='translate'?`中文 → ${path.label}`:lesson.type==='reorder'?'组句':'自己造句'}</span>${lesson.type==='intro'?`<div class="pronunciation-item"><div class="sound-symbol">${it.symbol}</div><button class="pronunciation-audio" id="playSymbol" type="button">🔊 听字母</button></div><div class="pronunciation-item"><h2>${it.example}</h2><button class="pronunciation-audio" id="playExample" type="button">🔊 听单词</button></div><p class="meaning">${it.meaning}</p><p class="hint">${it.note}</p><div class="pronunciation-actions"><button class="secondary-btn" id="knowIt">我会了，下一张 →</button></div>`:lesson.type==='listen'||lesson.type==='select'?`<h2>${it[0]}</h2>${lesson.type==='listen'?`<button class="audio-btn" id="playAudio">🔊 播放 ${it[1]}</button>`:''}${(Array.isArray(it[2])?it[2]:it[1]).map((x,j)=>`<button class="answer-option" data-j="${j}">${x}</button>`).join('')}`:lesson.type==='translate'||lesson.type==='write'?`<h2>${it[0]}</h2><textarea id="textAnswer" class="answer-input" rows="3" placeholder="写出你的答案"></textarea><button id="submitText" class="primary-btn">提交答案</button><p class="hint">初学阶段先用标准答案建立正确表达；可参考例句修改后再练。</p>`:`<h2>${it[0]}</h2><div class="chip-bank">${shuffle(it[1]).map((x,j)=>`<button class="word-chip" data-word="${x}">${x}</button>`).join('')}</div><div id="chosen" class="chosen-line"></div><button id="checkOrder" class="primary-btn" disabled>检查句子</button>`}</div>`;
+  function next(){ if(i>=items.length)return finish(); const it=items[i]; area.innerHTML=meta()+`<div class="exercise-card"><span class="eyebrow">${lesson.type==='intro'?'认识发音':lesson.type==='listen'?'先听再选':lesson.type==='select'?'认识词语':lesson.type==='translate'?`中文 → ${path.label}`:lesson.type==='reorder'?'组句':'自己造句'}</span>${lesson.type==='intro'?`<div class="pronunciation-item"><div class="sound-symbol">${it.symbol}</div><button class="pronunciation-audio" id="playSymbol" type="button">🔊 听字母</button></div><div class="pronunciation-item"><h2>${it.example}</h2><button class="pronunciation-audio" id="playExample" type="button">🔊 听单词</button></div><p class="meaning">${it.meaning}</p><p class="hint">${it.note}</p><div class="pronunciation-actions"><button class="secondary-btn" id="knowIt">我会了，下一张 →</button></div>`:lesson.type==='listen'||lesson.type==='select'?`<h2>${it[0]}</h2>${lesson.type==='listen'?`<button class="audio-btn" id="playAudio">🔊 播放发音</button>`:''}${(Array.isArray(it[2])?it[2]:it[1]).map((x,j)=>`<button class="answer-option" data-j="${j}">${x}</button>`).join('')}`:lesson.type==='translate'||lesson.type==='write'?`<h2>${it[0]}</h2><textarea id="textAnswer" class="answer-input" rows="3" placeholder="写出你的答案"></textarea><button id="submitText" class="primary-btn">提交答案</button><p class="hint">初学阶段先用标准答案建立正确表达；可参考例句修改后再练。</p>`:`<h2>${it[0]}</h2><div class="chip-bank">${shuffle(it[1]).map((x,j)=>`<button class="word-chip" data-word="${x}">${x}</button>`).join('')}</div><div id="chosen" class="chosen-line"></div><button id="checkOrder" class="primary-btn" disabled>检查句子</button>`}</div>`;
     if(lesson.type==='intro'){area.querySelector('#playSymbol').onclick=()=>speak(it.symbol,langKey());area.querySelector('#playExample').onclick=()=>speak(it.example,langKey());area.querySelector('#knowIt').onclick=()=>{score++;i++;next()};return}
     if(lesson.type==='listen'||lesson.type==='select'){if(lesson.type==='listen')area.querySelector('#playAudio').onclick=()=>speak(it[1],langKey());area.querySelectorAll('.answer-option').forEach(b=>b.onclick=()=>{const ok=+b.dataset.j===Number(it[3]);if(ok)score++;area.querySelectorAll('.answer-option').forEach(x=>x.disabled=true);b.classList.add(ok?'correct':'wrong');if(!ok){const right=area.querySelector(`[data-j="${it[3]}"]`);if(right)right.classList.add('correct')}const fb=document.createElement('div');fb.className='feedback-box '+(ok?'good':'bad');fb.textContent=ok?'正确！':'看看绿色的正确答案。';area.querySelector('.exercise-card').appendChild(fb);setTimeout(()=>{i++;next()},650)});return}
     if(lesson.type==='translate'||lesson.type==='write'){area.querySelector('#submitText').onclick=()=>{const v=area.querySelector('#textAnswer').value.trim(),ok=v===it[1];if(ok)score++;area.querySelector('#textAnswer').disabled=true;area.querySelector('#submitText').disabled=true;const fb=document.createElement('div');fb.className='feedback-box '+(ok?'good':'bad');fb.textContent=ok?'正确！':`参考表达：${it[1]}`;area.querySelector('.exercise-card').appendChild(fb);setTimeout(()=>{i++;next()},900)};return}

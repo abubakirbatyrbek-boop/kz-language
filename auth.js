@@ -1,3 +1,65 @@
+// Recorded pronunciation. Most phones ship no Kazakh (and often no Russian) system voice,
+// so every speak path plays a pre-generated clip from audio/{kk,ru}.bin first and only
+// falls back to speechSynthesis when a text has no clip.
+(function () {
+  const INDEX_URL = 'audio/index.json';
+  const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
+  const norm = t => String(t ?? '').replace(/\s+/g, ' ').trim();
+  const langOf = l => /^kk/i.test(String(l || '')) ? 'kk' : /^ru/i.test(String(l || '')) ? 'ru' : null;
+  let index = null, indexLoad = null, player = null, token = 0;
+  const cache = new Map();
+  function loadIndex() {
+    if (index) return Promise.resolve(index);
+    return indexLoad ||= fetch(INDEX_URL).then(r => r.ok ? r.json() : {}).catch(() => ({})).then(j => (index = j || {}));
+  }
+  async function clip(lang, text) {
+    const idx = await loadIndex(), entry = idx[lang]?.[text];
+    if (!entry) return null;
+    const id = lang + '|' + text;
+    if (cache.has(id)) return cache.get(id);
+    const [start, length] = entry;
+    const res = await fetch('audio/' + lang + '.bin', {headers: {Range: 'bytes=' + start + '-' + (start + length - 1)}});
+    if (!res.ok) return null;
+    let buf = await res.arrayBuffer();
+    if (res.status === 200) buf = buf.slice(start, start + length); // server ignored Range
+    const url = URL.createObjectURL(new Blob([buf], {type: 'audio/mpeg'}));
+    cache.set(id, url);
+    return url;
+  }
+  // Returns a promise resolving true when a recorded clip played, false when the caller should fall back.
+  function play(text, lang, rate = 1) {
+    const l = langOf(lang), t = norm(text);
+    if (!l || !t) return Promise.resolve(false);
+    const my = ++token;
+    player ||= new Audio();
+    // Start playback inside the click so iOS/Safari keeps the element unlocked for the real clip.
+    try { player.pause(); player.src = SILENT; player.play().catch(() => {}); } catch {}
+    return clip(l, t).then(url => {
+      if (!url || my !== token) return !!url;
+      try { window.speechSynthesis?.cancel(); } catch {}
+      player.src = url;
+      player.playbackRate = Math.max(0.5, Math.min(2, Number(rate) || 1));
+      if ('preservesPitch' in player) player.preservesPitch = true;
+      return player.play().then(() => true, () => false);
+    }, () => false);
+  }
+  function has(text, lang) { const l = langOf(lang); return !!(index && l && index[l]?.[norm(text)]); }
+  window.KZAudio = {play, has, ready: loadIndex};
+  // Route every existing speechSynthesis caller (app.js, grammar-flow.js, v5.js, government.html) through the clips.
+  const synth = window.speechSynthesis;
+  if (synth && window.SpeechSynthesisUtterance) {
+    const nativeSpeak = synth.speak.bind(synth);
+    synth.speak = function (u) {
+      if (!u || u.__kzNative || !langOf(u.lang)) return nativeSpeak(u);
+      play(u.text, u.lang, (u.rate || 1) / 0.88).then(ok => {
+        if (!ok) { u.__kzNative = true; nativeSpeak(u); }
+      });
+    };
+  }
+  const warm = () => loadIndex();
+  if (window.requestIdleCallback) requestIdleCallback(warm, {timeout: 4000}); else setTimeout(warm, 1500);
+})();
+
 (function () {
   const cfg = window.SUPABASE_CONFIG || {};
   const configured = cfg.url && cfg.publishableKey && !cfg.url.includes('YOUR-PROJECT') && !cfg.publishableKey.includes('YOUR_SUPABASE');
@@ -240,7 +302,40 @@
   const readKey=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')}catch{return {}}};
   const key=()=> 'kz-study:'+(window.KZAuth.getUser()?.id||'guest');
   function state(){return readKey(key());}
-  function update(fn){const s=state();fn(s);localStorage.setItem(key(),JSON.stringify(s));}
+  function update(fn){const s=state();fn(s);localStorage.setItem(key(),JSON.stringify(s));schedulePush();}
+  // Review list, practice marks and resume positions follow the account: the newest snapshot
+  // is kept as a test_results row (node kz-study-state), so no database change is needed.
+  const STATE_NODE='kz-study-state';let pushTimer=null;
+  function snapshot(s){return {review:s.review||{},practice:s.practice||{},courses:s.courses||{},last:s.last||null};}
+  function pushNow(){
+    clearTimeout(pushTimer);pushTimer=null;
+    const u=window.KZAuth.getUser(),client=window.KZAuth.getClient();if(!u||!client)return;
+    client.from('test_results').insert({user_id:u.id,node_id:STATE_NODE,language:'kk',score:0,passed:false,answers:[snapshot(state())]}).then(()=>{},()=>{});
+  }
+  function schedulePush(){if(!window.KZAuth.getUser())return;clearTimeout(pushTimer);pushTimer=setTimeout(pushNow,3000);}
+  window.addEventListener('pagehide',()=>{if(pushTimer)pushNow();});
+  function mergeState(remote){
+    if(!remote)return false;const s=state(),before=JSON.stringify(s);
+    s.review||={};for(const [k,v] of Object.entries(remote.review||{})){const l=s.review[k];if(!l||(v.due||0)>(l.due||0))s.review[k]=v;}
+    s.practice={...(remote.practice||{}),...(s.practice||{})};
+    s.courses||={};for(const [k,v] of Object.entries(remote.courses||{})){if(!s.courses[k]||(v.at||0)>(s.courses[k].at||0))s.courses[k]=v;}
+    if(remote.last&&(!s.last||(remote.last.at||0)>(s.last.at||0)))s.last=remote.last;
+    if(JSON.stringify(s)===before)return false;localStorage.setItem(key(),JSON.stringify(s));return true;
+  }
+  let pulled=null;
+  function pull(){
+    return pulled||=(async()=>{
+      const u=window.KZAuth.getUser(),client=window.KZAuth.getClient();if(!u||!client)return;
+      try{
+        const {data}=await client.from('test_results').select('answers,created_at').eq('user_id',u.id).eq('node_id',STATE_NODE).order('created_at',{ascending:false}).limit(1);
+        const remote=Array.isArray(data?.[0]?.answers)?data[0].answers[0]:data?.[0]?.answers;
+        mergeState(remote);
+        // This device knew something the account did not (e.g. guest work): upload the merged state.
+        if(JSON.stringify(snapshot(state()))!==JSON.stringify(snapshot(remote||{})))schedulePush();
+        updateLinks();
+      }catch{}
+    })();
+  }
   function safeUrl(raw){try{const u=new URL(raw,location.href);return u.origin===location.origin && /\/(learn|course|unit|lesson-v4|quiz-v4|grammar-test)\.html$/.test(u.pathname)?u.pathname.split('/').pop()+u.search:null}catch{return null}}
   function resume(course){const s=state(),r=course?s.courses?.[course]:s.last;return r&&safeUrl(r.url)?r:null;}
   function updateLinks(){document.querySelectorAll('[data-continue]').forEach(a=>{const r=resume();a.href=r?safeUrl(r.url):'courses.html';a.textContent=r?'继续学习':'选择课程';});}
@@ -248,10 +343,15 @@
   function review(c,l){update(s=>{(s.review||={})[c.id+':'+l.id]={course:c.id,id:l.id,title:l.title,cn:l.cn,target:c.targetLang==='kk'?l.kz:l.ru,lang:c.targetLang,note:l.tip||'',due:Date.now(),streak:0};});}
   function practiceDone(c,l){return !!state().practice?.[c.id+':'+l.id];}
   function voice(text,lang,rate=1,status){
+    if(status)status.textContent='';
+    if(window.KZAudio){window.KZAudio.play(text,lang,rate).then(ok=>{if(!ok)deviceVoice(text,lang,rate,status)});return;}
+    deviceVoice(text,lang,rate,status);
+  }
+  function deviceVoice(text,lang,rate,status){
     if(!window.speechSynthesis){if(status)status.textContent='此浏览器不支持朗读，请换用支持语音的浏览器。';return;}
     const code=lang==='kk'?'kk-KZ':'ru-RU',voices=speechSynthesis.getVoices(),v=voices.find(v=>v.lang.toLowerCase().startsWith(lang));
     if(voices.length && !v){if(status)status.textContent='当前设备没有'+(lang==='kk'?'哈萨克语':'俄语')+'语音，请在设备设置中安装对应语言语音。';return;}
-    speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=code;u.rate=rate;if(v)u.voice=v;
+    speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.__kzNative=true;u.lang=code;u.rate=rate;if(v)u.voice=v;
     u.onerror=()=>{if(status)status.textContent='朗读失败，请检查设备语音设置后重试。';};speechSynthesis.speak(u);
     if(status)status.textContent='';
   }
@@ -333,7 +433,7 @@
     });
     if(due.length>10)host.insertAdjacentHTML('beforeend','<p>先复习这 10 个，完成后会显示下一组。</p>');
   }
-  async function ready(){await window.KZAuth.ready;if(!window.KZAuth.getClient())throw new Error('登录服务不可用');}
+  async function ready(){await window.KZAuth.ready;if(!window.KZAuth.getClient())throw new Error('登录服务不可用');await pull();}
   window.KZLearning={ready,esc,resume,remember,state,review,attachLesson,renderReview,voice,updateLinks};
   window.KZAuth.ready.then(()=>{
     const u=window.KZAuth.getUser();
@@ -342,5 +442,6 @@
       if(Object.keys(guest).length){update(s=>{s.review={...guest.review,...s.review};s.practice={...guest.practice,...s.practice};s.courses={...guest.courses,...s.courses};s.last=s.last||guest.last});localStorage.setItem('kz-study-guest-claimed',u.id);}
     }
     updateLinks();
+    pull();
   }).catch(()=>{});
 })();
