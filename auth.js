@@ -1,8 +1,9 @@
 // Recorded pronunciation. Most phones ship no Kazakh (and often no Russian) system voice,
-// so every speak path plays a pre-generated clip from audio/{kk,ru}.bin first and only
+// so every speak path plays a pre-generated clip from {kk,ru}.bin first and only
 // falls back to speechSynthesis when a text has no clip.
 (function () {
-  const INDEX_URL = 'audio/index.json';
+  // Clips live at the site root: index.json + kk.bin / ru.bin.
+  const INDEX_URL = 'index.json';
   const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
   const norm = t => String(t ?? '').replace(/\s+/g, ' ').trim();
   const langOf = l => /^kk/i.test(String(l || '')) ? 'kk' : /^ru/i.test(String(l || '')) ? 'ru' : null;
@@ -18,7 +19,7 @@
     const id = lang + '|' + text;
     if (cache.has(id)) return cache.get(id);
     const [start, length] = entry;
-    const res = await fetch('audio/' + lang + '.bin', {headers: {Range: 'bytes=' + start + '-' + (start + length - 1)}});
+    const res = await fetch(lang + '.bin', {headers: {Range: 'bytes=' + start + '-' + (start + length - 1)}});
     if (!res.ok) return null;
     let buf = await res.arrayBuffer();
     if (res.status === 200) buf = buf.slice(start, start + length); // server ignored Range
