@@ -53,7 +53,7 @@
   }
   function open(c,mi){
     const ms = allModules(c);
-    return mi >= 0 && mi < ms.length && (mi === 0 || !!user) &&
+    return mi >= 0 && mi < ms.length &&
       ms.slice(0,mi).every(m => complete(c,m) && passed(c,m.no));
   }
 
@@ -243,12 +243,6 @@
     document.head.appendChild(style);
   }
 
-  function gate(c, reason){
-    const box=document.createElement('div');
-    box.className='grammar-v22-gate';
-    box.innerHTML=`<span class="eyebrow">🔐 第 2 模块开始需要账号</span><h2>注册 / 登录后继续</h2><p>${esc(reason || '第 1 模块可以直接体验。完成并通过第 1 模块的 70% 考试后，注册 / 登录即可继续。学习进度和考试成绩会保存到账号。')}</p><a class="primary-btn" href="auth.html?mode=signup&next=${encodeURIComponent(location.href)}">注册 / 登录 →</a>`;
-    return box;
-  }
 
   function renderModules(c, pool){
     const list=document.getElementById('lessonList');
@@ -269,7 +263,6 @@
       card.className=`grammar-v22-module ${!isOpen?'locked':''} ${pass?'passed':''}`;
 
       let status=pass ? `✅ 已通过 ${t?.score||0}%`
-        : (!isOpen && mi>0 && !user) ? '🔐 注册 / 登录解锁'
         : (!isOpen ? '🔒 等待上一模块 ≥70%' : '🟢 已开放');
 
       const rows=m.lessons.map((l,i)=>{
@@ -281,9 +274,7 @@
       }).join('');
 
       let action='';
-      if(!isOpen && mi>0 && !user){
-        action=`<a class="primary-btn" href="auth.html?mode=signup&next=${encodeURIComponent(location.href)}">🔐 注册 / 登录后继续</a>`;
-      }else if(!isOpen){
+      if(!isOpen){
         action=`<span class="grammar-lock-copy">先通过上一模块考试（≥70%）</span>`;
       }else if(d===m.lessons.length && !pass){
         action=`<a class="primary-btn" href="grammar-test.html?grammar=1&course=${encodeURIComponent(c.id)}&module=${m.no}">参加模块考试 →</a>`;
@@ -296,7 +287,7 @@
       card.innerHTML=`
         <summary class="grammar-v22-head">
           <div><span class="eyebrow">模块 ${String(m.no).padStart(2,'0')}</span><h3>${esc(m.title)}</h3></div>
-          <span class="grammar-v22-status ${(!isOpen&&mi>0&&!user)?'login':(!isOpen?'lock':'')}">${status}</span>
+          <span class="grammar-v22-status ${!isOpen?'lock':''}">${status}</span>
         </summary>
         <div class="grammar-v22-stats"><span>${d} / ${m.lessons.length} 课完成</span><span>${pct}%</span></div>
         <div class="grammar-v22-bar"><span style="width:${pct}%"></span></div>
@@ -306,9 +297,7 @@
           ? '已通过本模块，可以复习。'
           : (d===m.lessons.length&&isOpen
             ? '本模块已经全部完成。参加考试，答对 ≥70% 才能进入下一模块。'
-            : (!isOpen&&mi>0&&!user
-              ? '第 2 模块开始必须注册 / 登录。登录后会继续保存你的学习数据。'
-              : (!isOpen?'等待上一模块通过。':'上一课完成后才开放下一课。')))}</div>`;
+            : (!isOpen?'等待上一模块通过。':'上一课完成后才开放下一课。'))}</div>`;
 
       root.appendChild(card);
     });
@@ -325,7 +314,7 @@
         ? '正式哈萨克语基础语法课：每次只学一个词或一个结构。按模块学习，完成一个模块后参加考核，答对 ≥70% 才能进入下一模块。'
         : '正式俄语基础语法课：每次只学一个词或一个结构。按模块学习，完成一个模块后参加考核，答对 ≥70% 才能进入下一模块。';
       const map=document.getElementById('courseStudyMap');
-      if(map) map.innerHTML=`<div class="grammar-v22-note"><strong>闯关规则</strong><span>每个模块完成全部小课后参加考试；答对 ≥70% 才能通过。${user?'已登录，后续模块按闯关成绩解锁。':'模块 1 免费体验；模块 2 开始需要注册 / 登录。'}</span></div>`;
+      if(map) map.innerHTML=`<div class="grammar-v22-note"><strong>闯关规则</strong><span>每个模块完成全部小课后参加考试；答对 ≥70% 才能通过。${user?'进度已同步到账号。':'无需注册即可学习全部模块；登录后进度可在其他设备继续。'}</span></div>`;
       const pct=document.getElementById('courseProgress');
       const d=pool.filter(l=>done(c,l.id)).length; if(pct) pct.textContent=Math.round(d/(pool.length||1)*100)+'%';
       const start=document.getElementById('courseStart'); if(start) start.href=`learn.html?pool=course&id=${encodeURIComponent(c.id)}&start=0`;
@@ -341,7 +330,6 @@
       const inModuleIndex=m.lessons.findIndex(x=>x.id===l.id);
 
       const root=document.getElementById('protectedContent');
-      if(mi>=1 && !user){root.innerHTML='';root.appendChild(gate(c));return;}
       if(!open(c,mi)){root.innerHTML='';root.appendChild(Object.assign(document.createElement('div'),{className:'grammar-v22-gate',innerHTML:`<span class="eyebrow">尚未解锁</span><h2>等待上一模块通过</h2><p>完成前面模块全部小课，并在各模块考试中答对 ≥70% 后，才能进入本模块。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a>`}));return;}
       if(inModuleIndex>0 && !m.lessons.slice(0,inModuleIndex).every(x=>done(c,x.id))){
         const first=m.lessons.findIndex(x=>!done(c,x.id));
@@ -368,7 +356,6 @@
     renderTestPage: async function(c,mNo){
       await initUser(); migrateGuest(c); injectStyles();
       const ms=allModules(c),m=ms.find(x=>x.no===mNo),root=document.getElementById('grammarTestRoot'); if(!m||!root)return;
-      if(mNo>=2&&!user){root.innerHTML='';root.appendChild(gate(c,'第 2 模块开始需要注册 / 登录，登录后考试成绩会保存到账号。'));return;}
       if(!open(c,ms.indexOf(m))){root.innerHTML='';const b=document.createElement('div');b.className='grammar-v22-gate';b.innerHTML=`<span class="eyebrow">尚未解锁</span><h2>等待上一模块通过</h2><p>完成前面模块全部小课，各模块考试答对 ≥70% 才能进入下一模块。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a>`;root.appendChild(b);return;}
       if(!complete(c,m)){root.innerHTML=`<div class="grammar-v22-gate"><span class="eyebrow">还不能考试</span><h2>请先完成模块 ${mNo} 的全部小课</h2><p>目前完成 ${m.lessons.filter(l=>done(c,l.id)).length} / ${m.lessons.length} 课。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a></div>`;return;}
 
@@ -392,7 +379,7 @@
           root.querySelector('#gFeedback').textContent=ok?'回答正确！':'回答错误。正确答案：'+q.answer;
           root.querySelector('#gNext').disabled=false;
         });
-        root.querySelector('#gNext').onclick=async()=>{if(!answered)return;if(i<questions.length-1){i++;draw()}else{const pct=Math.round(score/questions.length*100);await saveTest(c,m.no,pct,questions.map(q=>({q:q.question,a:q.answer})));root.innerHTML=`<div class="grammar-v22-gate" style="text-align:center"><span class="eyebrow">模块 ${m.no} 考试</span><div class="grammar-v22-score">${pct}%</div><h2>${pct>=PASS?'通过！':'需要再练一次'}</h2><p>${pct>=PASS?(m.no===ms[ms.length-1].no?'全部模块已完成，可以继续复习。':user?'达到 70% 通过线。下一模块已经解锁。':'达到 70% 通过线。注册 / 登录后可进入下一模块。'):'没有达到 70%，回去复习本模块后再测试。'}</p>${pct>=PASS?(m.no<ms.length?`<a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">查看下一模块 →</a>`:`<a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">完成课程 →</a>`):`<button class="primary-btn" id="gRetry">重新测试 →</button>`}</div>`;if(root.querySelector('#gRetry'))root.querySelector('#gRetry').onclick=()=>G.renderTestPage(c,m.no);}};};
+        root.querySelector('#gNext').onclick=async()=>{if(!answered)return;if(i<questions.length-1){i++;draw()}else{const pct=Math.round(score/questions.length*100);await saveTest(c,m.no,pct,questions.map(q=>({q:q.question,a:q.answer})));root.innerHTML=`<div class="grammar-v22-gate" style="text-align:center"><span class="eyebrow">模块 ${m.no} 考试</span><div class="grammar-v22-score">${pct}%</div><h2>${pct>=PASS?'通过！':'需要再练一次'}</h2><p>${pct>=PASS?(m.no===ms[ms.length-1].no?'全部模块已完成，可以继续复习。':'达到 70% 通过线。下一模块已经解锁。'):'没有达到 70%，回去复习本模块后再测试。'}</p>${pct>=PASS?(m.no<ms.length?`<a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">查看下一模块 →</a>`:`<a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">完成课程 →</a>`):`<button class="primary-btn" id="gRetry">重新测试 →</button>`}</div>`;if(root.querySelector('#gRetry'))root.querySelector('#gRetry').onclick=()=>G.renderTestPage(c,m.no);}};};
       draw();
     }
   };

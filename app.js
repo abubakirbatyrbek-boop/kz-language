@@ -671,7 +671,7 @@ const SpeakingFlow = (() => {
     return Array.isArray(ids) && m.items.every(l => ids.includes(l.id));
   }
   function unlocked(c, ms, i, user) {
-    return i >= 0 && i < ms.length && (i === 0 || !!user) &&
+    return i >= 0 && i < ms.length &&
       ms.slice(0, i).every(m => done(m) && best(c, m) >= PASS);
   }
   // Account sync: lessons live in learning_progress (speaking:<course>:<lesson>),
@@ -736,7 +736,6 @@ const SpeakingFlow = (() => {
     return null;
   }
   function gate(c, ms, i, user, next) {
-    if (i > 0 && !user) return '<p>第 2 模块开始必须注册 / 登录；前面模块的考试也须达到 70%。本浏览器已有学习进度会保留。</p><a class="primary-btn" href="' + esc(loginUrl(next)) + '">注册 / 登录</a>';
     return '<p>未解锁：等待上一模块通过。请先完成前面模块的全部小课，并通过各模块考试（≥70%）。</p><a class="primary-btn" href="' + esc(courseUrl(c)) + '">返回模块列表</a>';
   }
   function questions(c, m) {
@@ -752,7 +751,7 @@ const SpeakingFlow = (() => {
     document.title = c.title + '｜中亚语言通';
     document.getElementById('courseTitle').textContent = c.title;
     document.getElementById('courseDesc').textContent = c.desc;
-    document.getElementById('courseIntroNote').textContent = '按模块闯关：完成全部小课 → 模块考试达到 70% → 解锁下一模块。' + (user ? '已登录，后续模块按学习进度和考试成绩解锁。' : '第 1 模块可游客体验，第 2 模块起需注册 / 登录。');
+    document.getElementById('courseIntroNote').textContent = '按模块闯关：完成全部小课 → 模块考试达到 70% → 解锁下一模块。' + (user ? '进度已同步到账号。' : '无需注册即可学习全部模块；登录后进度可在其他设备继续。');
     document.getElementById('courseProgress').textContent = percentFor(pool) + '%';
     document.getElementById('courseStudyMap').innerHTML = courseStudyMap(pool, c);
     const root = document.getElementById('lessonList'), start = document.getElementById('courseStart');
@@ -810,7 +809,7 @@ const SpeakingFlow = (() => {
         }
         saveExam(c, index, score, user);
         const passed = score >= PASS;
-        root.innerHTML = '<div class="lesson-card"><h2>' + (passed?'考试通过！':'暂未通过，请复习后重试。') + '</h2><p>答对 ' + correct + ' / ' + bank.length + ' 题 · ' + Math.floor(score) + '%</p><p>' + (passed?(index===ms.length-1?'你已完成全部模块！':index===0&&!user?'注册 / 登录后可进入第 2 模块，当前进度已保留。':'下一模块已解锁。'):'本次未达到 70%。已取得的历史通过成绩会保留。') + '</p><a class="primary-btn" href="' + esc(courseUrl(c)) + '">返回模块列表</a><a class="secondary-btn" href="' + esc(examUrl(c,index)) + '">重新考试</a>' + (passed&&index===0&&!user?'<a class="primary-btn" href="'+esc(loginUrl(courseUrl(c)))+'">注册 / 登录，继续学习</a>':'') + '</div>';
+        root.innerHTML = '<div class="lesson-card"><h2>' + (passed?'考试通过！':'暂未通过，请复习后重试。') + '</h2><p>答对 ' + correct + ' / ' + bank.length + ' 题 · ' + Math.floor(score) + '%</p><p>' + (passed?(index===ms.length-1?'你已完成全部模块！':'下一模块已解锁。'):'本次未达到 70%。已取得的历史通过成绩会保留。') + '</p><a class="primary-btn" href="' + esc(courseUrl(c)) + '">返回模块列表</a><a class="secondary-btn" href="' + esc(examUrl(c,index)) + '">重新考试</a>' + '</div>';
       };
     }
     draw();
@@ -935,7 +934,7 @@ document.addEventListener('DOMContentLoaded', init);
         const first=foundation[lang];const fd=first.lessons.filter(l=>(basic['v5:'+l.id]||basic[l.id])?.status==='done').length;
         const states=[{id:'foundation-'+lang,title:'字母与发音',desc:lang==='kk'?'从 42 个字母、特殊音和拼读开始。':'从 33 个字母、重音和拼读开始。',done:fd,total:first.lessons.length,passed:(basic['v5:'+first.id]||basic[first.id])?.status==='passed'?1:0,modules:1,url:`unit.html?lang=${lang}&unit=${first.id}`,storage:'已完成的小课与原字母课程保持一致。'}];
         const gc=courseById('sentence-'+suffix);const gs=await window.GrammarFlow.summary(gc);
-        const synced=user?'进度已同步到账号，换设备登录可继续。':'登录后进度会同步到账号。';
+        const synced=user?'进度已同步到账号，换设备登录可继续。':'进度保存在本设备，登录后可同步到账号。';
         states.forEach(s=>s.storage=synced);
         states.push({...gs,id:gc.id,title:'基础语法',desc:'一个结构、一个例句，逐模块掌握句子规律。',url:'course.html?id='+gc.id,storage:synced});
         const sc=courseById('speaking-'+suffix);await SpeakingFlow.sync(sc,user);
@@ -946,7 +945,7 @@ document.addEventListener('DOMContentLoaded', init);
         html+=`</div><a class="study-legacy" href="path.html?lang=${lang}">学完字母后：拼读、问候、句型到工作场景的 6 个单元 →</a></section>`;
       }
       host.innerHTML=html;
-      const account=document.getElementById('progressUser');if(account)account.textContent=user?'当前账号：'+(user.email||'已登录')+'。字母、语法、口语进度，继续学习位置和错题复习都会同步到账号。':'游客可体验各课程第 1 模块；从第 2 模块开始需登录，并通过前面模块考试（≥70%）。';
+      const account=document.getElementById('progressUser');if(account)account.textContent=user?'当前账号：'+(user.email||'已登录')+'。字母、语法、口语进度，继续学习位置和错题复习都会同步到账号。':'无需注册即可学习全部课程：完成本模块小课并通过考试（≥70%）即可解锁下一模块。进度保存在本设备，登录后可同步到账号、换设备继续。';
       const review=document.getElementById('dailyReview');if(review)window.KZLearning.renderReview(review);
       window.KZLearning.updateLinks();
       if(location.hash)document.getElementById(location.hash.slice(1))?.scrollIntoView();
