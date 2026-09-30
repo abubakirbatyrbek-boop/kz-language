@@ -340,6 +340,53 @@ const TALK_COURSE = {
     {g:'对话：打车与问路', cn:'下车付钱', turns:[['A','请在这里停。','Остановите здесь, пожалуйста.'],['B','好的。','Хорошо.'],['A','给您一千，不用找了。','Вот тысяча, сдачи не надо.']], tip:'сдача = 找零。'}
   ]
 };
+// Life scenes that used to fall back to the generic greeting phrases: their own sentences.
+// Each row: [title, 中文, 哈萨克语, 俄语, tip]
+const LIFE_SCENE_LESSONS = {
+  taxi: [
+    ['去这个地址','请去这个地址。','Мына мекенжайға апарыңызшы.','Отвезите меня по этому адресу, пожалуйста.','上车后把手机地图给司机看，同时说这句。'],
+    ['到机场多少钱','到机场多少钱？','Әуежайға дейін қанша тұрады?','Сколько стоит до аэропорта?','上车前先问价格。дейін / до = 到……为止。'],
+    ['开空调','请开空调。','Кондиционерді қосыңызшы.','Включите кондиционер, пожалуйста.','қосу / включить = 打开（电器）。'],
+    ['在这里停','请在这里停车。','Осы жерде тоқтаңызшы.','Остановите здесь, пожалуйста.','到了目的地就说这句。'],
+    ['往右拐','请往右拐。','Оңға бұрылыңызшы.','Поверните направо, пожалуйста.','往左：Солға / налево。'],
+    ['等我五分钟','请等我五分钟。','Мені бес минут күте тұрыңызшы.','Подождите меня пять минут, пожалуйста.','要回来继续坐车时用。'],
+    ['能刷卡吗','可以用卡付吗？','Картамен төлеуге бола ма?','Можно оплатить картой?','很多出租车只收现金或转账，先问清楚。'],
+    ['我叫了车','我叫了出租车。','Мен такси шақырдым.','Я вызвал такси.','用软件叫车后，和司机确认时说。']
+  ],
+  rent: [
+    ['想租公寓','我想租一套公寓。','Мен пәтер жалдағым келеді.','Я хочу снять квартиру.','пәтер / квартира = 公寓。'],
+    ['月租多少','一个月房租多少钱？','Бір айлық жалдау ақысы қанша?','Сколько стоит аренда в месяц?','先问月租，再问押金和水电。'],
+    ['押金多少','押金多少？','Кепіл ақысы қанша?','Какой залог?','кепіл / залог = 押金。'],
+    ['含水电吗','水电费包括在内吗？','Коммуналдық төлемдер кіре ме?','Коммунальные услуги включены?','коммунальные услуги = 水、电、暖气等公共费用。'],
+    ['能看房吗','可以看看房子吗？','Пәтерді көруге бола ма?','Можно посмотреть квартиру?','签合同前一定要看房。'],
+    ['有家具吗','有家具吗？','Жиһазы бар ма?','Квартира с мебелью?','жиһаз / мебель = 家具。'],
+    ['什么时候入住','我什么时候可以搬进来？','Мен қашан көшіп келе аламын?','Когда я могу въехать?','көшіп келу / въехать = 搬进来。'],
+    ['签合同','我们签合同吧。','Келісімшартқа қол қояйық.','Давайте подпишем договор.','租房一定要签书面合同。']
+  ],
+  bank: [
+    ['开账户','我想开一个账户。','Мен шот ашқым келеді.','Я хочу открыть счёт.','шот / счёт = 账户。'],
+    ['要护照吗','需要护照吗？','Төлқұжат керек пе?','Нужен паспорт?','外国人办业务一般都要护照。'],
+    ['换钱','我想换钱。','Мен ақша айырбастағым келеді.','Я хочу обменять деньги.','айырбастау / обменять = 兑换。'],
+    ['今天汇率','今天的汇率是多少？','Бүгінгі бағам қандай?','Какой сегодня курс?','бағам / курс = 汇率。'],
+    ['转账','我想转账。','Мен ақша аударғым келеді.','Я хочу сделать перевод.','аудару / перевод = 转账。'],
+    ['卡被吞了','取款机把我的卡吞了。','Банкомат картамды жұтып қойды.','Банкомат проглотил мою карту.','遇到这种情况，带护照去银行柜台。'],
+    ['附近取款机','附近有取款机吗？','Жақын жерде банкомат бар ма?','Здесь рядом есть банкомат?','банкомат = 自动取款机。'],
+    ['手续费','手续费是多少？','Комиссия қанша?','Какая комиссия?','转账、换钱前问清手续费。']
+  ],
+  restaurant: [
+    ['两个人','我们两个人。','Біз екеуміз.','Нас двое.','进门服务员问几位时回答。'],
+    ['要菜单','请给我菜单。','Мәзірді беріңізші.','Дайте меню, пожалуйста.','мәзір / меню = 菜单。'],
+    ['推荐什么','你们推荐什么？','Не ұсынасыз?','Что вы посоветуете?','不知道点什么时问服务员。'],
+    ['我要这个','我要这个。','Маған мынаны беріңізші.','Мне вот это, пожалуйста.','指着菜单说，最省事。'],
+    ['不要太辣','不要太辣。','Тым ащы болмасын.','Не очень остро, пожалуйста.','ащы / острый = 辣。'],
+    ['不吃猪肉','我不吃猪肉。','Мен шошқа етін жемеймін.','Я не ем свинину.','有饮食禁忌时一定要说。'],
+    ['再来杯茶','请再来一杯茶。','Тағы бір кесе шай беріңізші.','Ещё одну чашку чая, пожалуйста.','тағы / ещё = 再。'],
+    ['结账','请结账。','Есепті әкеліңізші.','Счёт, пожалуйста.','吃完饭叫服务员结账。']
+  ]
+};
+for (const [scene, rows] of Object.entries(LIFE_SCENE_LESSONS)) rows.forEach(([title, cn, kz, ru, tip], i) =>
+  lessons.push({ id:`${scene}-${String(i+1).padStart(2,'0')}`, course:'scene-life', title, tag:'生活', level:'场景', cn, kz, ru, tip }));
+
 // “主题词汇与换词造句”: 20 themes × 30 words ("中文|哈萨克语|俄语"), taught 6 per lesson,
 // plus one substitution-drill lesson per theme (a sentence frame + words that fit its gap).
 const VOCAB_THEMES = [
@@ -577,8 +624,23 @@ const sceneTestInfo = {
   customs:{title:'海关场景考试'}, business:{title:'商务场景考试'}
 };
 
+// Finished lessons and module scores are kept per account ("guest" before signing in), so two people
+// sharing a computer never see or upload each other's progress. The old shared keys become guest data.
+const progressOwner = () => window.KZAuth?.getUser?.()?.id || 'guest';
+const completedKey = () => 'completedLessons:' + progressOwner();
+(function migrateSharedProgress(){
+  try {
+    const old = localStorage.getItem('completedLessons');
+    if (old !== null) { if (localStorage.getItem('completedLessons:guest') === null) localStorage.setItem('completedLessons:guest', old); localStorage.removeItem('completedLessons'); }
+    Object.keys(localStorage).filter(k => /^speakingModuleBest:(speaking|talk|vocab)-/.test(k)).forEach(k => {
+      const guestKey = k.replace('speakingModuleBest:', 'speakingModuleBest:guest:');
+      if (localStorage.getItem(guestKey) === null) localStorage.setItem(guestKey, localStorage.getItem(k));
+      localStorage.removeItem(k);
+    });
+  } catch {}
+})();
 function readCompleted(){
-  try { return JSON.parse(localStorage.getItem('completedLessons') || '[]'); } catch { return []; }
+  try { return JSON.parse(localStorage.getItem(completedKey()) || '[]'); } catch { return []; }
 }
 let completed = readCompleted();
 
@@ -600,7 +662,7 @@ function sceneLessons(type, sceneId){
   return lessons.filter(l=>l.course==='daily-kz');
 }
 function percentFor(pool){ return pool.length ? Math.round(pool.filter(l=>completed.includes(l.id)).length/pool.length*100) : 0; }
-function saveCompleted(){ localStorage.setItem('completedLessons', JSON.stringify(completed)); }
+function saveCompleted(){ localStorage.setItem(completedKey(), JSON.stringify(completed)); }
 
 function isTargetScript(text){return /[А-Яа-яӘәӨөҮүҰұҚқҒғҢңІіҺһЁёЫыЭэЮюЯя]/.test(text||'');}
 
@@ -747,7 +809,7 @@ function renderLearnPage(){
     const l=pool[current]; if(!l) return;
     title.textContent=l.title; count.textContent=`${current+1} / ${pool.length}`; cn.textContent=l.cn; kz.textContent=l.kz; ru.textContent=l.ru;
     // learn.html ships placeholder data-text ("您好") on the 🔊 buttons; point them at this sentence.
-    kzRow?.querySelector('[data-text]')?.setAttribute('data-text', l.kz||''); ruRow?.querySelector('[data-text]')?.setAttribute('data-text', l.ru||''); tip.textContent=l.tip; if(grammar) grammar.textContent=l.group ? `语法模块：${l.group}` : ''; if(memory) memory.innerHTML=`<span>记忆方法</span><strong>${courseForLearn ? memoryMethod(l,courseForLearn) : '先听 2 次 → 跟读 3 次 → 遮住答案自己说 1 次。'}</strong>`; tag.textContent=l.tag; path.textContent=`当前内容：${label}`;
+    kzRow?.querySelector('[data-text]')?.setAttribute('data-text', l.kz||''); ruRow?.querySelector('[data-text]')?.setAttribute('data-text', l.ru||''); tip.textContent=l.tip; if(grammar) grammar.textContent=l.group ? `${courseForLearn?.kind==='sentence'?'语法模块':courseForLearn?.open?'主题':'模块'}：${l.group}` : ''; if(memory) memory.innerHTML=`<span>记忆方法</span><strong>${courseForLearn ? memoryMethod(l,courseForLearn) : '先听 2 次 → 跟读 3 次 → 遮住答案自己说 1 次。'}</strong>`; tag.textContent=l.tag; path.textContent=`当前内容：${label}`;
     document.getElementById('prevLink').href = learnUrl(current-1<0?pool.length-1:current-1);
     document.getElementById('nextLink').href = learnUrl((current+1)%pool.length);
     document.getElementById('markBtn').textContent = completed.includes(l.id) ? '已记住 ✓' : '记住了，下一句';
@@ -833,7 +895,7 @@ const SpeakingFlow = (() => {
   const lessonUrl = (c, i) => 'learn.html?pool=course&id=' + encodeURIComponent(c.id) + '&start=' + i;
   const examUrl = (c, i) => courseUrl(c) + '&exam=' + (i + 1);
   const loginUrl = next => 'auth.html?next=' + encodeURIComponent(next);
-  const scoreKey = (c, m) => 'speakingModuleBest:' + c.id + ':' + encodeURIComponent(m.name);
+  const scoreKey = (c, m, owner = progressOwner()) => 'speakingModuleBest:' + owner + ':' + c.id + ':' + encodeURIComponent(m.name);
   function best(c, m) {
     const n = Number(localStorage.getItem(scoreKey(c, m)));
     return Number.isFinite(n) && n >= 0 && n <= 100 ? n : 0;
@@ -853,8 +915,27 @@ const SpeakingFlow = (() => {
   const lessonNode = (c, l) => 'speaking:' + c.id + ':' + l.id;
   const examNode = (c, i) => 'speaking-test:' + c.id + ':m' + (i + 1);
   const synced = {};
+  // Signing in adopts what was learned as a guest on this device, then clears the guest copy
+  // so a second account signing in later on the same computer does not inherit it.
+  function claimGuest(user) {
+    try {
+      const g = JSON.parse(localStorage.getItem('completedLessons:guest') || '[]');
+      if (g.length) {
+        const mine = new Set(JSON.parse(localStorage.getItem('completedLessons:' + user.id) || '[]'));
+        g.forEach(id => mine.add(id));
+        localStorage.setItem('completedLessons:' + user.id, JSON.stringify([...mine]));
+      }
+      localStorage.removeItem('completedLessons:guest');
+      Object.keys(localStorage).filter(k => k.startsWith('speakingModuleBest:guest:')).forEach(k => {
+        const mineKey = k.replace('speakingModuleBest:guest:', 'speakingModuleBest:' + user.id + ':');
+        if (Number(localStorage.getItem(k)) > Number(localStorage.getItem(mineKey) || 0)) localStorage.setItem(mineKey, localStorage.getItem(k));
+        localStorage.removeItem(k);
+      });
+    } catch {}
+  }
   function sync(c, user) {
     if (!user) return Promise.resolve();
+    claimGuest(user);
     return synced[c.id + user.id] ||= (async () => {
       const client = window.KZAuth?.getClient?.();
       if (!client) return;
@@ -1101,7 +1182,7 @@ function init(){
       window.GrammarFlow.renderTestPage(c,Math.max(1,Number(qs('module')||1)));
     } else renderTestPage();
   }
-  const reset=document.getElementById('resetProgress'); if(reset) reset.addEventListener('click',()=>{if(confirm('确定要清空本机学习进度吗？')){completed=[];localStorage.removeItem('completedLessons');Object.keys(localStorage).filter(key=>key.startsWith('speakingModuleBest:')).forEach(key=>localStorage.removeItem(key));location.reload();}});
+  const reset=document.getElementById('resetProgress'); if(reset) reset.addEventListener('click',()=>{if(confirm('确定要清空本机学习进度吗？')){completed=[];localStorage.removeItem(completedKey());Object.keys(localStorage).filter(key=>key.startsWith('speakingModuleBest:'+progressOwner()+':')).forEach(key=>localStorage.removeItem(key));location.reload();}});
 }
 
 document.addEventListener('DOMContentLoaded', init);
@@ -1139,10 +1220,14 @@ document.addEventListener('DOMContentLoaded', init);
         const vc=courseById('vocab-'+suffix);await SpeakingFlow.sync(vc,user);
         const vms=SpeakingFlow.modules(vc),vids=readCompleted();
         states.push({id:vc.id,title:'主题词汇与换词造句',desc:'20 个主题、600 个常用词，学完马上换词造句。',done:courseLessons(vc.id).filter(l=>vids.includes(l.id)).length,total:courseLessons(vc.id).length,passed:vms.filter(m=>SpeakingFlow.done(m)&&SpeakingFlow.best(vc,m)>=70).length,modules:vms.length,url:'course.html?id='+vc.id,storage:synced});
-        const shown=states.filter(s=>s.id.startsWith('vocab-')===vocabMode);
-        html+=`<section class="study-language" id="${lang}"><div class="study-language-head"><h2>${flag} ${label}</h2>${vocabMode?'':`<a href="level-test.html?lang=${lang}">选做起点测试 →</a>`}</div><div class="study-course-grid">`;
+        // Recommended order for beginners; cards follow it and the route shows ✓ / the step to do now.
+        const order=['foundation-'+lang,'speaking-'+suffix,'talk-'+suffix,'sentence-'+suffix];
+        const shown=states.filter(s=>s.id.startsWith('vocab-')===vocabMode).sort((x,y)=>order.indexOf(x.id)-order.indexOf(y.id));
+        const route=order.map(id=>states.find(s=>s.id===id)).filter(Boolean), cur=route.findIndex(s=>s.done<s.total);
+        const routeHtml=vocabMode?'':`<ol class="study-route" aria-label="${label}推荐学习顺序">${route.map((s,i)=>{const fin=s.total&&s.done>=s.total;return `<li class="${fin?'done':i===cur?'current':''}"><a href="${esc(s.url)}"><span>${fin?'✓':i+1}</span>${s.title}</a></li>`;}).join('')}</ol><p class="study-route-note">推荐按这个顺序学；主题词汇可以随时从导航栏“主题词汇”进入。</p>`;
+        html+=`<section class="study-language" id="${lang}"><div class="study-language-head"><h2>${flag} ${label}</h2>${vocabMode?'':`<a href="level-test.html?lang=${lang}">选做起点测试 →</a>`}</div>${routeHtml}<div class="study-course-grid">`;
         for(const s of shown){const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);html+=`<article class="study-course-card" id="card-${s.id}"><span class="eyebrow">${label}</span><h3>${s.title}</h3><p>${s.desc}</p><div class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><p class="study-count">${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</p><div class="study-actions"><a class="primary-btn" href="${esc(last?.url||s.url)}">${last||s.done?'继续学习':'开始学习'} →</a>${last?`<a class="study-text-link" href="${s.url}">课程目录</a>`:''}</div><small>${s.storage}</small></article>`;}
-        html+=vocabMode?'</div></section>':`</div><a class="study-legacy" href="path.html?lang=${lang}">学完字母后：拼读、问候、句型到工作场景的 6 个单元 →</a></section>`;
+        html+='</div></section>';
       }
       host.innerHTML=html;
       const account=document.getElementById('progressUser');if(account)account.textContent=user?'当前账号：'+(user.email||'已登录')+'。字母、语法、口语进度，继续学习位置和错题复习都会同步到账号。':'无需注册即可学习全部课程：完成本模块小课并通过考试（≥70%）即可解锁下一模块。进度保存在本设备，登录后可同步到账号、换设备继续。';

@@ -2,7 +2,7 @@
 const V5_PATHS = {
   kk: {
     label: '哈萨克语', flag: '🇰🇿',
-    desc: '从字母与发音开始，先学会读，再学词、句型、造句，最后进入真实场景。',
+    desc: '先把字母和发音学会。学完后回到课程中心，按推荐顺序继续：造句与口语 → 数字与情景对话 → 基础语法。',
     units: [
       {id:'kk-u1',num:1,title:'字母与发音',desc:'42 个字母：特殊元音、特殊辅音、常用字母、外来词字母和拼读',level:'入门',lessons:[
         {id:'kk-u1-l1',title:'特殊元音 Ә Ө Ұ Ү І',type:'intro',items:[
@@ -215,7 +215,7 @@ const V5_PATHS = {
   },
   ru: {
     label: '俄语', flag:'🇷🇺',
-    desc: '从字母、发音和拼读开始，逐步进入词汇、句型、造句和真实交流。',
+    desc: '先把字母和发音学会。学完后回到课程中心，按推荐顺序继续：造句与口语 → 数字与情景对话 → 基础语法。',
     units: [
       {id:'ru-u1',num:1,title:'字母与发音',desc:'33 个字母：元音、形似拉丁字母的“假朋友”、辅音、软硬音符号和重音',level:'入门',lessons:[
         {id:'ru-u1-l1',title:'元音与难点辅音',type:'intro',items:[
@@ -451,11 +451,12 @@ async function initUser(){
       try{guest=JSON.parse(guestRaw||'{}')}catch{guest={}}
       const merged={...guest,...remote,...localProgress()};
       localStorage.setItem(currentUserKey(),JSON.stringify(merged));
-      // One-time migration of guest progress into the first logged-in account.
-      if(guestRaw && !localStorage.getItem(`v5_guest_migrated_${window.__v5User.id}`)){
+      // Guest progress moves into the first account that signs in on this device, then the guest copy is
+      // cleared so a second account on the same computer does not inherit it.
+      if(guestRaw){
         const rowsToUpload=Object.entries(guest).filter(([node_id])=>!remote[node_id]).map(([node_id,v])=>({user_id:window.__v5User.id,node_id,language:v.language||langKey(),status:v.status||'in_progress',score:v.score??null,updated_at:v.updated_at||new Date().toISOString()}));
         if(rowsToUpload.length){try{await c.from('learning_progress').upsert(rowsToUpload,{onConflict:'user_id,node_id'})}catch(e){console.warn('guest migration failed',e)}}
-        localStorage.setItem(`v5_guest_migrated_${window.__v5User.id}`,'1');
+        localStorage.removeItem(guestKey); localStorage.removeItem('v5_progress');
       }
     }
   } catch(e){console.warn('auth/progress init failed',e)}
@@ -590,11 +591,21 @@ async function v7SyncPlacement(){
 }
 function v7LevelIndex(score){ if(score<=3)return 0; if(score<=6)return 1; if(score<=9)return 2; if(score<=12)return 3; if(score<=15)return 4; return 5; }
 function v7LevelLabel(i){ return ['入门','基础','初级','初级+','生活交流','实用'][i] || '入门'; }
+// The old units 2–6 overlapped the new grammar / speaking / scene courses: the path now keeps only
+// the alphabet unit, and the placement test points to one of the current courses instead.
+for (const l of ['kk','ru']) V5_PATHS[l].units.length = 1;
+function v7Recommend(lang,score){
+  const s=lang==='kk'?'kz':'ru';
+  if(score<=5)  return {title:'字母与发音', href:`unit.html?lang=${lang}&unit=${lang}-u1`, why:'先把字母和发音打牢，后面学句子会快很多。'};
+  if(score<=11) return {title:'造句与口语', href:`course.html?id=speaking-${s}`, why:'你已经认识字母和一些常用词，可以直接开口说整句了。'};
+  if(score<=15) return {title:'数字与情景对话', href:`course.html?id=talk-${s}`, why:'基础句子没问题，接下来练听懂价格、时间和真实对话。'};
+  return {title:'基础语法', href:`course.html?id=sentence-${s}`, why:'你的基础不错，用语法课把零散的知识系统整理一遍。'};
+}
 function v7PlacementCard(path){
   const p=v7GetPlacement(langKey());
   if(!p) return `<div class="placement-top"><div><span class="eyebrow">STEP 0 · 等级测试</span><h2>可以直接学习，也可以选做测试</h2><p>18 道题，题目会从发音、词汇、句型逐步变难。测试用于匹配学习起点，不是正式语言水平考试。</p><div class="placement-badges"><span class="placement-badge">18 题</span><span class="placement-badge">约 5 分钟</span><span class="placement-badge">完成后解锁对应起点</span></div></div><a class="primary-btn" href="level-test.html?lang=${langKey()}">开始等级测试 →</a></div>`;
-  const u=path.units[p.index];
-  return `<div class="placement-top"><div><span class="eyebrow">${p.skipped?'已从基础开始':'已完成等级测试'}</span><h2>你的起点：${p.level}</h2><p>${p.skipped?'你选择直接从入门开始。之后仍可以随时参加测试并重新匹配起点。':`得分 ${p.score}/18，建议从第 ${u?.num||1} 单元开始。前面的单元已开放，可随时复习。`}</p></div><div class="result-actions"><a class="secondary-btn" href="level-test.html?lang=${langKey()}">重新测试</a>${u?`<a class="primary-btn" href="unit.html?lang=${langKey()}&unit=${u.id}">从这里开始 →</a>`:''}</div></div>`;
+  const rec=v7Recommend(langKey(),p.score||0);
+  return `<div class="placement-top"><div><span class="eyebrow">${p.skipped?'已从基础开始':'已完成等级测试'}</span><h2>你的起点：${p.level}</h2><p>${p.skipped?'你选择直接从入门开始。之后仍可以随时参加测试并重新匹配起点。':`得分 ${p.score}/18，建议从「${rec.title}」开始。`}</p></div><div class="result-actions"><a class="secondary-btn" href="level-test.html?lang=${langKey()}">重新测试</a><a class="primary-btn" href="${rec.href}">从这里开始 →</a></div></div>`;
 }
 function v7UnitUnlocked(path,idx){
   const p=v7GetPlacement(langKey());
@@ -701,9 +712,8 @@ function renderPlacement(){
     if(i>=list.length){
       const idx=v7LevelIndex(score), level=v7LevelLabel(idx), obj={score,max:list.length,index:idx,level,created_at:new Date().toISOString()}; v7SetPlacement(lang,obj);
       if(getUser()) saveTestResult('placement:'+lang,{language:lang,score,passed:true,answers});
-      const u=path.units[idx]; const locked=requiresAccount(path,idx)&&!getUser();
-      const nextHref=locked?`auth.html?mode=signup&next=${encodeURIComponent(`unit.html?lang=${lang}&unit=${u.id}`)}`:`unit.html?lang=${lang}&unit=${u.id}`;
-      area.innerHTML=`<div class="placement-result"><span class="eyebrow">测试完成</span><div class="level-pill">${level}</div><h1>建议从第 ${u?.num||1} 单元开始</h1><div class="score-big">${score}/18</div><p>${locked?'这个起点从第 2 单元开始，先注册/登录后即可进入。':'已根据测试结果开放对应起点及之前的复习单元。'}</p><div class="result-actions"><a class="secondary-btn" href="path.html?lang=${lang}">查看学习路径</a><a class="primary-btn" href="${nextHref}">${locked?'注册 / 登录后开始':'从这里开始 →'}</a></div></div>`; return;
+      const rec=v7Recommend(lang,score);
+      area.innerHTML=`<div class="placement-result"><span class="eyebrow">测试完成</span><div class="level-pill">${level}</div><h1>建议从「${rec.title}」开始</h1><div class="score-big">${score}/18</div><p>${rec.why}</p><div class="result-actions"><a class="secondary-btn" href="courses.html">查看全部课程</a><a class="primary-btn" href="${rec.href}">从这里开始 →</a></div></div>`; return;
     }
     const q=list[i]; const qHasTarget=/[А-Яа-яӘәӨөҮүҰұҚқҒғҢңІіҺһЁёЫыЭэЮюЯя]/.test(q[0]); area.innerHTML=`<div class="placement-test-head"><span class="eyebrow">STEP 0 · 等级测试</span><h1>${path.flag} ${path.label}起点测试</h1><p>题目会由易到难。不会的可以跳过，系统按答对题数建议学习起点。</p><div class="placement-progress"><span style="width:${Math.round(i/list.length*100)}%"></span></div><div class="exercise-meta"><span>第 ${i+1} / ${list.length} 题</span><span>当前得分：${score}</span></div></div><div class="placement-question"><span class="eyebrow">请选择答案</span><div class="question-with-audio"><h2>${q[0]}</h2>${qHasTarget?`<button class="question-audio" id="placementPromptAudio" type="button">🔊 听这句</button>`:''}</div><div class="placement-options">${q[1].map((x,j)=>`<button class="answer-option" data-j="${j}"><span>${x}</span>${/[А-Яа-яӘәӨөҮүҰұҚқҒғҢңІіҺһЁёЫыЭэЮюЯя]/.test(x)?`<span class="option-audio" data-text="${x.replace(/"/g,'&quot;')}" data-lang="${lang==='kk'?'kk-KZ':'ru-RU'}">🔊</span>`:''}</button>`).join('')}</div></div>`;
     if(qHasTarget){const b=area.querySelector('#placementPromptAudio');if(b)b.onclick=e=>{e.stopPropagation();speak(q[0].match(/[А-Яа-яӘәӨөҮүҰұҚқҒғҢңІіҺһЁёЫыЭэЮюЯя][А-Яа-яӘәӨөҮүҰұҚқҒғҢңІіҺһЁёЫыЭэЮюЯя\s.-]*/)?.[0]||q[0],lang)};}

@@ -153,6 +153,7 @@
         if(!account.tests[k]){ account.tests[k] = v; changed = true; }
       }
       if(changed) localStorage.setItem(accountKey, JSON.stringify(account));
+      localStorage.removeItem(guestKey); // adopted by this account; a later account on this device must not get it too
     }catch{}
   }
 

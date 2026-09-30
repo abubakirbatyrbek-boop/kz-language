@@ -305,3 +305,14 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #a2
 .today-goals b{display:block;font-weight:700}.today-goals small{display:block;color:#6b7a72;font-size:13px}
 .today-streak{margin:0 0 6px;font-weight:700;color:#b98534}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.today-signup{margin:12px 0 0;padding:10px 12px;border-radius:12px;background:rgba(185,133,52,.12);font-size:14px;line-height:1.6}.today-signup a{font-weight:700;color:#173b2c;text-decoration:underline}
+
+/* Recommended learning route on the course hub */
+.study-route{list-style:none;display:flex;flex-wrap:wrap;gap:8px;padding:0;margin:4px 0 6px;counter-reset:none}
+.study-route li a{display:inline-flex;align-items:center;gap:8px;padding:7px 12px 7px 8px;border:1px solid #dfe7e3;border-radius:999px;background:#fff;color:#17202b;text-decoration:none;font-weight:600;font-size:14px}
+.study-route li a span{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#eef4f0;color:#173b2c;font-size:12px;font-weight:800}
+.study-route li.done a span{background:#1f7a4d;color:#fff}
+.study-route li.current a{border-color:#b98534;box-shadow:0 0 0 2px rgba(185,133,52,.25)}
+.study-route li.current a span{background:#b98534;color:#fff}
+.study-route li+li::before{content:'→';color:#9aa7a0;margin-right:8px}
+.study-route li{display:flex;align-items:center}
+.study-route-note{margin:0 0 14px;color:#6b7a72;font-size:13px}
