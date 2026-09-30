@@ -49,7 +49,7 @@
       player.src = url;
       player.playbackRate = Math.max(0.5, Math.min(2, Number(rate) || 1));
       if ('preservesPitch' in player) player.preservesPitch = true;
-      return player.play().then(() => true, () => false);
+      return player.play().then(() => { window.dispatchEvent(new Event('kz-heard')); return true; }, () => false);
     }, () => false);
   }
   function has(text, lang) { const l = langOf(lang); return !!(index && l && index[l]?.[norm(text)]); }
@@ -337,7 +337,14 @@
   // Review list, practice marks and resume positions follow the account: the newest snapshot
   // is kept as a test_results row (node kz-study-state), so no database change is needed.
   const STATE_NODE='kz-study-state';let pushTimer=null;
-  function snapshot(s){return {review:s.review||{},practice:s.practice||{},courses:s.courses||{},last:s.last||null};}
+  function snapshot(s){return {review:s.review||{},practice:s.practice||{},courses:s.courses||{},last:s.last||null,daily:s.daily||null,days:s.days||[]};}
+  // Daily goals: today's counters (lessons finished, reviews done, sentences heard) and the list of days studied.
+  const dayKey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  function bump(kind){update(s=>{const d=dayKey();if(s.daily?.date!==d)s.daily={date:d,lessons:0,review:0,listen:0};s.daily[kind]=(s.daily[kind]||0)+1;
+    if(kind==='lessons'||kind==='review'){s.days=[...new Set([...(s.days||[]),d])].sort().slice(-400);}});}
+  function streak(days){const set=new Set(days||[]);let n=0,d=new Date();if(!set.has(dayKey(d)))d.setDate(d.getDate()-1);while(set.has(dayKey(d))){n++;d.setDate(d.getDate()-1);}return n;}
+  function today(){const s=state(),d=dayKey(),t=s.daily?.date===d?s.daily:{lessons:0,review:0,listen:0};
+    const due=Object.values(s.review||{}).filter(x=>x.due<=Date.now()).length;return {...t,due,streak:streak(s.days),last:resume()};}
   function pushNow(){
     clearTimeout(pushTimer);pushTimer=null;
     const u=window.KZAuth.getUser(),client=window.KZAuth.getClient();if(!u||!client)return;
@@ -351,6 +358,8 @@
     s.practice={...(remote.practice||{}),...(s.practice||{})};
     s.courses||={};for(const [k,v] of Object.entries(remote.courses||{})){if(!s.courses[k]||(v.at||0)>(s.courses[k].at||0))s.courses[k]=v;}
     if(remote.last&&(!s.last||(remote.last.at||0)>(s.last.at||0)))s.last=remote.last;
+    if(remote.days)s.days=[...new Set([...(s.days||[]),...remote.days])].sort().slice(-400);
+    if(remote.daily){const a=s.daily,b=remote.daily;if(!a||b.date>a.date)s.daily=b;else if(b.date===a.date)for(const k of ['lessons','review','listen'])a[k]=Math.max(a[k]||0,b[k]||0);}
     if(JSON.stringify(s)===before)return false;localStorage.setItem(key(),JSON.stringify(s));return true;
   }
   let pulled=null;
@@ -383,7 +392,7 @@
     const code=lang==='kk'?'kk-KZ':'ru-RU',voices=speechSynthesis.getVoices(),v=voices.find(v=>v.lang.toLowerCase().startsWith(lang));
     if(voices.length && !v){if(status)status.textContent='当前设备没有'+(lang==='kk'?'哈萨克语':'俄语')+'语音，请在设备设置中安装对应语言语音。';return;}
     speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.__kzNative=true;u.lang=code;u.rate=rate;if(v)u.voice=v;
-    u.onerror=()=>{if(status)status.textContent='朗读失败，请检查设备语音设置后重试。';};speechSynthesis.speak(u);
+    u.onerror=()=>{if(status)status.textContent='朗读失败，请检查设备语音设置后重试。';};speechSynthesis.speak(u);window.dispatchEvent(new Event('kz-heard'));
     if(status)status.textContent='';
   }
   let releaseRecording=()=>{};
@@ -432,7 +441,7 @@
     const original=next.onclick;
     const lock=()=>{next.setAttribute('aria-disabled',String(!passed));next.classList.toggle('practice-pending',!passed);};
     next.onclick=async e=>{if(!passed){e.preventDefault();box.scrollIntoView({behavior:'smooth',block:'center'});box.querySelector('button')?.focus();return;}return original?.call(next,e);};
-    function finish(){passed=true;update(s=>{(s.practice||={})[c.id+':'+l.id]=true});lock();box.innerHTML='<h3>✓ 本课练习已完成</h3><p>可以继续下一课，也可以再听一遍。</p>';}
+    function finish(){const first=!passed;passed=true;if(first)bump('lessons');update(s=>{(s.practice||={})[c.id+':'+l.id]=true});lock();box.innerHTML='<h3>✓ 本课练习已完成</h3><p>可以继续下一课，也可以再听一遍。</p>';}
     function feedback(ok){const fb=box.querySelector('[role=status]');fb.textContent=ok?'回答正确！':`正确表达：${target}。${l.tip||''} 已加入错题复习，请再试一次。`;if(!ok)review(c,l);return ok;}
     function draw(){
       if(passed){finish();return;}
@@ -526,13 +535,34 @@
       const card=document.createElement('article');card.className='study-tool';card.innerHTML=`<span class="eyebrow">${x.lang==='kk'?'哈萨克语':'俄语'}</span><h3>${esc(x.cn)}</h3><p>先自己说，再看参考答案。</p><button type="button" data-reveal>查看参考答案</button><div hidden><strong>${esc(x.target)}</strong><p>${esc(x.note)}</p><button data-hear>听发音</button><p role="status"></p><div class="study-actions"><button data-again>还不熟，稍后再练</button><button data-known>已掌握，明天复习</button></div></div>`;
       card.querySelector('[data-reveal]').onclick=e=>{e.target.hidden=true;card.querySelector('div').hidden=false};
       card.querySelector('[data-hear]').onclick=()=>voice(x.target,x.lang,0.85,card.querySelector('[role=status]'));
-      function schedule(known){update(s=>{const r=s.review[id];if(!r)return;r.streak=known?(r.streak||0)+1:0;r.due=Date.now()+(known?86400000:600000)});renderReview(host);}
+      function schedule(known){bump('review');update(s=>{const r=s.review[id];if(!r)return;r.streak=known?(r.streak||0)+1:0;r.due=Date.now()+(known?86400000:600000)});renderReview(host);}
       card.querySelector('[data-again]').onclick=()=>schedule(false);card.querySelector('[data-known]').onclick=()=>schedule(true);list.appendChild(card);
     });
     if(due.length>10)host.insertAdjacentHTML('beforeend','<p>先复习这 10 个，完成后会显示下一组。</p>');
   }
+  window.addEventListener('kz-heard',()=>bump('listen'));
+  // Home page card: where the learner stopped last time + today's three goals with ✓ when done.
+  function ago(ts){if(!ts)return '';const m=Math.round((Date.now()-ts)/60000);if(m<1)return '刚刚';if(m<60)return m+' 分钟前';const h=Math.round(m/60);if(h<24)return h+' 小时前';const d=Math.round(h/24);return d===1?'昨天':d+' 天前';}
+  function renderToday(host){
+    if(!host)return;const t=today(),LISTEN=3;
+    const goals=[
+      {ok:t.lessons>=1,label:'完成 1 节小课',note:t.lessons?'今天已完成 '+t.lessons+' 节':'做完一节课的练习就算'},
+      {ok:t.due===0,label:'复习到期的错题',note:t.due?'还有 '+t.due+' 个待复习':(t.review?'今天复习了 '+t.review+' 个':'今天没有待复习的')},
+      {ok:t.listen>=LISTEN,label:'听 '+LISTEN+' 句发音',note:Math.min(t.listen,LISTEN)+' / '+LISTEN}
+    ];
+    const all=goals.every(g=>g.ok);
+    host.innerHTML=`<span class="eyebrow">今天的学习</span>`+
+      (t.last?`<div class="today-last"><small>上次学到 · ${esc(ago(t.last.at))}</small><strong>${esc(t.last.title||'继续上次的课程')}</strong><a class="primary-btn" href="${esc(t.last.url)}">继续学习 →</a></div>`
+             :`<div class="today-last"><small>还没有开始学习</small><strong>从第一课开始吧</strong><a class="primary-btn" href="courses.html">选择课程 →</a></div>`)+
+      `<h2>${all?'今天的目标都完成了 🎉':'今日目标'}</h2><ul class="today-goals">`+
+      goals.map(g=>`<li class="${g.ok?'done':''}"><span class="mark" aria-hidden="true">${g.ok?'✓':''}</span><span><b>${g.label}</b><small>${esc(g.note)}</small></span><span class="sr-only">${g.ok?'已完成':'未完成'}</span></li>`).join('')+
+      `</ul><p class="today-streak">${t.streak?'🔥 已连续学习 '+t.streak+' 天':'今天完成一节课，开始连续学习记录'}</p>`+
+      (t.due?`<a class="study-text-link" href="progress.html#dailyReview">去复习错题 →</a>`:'')+
+      // Guests keep progress only on this device: invite them to register so it follows them.
+      (window.KZAuth?.getUser?.()?'':`<p class="today-signup">💾 为了同步学习进度，建议<a href="auth.html?mode=signup&next=index.html">免费注册</a>：换手机、换电脑也能接着学。</p>`);
+  }
   async function ready(){await window.KZAuth.ready;if(!window.KZAuth.getClient())throw new Error('登录服务不可用');await pull();}
-  window.KZLearning={ready,esc,resume,remember,state,review,attachLesson,renderReview,voice,updateLinks};
+  window.KZLearning={ready,esc,resume,remember,state,review,attachLesson,renderReview,voice,updateLinks,bump,today,renderToday};
   window.KZAuth.ready.then(()=>{
     const u=window.KZAuth.getUser();
     if(u&&!localStorage.getItem('kz-study-guest-claimed')){
@@ -540,6 +570,8 @@
       if(Object.keys(guest).length){update(s=>{s.review={...guest.review,...s.review};s.practice={...guest.practice,...s.practice};s.courses={...guest.courses,...s.courses};s.last=s.last||guest.last});localStorage.setItem('kz-study-guest-claimed',u.id);}
     }
     updateLinks();
-    pull();
+    const card=()=>renderToday(document.getElementById('todayCard'));
+    card(); pull().then(card);
+    window.addEventListener('pageshow',card); // back from a lesson (bfcache)
   }).catch(()=>{});
 })();

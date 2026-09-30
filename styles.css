@@ -293,3 +293,15 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #a2
 .dialogue-line b{display:block;font-size:18px;line-height:1.4}
 .dialogue-line small{display:block;color:#6b7a72;margin-top:2px}@media(max-width:560px){.dialogue-line{grid-template-columns:24px 1fr auto;gap:8px}.dialogue-line b{font-size:16px}}
 .swap-frame{font-size:20px;font-weight:700;line-height:1.6;margin:8px 0}.swap-gap{display:inline-block;min-width:64px;border-bottom:2px solid #b98534;color:#b98534;text-align:center;margin:0 4px}
+
+/* Home: last lesson + today's goals */
+.today-last{display:grid;gap:4px;margin:10px 0 18px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.65);border:1px solid rgba(23,59,44,.12)}
+.today-last small{color:#6b7a72}.today-last strong{font-size:17px;line-height:1.4}.today-last .primary-btn{justify-self:start;margin-top:6px}
+.today-goals{list-style:none;padding:0;margin:10px 0 12px;display:grid;gap:10px}
+.today-goals li{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:center}
+.today-goals .mark{width:26px;height:26px;border-radius:50%;border:2px solid #b8c7bf;display:grid;place-items:center;font-weight:800;color:#fff}
+.today-goals li.done .mark{background:#1f7a4d;border-color:#1f7a4d}
+.today-goals li.done b{color:#1f7a4d}
+.today-goals b{display:block;font-weight:700}.today-goals small{display:block;color:#6b7a72;font-size:13px}
+.today-streak{margin:0 0 6px;font-weight:700;color:#b98534}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}.today-signup{margin:12px 0 0;padding:10px 12px;border-radius:12px;background:rgba(185,133,52,.12);font-size:14px;line-height:1.6}.today-signup a{font-weight:700;color:#173b2c;text-decoration:underline}
