@@ -292,3 +292,4 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #a2
 .dialogue-line strong{width:28px;height:28px;border-radius:50%;background:#eef4f0;color:#173b2c;display:grid;place-items:center;font-size:12px}
 .dialogue-line b{display:block;font-size:18px;line-height:1.4}
 .dialogue-line small{display:block;color:#6b7a72;margin-top:2px}@media(max-width:560px){.dialogue-line{grid-template-columns:24px 1fr auto;gap:8px}.dialogue-line b{font-size:16px}}
+.swap-frame{font-size:20px;font-weight:700;line-height:1.6;margin:8px 0}.swap-gap{display:inline-block;min-width:64px;border-bottom:2px solid #b98534;color:#b98534;text-align:center;margin:0 4px}

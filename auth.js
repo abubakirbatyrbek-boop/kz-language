@@ -18,17 +18,18 @@
     if (!entry) return null;
     const id = lang + '|' + text;
     if (cache.has(id)) return cache.get(id);
-    const [start, length] = entry;
-    if (mismatched[lang]) return null;
-    const res = await fetch(lang + '.bin', {headers: {Range: 'bytes=' + start + '-' + (start + length - 1)}});
+    // [offset, length, part]: part 2+ lives in kk-2.bin, kk-3.bin … (keeps each file under GitHub's upload limit)
+    const [start, length, part] = entry, file = lang + (part > 1 ? '-' + part : '') + '.bin';
+    if (mismatched[file]) return null;
+    const res = await fetch(file, {headers: {Range: 'bytes=' + start + '-' + (start + length - 1)}});
     if (!res.ok) return null;
     // index.json and the .bin must come from the same build; otherwise offsets point at the
     // wrong sentence. On a size mismatch (e.g. halfway through an upload) use the device voice.
-    const expected = idx._size?.[lang];
+    const expected = idx._size?.[file] ?? idx._size?.[lang];
     const total = res.status === 206 ? Number((res.headers.get('Content-Range') || '').split('/')[1]) : null;
     let buf = await res.arrayBuffer();
     const actual = res.status === 200 ? buf.byteLength : total;
-    if (expected && actual && actual !== expected) { mismatched[lang] = true; return null; }
+    if (expected && actual && actual !== expected) { mismatched[file] = true; return null; }
     if (res.status === 200) buf = buf.slice(start, start + length); // server ignored Range
     const url = URL.createObjectURL(new Blob([buf], {type: 'audio/mpeg'}));
     cache.set(id, url);
@@ -52,7 +53,29 @@
     }, () => false);
   }
   function has(text, lang) { const l = langOf(lang); return !!(index && l && index[l]?.[norm(text)]); }
-  window.KZAudio = {play, has, ready: loadIndex};
+  // Word lists are read word by word: each clip, then a short pause. Any other play cancels the list.
+  let listToken = 0;
+  const pause = ms => new Promise(r => setTimeout(r, ms));
+  const ended = () => new Promise(res => {
+    if (!player || player.paused) return res();
+    const done = () => { player.removeEventListener('ended', done); player.removeEventListener('pause', done); res(); };
+    player.addEventListener('ended', done); player.addEventListener('pause', done);
+  });
+  async function playList(texts, lang, rate = 1) {
+    const my = ++listToken;
+    for (const t of texts) {
+      if (my !== listToken) return;
+      const ok = await play(t, lang, rate);
+      if (my !== listToken) return;
+      if (ok) await ended();
+      else { // no recording for this word: device voice, then move on
+        try { const u = new SpeechSynthesisUtterance(t); u.__kzNative = true; u.lang = langOf(lang) === 'kk' ? 'kk-KZ' : 'ru-RU'; u.rate = rate; window.speechSynthesis.speak(u); } catch {}
+        await pause(1500);
+      }
+      await pause(450);
+    }
+  }
+  window.KZAudio = {play: (...a) => { listToken++; return play(...a); }, playList, has, ready: loadIndex};
   // Route every existing speechSynthesis caller (app.js, grammar-flow.js, v5.js, government.html) through the clips.
   const synth = window.speechSynthesis;
   if (synth && window.SpeechSynthesisUtterance) {
@@ -426,7 +449,7 @@
         options.forEach(value=>{const b=document.createElement('button');b.textContent=value;b.onclick=()=>{if(!feedback(value===target))return;if(step===0){step++;draw()}else finish()};area.appendChild(b)});
       }
     }
-    if(l.turns||l.drill){ lock(); specialPractice(); return; }
+    if(l.turns||l.drill||l.swap){ lock(); specialPractice(); return; }
     lock();draw();
 
     // Numbers / days: hear a word → pick what it means; see the meaning → pick the word.
@@ -434,6 +457,21 @@
     function specialPractice(){
       const lang=c.targetLang, pick=(arr,n)=>[...arr].sort(()=>Math.random()-.5).slice(0,n);
       const say=(t,rate=0.9)=>voice(t,lang,rate,box.querySelector('[role=status]'));
+      const panelOf=(id,title,html)=>{document.getElementById(id)?.remove();const p=document.createElement('section');p.id=id;p.className='study-tool';p.innerHTML='<h3>'+title+'</h3>'+html;audio.before(p);return p;};
+      if(l.drill){
+        // Word list: every word on its own line with its own 🔊; "原速/慢速" read the words one by one.
+        const p=panelOf('lessonDialogue','词表',l.drill.map((d,i)=>`<div class="dialogue-line"><strong>${i+1}</strong><span><b lang="${lang}">${esc(d[1])}</b><small>${esc(d[0])}</small></span><button type="button" data-word="${i}">🔊</button></div>`).join('')+'<p class="study-help">先逐个听、跟读，再点“▶ 原速”按顺序听一遍。</p>');
+        p.querySelectorAll('[data-word]').forEach(b=>b.onclick=()=>voice(l.drill[+b.dataset.word][1],lang,1,audio.querySelector('[role=status]')));
+        const list=rate=>window.KZAudio?window.KZAudio.playList(l.drill.map(d=>d[1]),lang,rate):say(l.drill.map(d=>d[1]).join(', '),rate);
+        audio.querySelectorAll('[data-speed]').forEach(b=>b.onclick=()=>list(Number(b.dataset.speed)));
+        if(sound)sound.onclick=()=>list(1);
+      }
+      if(l.swap){
+        // Substitution drill: the pattern with a gap, then every sentence to say yourself before checking.
+        const sw=l.swap, gap=`${esc(sw.frame[0])}<span class="swap-gap">＿＿</span>${esc(sw.frame[1])}`;
+        const p=panelOf('lessonDialogue','句型：'+esc(sw.cnFrame[0])+'……'+esc(sw.cnFrame[1]),`<p class="swap-frame" lang="${lang}">${gap}</p><p class="study-help">可以换的词：${sw.items.map(i=>`<b lang="${lang}">${esc(i[1])}</b>（${esc(i[0])}）`).join('、')}</p><h3>自己说</h3>`+sw.sentences.map((s,i)=>`<div class="dialogue-line"><strong>${i+1}</strong><span><small>${esc(s[0])}</small><b lang="${lang}" hidden>${esc(s[1])}</b></span><button type="button" data-say="${i}">看答案</button></div>`).join('')+'<p class="study-help">先看中文自己说出来（可以用下方“录音跟读”），再点“看答案”对照并听发音。</p>');
+        p.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>{const i=+b.dataset.say,row=b.closest('.dialogue-line');row.querySelector('b').hidden=false;b.textContent='🔊';voice(sw.sentences[i][1],lang,0.9,audio.querySelector('[role=status]'));});
+      }
       if(l.turns){
         const panel=document.createElement('section');panel.id='lessonDialogue';panel.className='study-tool';
         panel.innerHTML='<h3>对话</h3>'+l.turns.map((t,i)=>`<div class="dialogue-line"><strong>${esc(t[0])}</strong><span><b lang="${lang}">${esc(t[2])}</b><small>${esc(t[1])}</small></span><button type="button" data-line="${i}">🔊</button></div>`).join('')+'<p class="study-help">先逐句听，再点上方“▶ 原速”听整段。最后一句是对方的回答，练习会考你听懂它。</p>';
@@ -443,13 +481,18 @@
       let stepN=0;
       function q(){
         if(passed){finish();return;}
-        let prompt,play,correct,choices;
-        if(l.drill){
+        let prompt,play,correct,choices,item=null,frameHtml='';
+        if(l.swap){
+          const sw=l.swap, k=Math.floor(Math.random()*sw.items.length);
+          if(stepN===0){ prompt='用句型说：'+sw.sentences[k][0]+' 空里填哪个词？'; correct=sw.items[k][1]; choices=sw.items.map(i=>i[1]);
+            frameHtml=`<p class="swap-frame" lang="${lang}">${esc(sw.frame[0])}<span class="swap-gap">＿＿</span>${esc(sw.frame[1])}</p>`; }
+          else { prompt='用句型说：'+sw.sentences[k][0]; correct=sw.sentences[k][1]; choices=pick(sw.sentences.map(s=>s[1]).filter(s=>s!==correct),3).concat(correct); }
+        }else if(l.drill){
           const isNum=s=>/^\d+$/.test(s), kind=isNum(l.drill[0][0]); // numbers vs weekdays: distractors from the same kind
           const others=pool.filter(x=>x.drill&&x.id!==l.id).flatMap(x=>x.drill).filter(d=>isNum(d[0])===kind);
-          if(stepN===0){ const it=pick(l.drill,1)[0]; prompt='听发音，选出是哪个。'; play=it[1]; correct=it[0];
+          if(stepN===0){ const it=pick(l.drill,1)[0]; item=it; prompt='听发音，选出是哪个。'; play=it[1]; correct=it[0];
             choices=pick([...new Set([...l.drill.map(d=>d[0]),...pick(others,4).map(d=>d[0])])].filter(x=>x!==correct),3).concat(correct); }
-          else { const it=pick(l.drill,1)[0]; prompt=`“${it[0]}” 怎么说？`; correct=it[1];
+          else { const it=pick(l.drill,1)[0]; item=it; prompt=`“${it[0]}” 怎么说？`; correct=it[1];
             choices=pick([...new Set([...l.drill.map(d=>d[1]),...pick(others,4).map(d=>d[1])])].filter(x=>x!==correct),3).concat(correct); }
         }else{
           const dialogs=pool.filter(x=>x.turns&&x.id!==l.id), last=l.turns[l.turns.length-1];
@@ -459,12 +502,17 @@
             choices=pick([...new Set(dialogs.map(x=>x.turns[1][2]))].filter(x=>x!==correct),3).concat(correct); }
         }
         choices=pick(choices,choices.length);
-        box.innerHTML=`<h3>小练习 ${stepN+1} / 2</h3><p>${esc(prompt)}</p>${play?'<button type="button" data-play>🔊 播放</button>':''}<div class="practice-options"></div><p role="status" class="study-status"></p>`;
+        box.innerHTML=`<h3>小练习 ${stepN+1} / 2</h3><p>${esc(prompt)}</p>${frameHtml}${play?'<button type="button" data-play>🔊 播放</button>':''}<div class="practice-options"></div><p role="status" class="study-status"></p>`;
         if(play){ const b=box.querySelector('[data-play]'); b.onclick=()=>say(play); }
         const area=box.querySelector('.practice-options');
         choices.forEach(v=>{const b=document.createElement('button');b.textContent=v;b.onclick=()=>{
           const ok=v===correct, fb=box.querySelector('[role=status]');
-          if(!ok){ fb.textContent=`正确答案：${correct}。${l.tip||''} 已加入错题复习，请再试一次。`; review(c,l); return; }
+          if(!ok){
+            fb.textContent=`正确答案：${correct}。${l.tip||''} 已加入错题复习，请再试一次。`;
+            // A missed word goes into review on its own, not the whole six-word lesson.
+            review(c, item ? {id:l.id+':'+item[1], title:item[0], cn:item[0], kz:item[1], ru:item[1], tip:l.group||''} : l);
+            return;
+          }
           fb.textContent='回答正确！'; if(stepN===0){stepN++;setTimeout(q,500)}else finish(); };area.appendChild(b)});
       }
       q();
