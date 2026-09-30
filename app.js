@@ -173,12 +173,12 @@ const lessons = [
   { id:"sentence-ru-41", course:"sentence-ru", title:"中文 → 俄语", tag:'语法与造句', level:'基础语法', cn:"他在家。", kz:"", ru:"Он дома.", tip:"独立完成地点句。", group:"造句" },
   { id:"sentence-ru-42", course:"sentence-ru", title:"场景：办公室", tag:'语法与造句', level:'基础语法', cn:"请把文件给我。", kz:"", ru:"Дайте мне документы, пожалуйста.", tip:"把基础语法迁移到工作交流。", group:"场景造句" },
   { id:"sentence-ru-43", course:"sentence-ru", title:"场景：物流", tag:'语法与造句', level:'基础语法', cn:"货物明天到。", kz:"", ru:"Груз прибудет завтра.", tip:"把时间和动作句用于物流场景。", group:"场景造句" },
-  {"id":"speaking-kz-01","course":"speaking-kz","title":"我","tag":"造句与口语","level":"零基础口语","cn":"我","kz":"Мен","ru":"","tip":"从一个词开始开口。","group":"口语起步"},
-  {"id":"speaking-kz-02","course":"speaking-kz","title":"你","tag":"造句与口语","level":"零基础口语","cn":"你","kz":"Сен","ru":"","tip":"认识对方。","group":"口语起步"},
-  {"id":"speaking-kz-03","course":"speaking-kz","title":"他","tag":"造句与口语","level":"零基础口语","cn":"他","kz":"Ол","ru":"","tip":"谈论第三个人。","group":"口语起步"},
-  {"id":"speaking-kz-04","course":"speaking-kz","title":"我们","tag":"造句与口语","level":"零基础口语","cn":"我们","kz":"Біз","ru":"","tip":"表达一起做事。","group":"口语起步"},
-  {"id":"speaking-kz-05","course":"speaking-kz","title":"你们","tag":"造句与口语","level":"零基础口语","cn":"你们","kz":"Сендер","ru":"","tip":"对多人说话。","group":"口语起步"},
-  {"id":"speaking-kz-06","course":"speaking-kz","title":"他们","tag":"造句与口语","level":"零基础口语","cn":"他们","kz":"Олар","ru":"","tip":"谈论多人。","group":"口语起步"},
+  {"id":"speaking-kz-01","course":"speaking-kz","title":"我想喝茶。","tag":"造句与口语","level":"零基础口语","cn":"我想喝茶。","kz":"Мен шай ішкім келеді.","ru":"","tip":"“我想做……”= 动词 + -ғым/-гім келеді。шай = 茶。先会这一句，就能开口提要求。","group":"口语起步"},
+  {"id":"speaking-kz-02","course":"speaking-kz","title":"你想喝茶吗？","tag":"造句与口语","level":"零基础口语","cn":"你想喝茶吗？","kz":"Сен шай ішкің келе ме?","ru":"","tip":"问对方想不想：把 -ғым 换成 -ғың，句尾加 ме。","group":"口语起步"},
+  {"id":"speaking-kz-03","course":"speaking-kz","title":"我想吃饭。","tag":"造句与口语","level":"零基础口语","cn":"我想吃饭。","kz":"Мен тамақ жегім келеді.","ru":"","tip":"тамақ = 饭、食物；же = 吃。同一个句型，只换动词。","group":"口语起步"},
+  {"id":"speaking-kz-04","course":"speaking-kz","title":"你想去哪里？","tag":"造句与口语","level":"零基础口语","cn":"你想去哪里？","kz":"Сен қайда барғың келеді?","ru":"","tip":"қайда = 去哪里。问路、打车前先问对方。","group":"口语起步"},
+  {"id":"speaking-kz-05","course":"speaking-kz","title":"我想睡觉。","tag":"造句与口语","level":"零基础口语","cn":"我想睡觉。","kz":"Мен ұйықтағым келеді.","ru":"","tip":"ұйықта = 睡觉。同一个句型，换一个动词。","group":"口语起步"},
+  {"id":"speaking-kz-06","course":"speaking-kz","title":"我不想去。","tag":"造句与口语","level":"零基础口语","cn":"我不想去。","kz":"Мен барғым келмейді.","ru":"","tip":"否定：келеді → келмейді。“不想”就这样说。","group":"口语起步"},
   {"id":"speaking-kz-07","course":"speaking-kz","title":"我是中国人。","tag":"造句与口语","level":"零基础口语","cn":"我是中国人。","kz":"Мен қытаймын.","ru":"","tip":"直接练一条完整口语句。","group":"基础表达"},
   {"id":"speaking-kz-08","course":"speaking-kz","title":"你是中国人吗？","tag":"造句与口语","level":"零基础口语","cn":"你是中国人吗？","kz":"Сен қытайсың ба?","ru":"","tip":"直接练提问。","group":"基础表达"},
   {"id":"speaking-kz-09","course":"speaking-kz","title":"他是我的同事。","tag":"造句与口语","level":"零基础口语","cn":"他是我的同事。","kz":"Ол менің әріптесім.","ru":"","tip":"把人称词放进真实表达。","group":"基础表达"},
@@ -206,8 +206,8 @@ const lessons = [
   {"id":"speaking-kz-31","course":"speaking-kz","title":"请说慢一点。","tag":"造句与口语","level":"零基础口语","cn":"请说慢一点。","kz":"Баяуырақ сөйлеңізші.","ru":"","tip":"对方说快时使用。","group":"高频交流"},
   {"id":"speaking-kz-32","course":"speaking-kz","title":"请帮我。","tag":"造句与口语","level":"零基础口语","cn":"请帮我。","kz":"Маған көмектесіңізші.","ru":"","tip":"请求帮助。","group":"高频交流"},
   {"id":"speaking-kz-33","course":"speaking-kz","title":"我需要帮助。","tag":"造句与口语","level":"零基础口语","cn":"我需要帮助。","kz":"Маған көмек керек.","ru":"","tip":"表达需要帮助。","group":"高频交流"},
-  {"id":"speaking-kz-34","course":"speaking-kz","title":"我想喝水。","tag":"造句与口语","level":"零基础口语","cn":"我想喝水。","kz":"Мен су ішкім келеді.","ru":"","tip":"从“我想”开始说。","group":"高频交流"},
-  {"id":"speaking-kz-35","course":"speaking-kz","title":"我想吃饭。","tag":"造句与口语","level":"零基础口语","cn":"我想吃饭。","kz":"Мен тамақ жегім келеді.","ru":"","tip":"日常吃饭表达。","group":"高频交流"},
+  {"id":"speaking-kz-34","course":"speaking-kz","title":"我想休息。","tag":"造句与口语","level":"零基础口语","cn":"我想休息。","kz":"Мен демалғым келеді.","ru":"","tip":"демал = 休息。累了就这样说。","group":"高频交流"},
+  {"id":"speaking-kz-35","course":"speaking-kz","title":"你想要什么？","tag":"造句与口语","level":"零基础口语","cn":"你想要什么？","kz":"Сен не қалайсың?","ru":"","tip":"не = 什么；қалайсың = 你想要。点餐、买东西时常听到。","group":"高频交流"},
   {"id":"speaking-kz-36","course":"speaking-kz","title":"我喜欢这个。","tag":"造句与口语","level":"零基础口语","cn":"我喜欢这个。","kz":"Маған бұл ұнайды.","ru":"","tip":"表达喜欢。","group":"实用场景"},
   {"id":"speaking-kz-37","course":"speaking-kz","title":"我不喜欢这个。","tag":"造句与口语","level":"零基础口语","cn":"我不喜欢这个。","kz":"Маған бұл ұнамайды.","ru":"","tip":"表达不喜欢。","group":"实用场景"},
   {"id":"speaking-kz-38","course":"speaking-kz","title":"多少钱？","tag":"造句与口语","level":"零基础口语","cn":"多少钱？","kz":"Қанша тұрады?","ru":"","tip":"购物和服务高频句。","group":"实用场景"},
@@ -222,12 +222,12 @@ const lessons = [
   {"id":"speaking-kz-47","course":"speaking-kz","title":"餐厅：请给我菜单。","tag":"造句与口语","level":"零基础口语","cn":"餐厅：请给我菜单。","kz":"Мәзірді беріңізші.","ru":"","tip":"把口语带入餐厅。","group":"实用场景"},
   {"id":"speaking-kz-48","course":"speaking-kz","title":"办公室：请把文件给我。","tag":"造句与口语","level":"零基础口语","cn":"办公室：请把文件给我。","kz":"Құжатты маған беріңізші.","ru":"","tip":"把口语带入办公室。","group":"实用场景"},
   {"id":"speaking-kz-49","course":"speaking-kz","title":"物流：货物什么时候到？","tag":"造句与口语","level":"零基础口语","cn":"物流：货物什么时候到？","kz":"Жүк қашан келеді?","ru":"","tip":"把口语带入物流。","group":"实用场景"},
-  {"id":"speaking-ru-01","course":"speaking-ru","title":"我","tag":"造句与口语","level":"零基础口语","cn":"我","kz":"","ru":"Я","tip":"从一个词开始开口。","group":"口语起步"},
-  {"id":"speaking-ru-02","course":"speaking-ru","title":"你","tag":"造句与口语","level":"零基础口语","cn":"你","kz":"","ru":"Ты","tip":"认识对方。","group":"口语起步"},
-  {"id":"speaking-ru-03","course":"speaking-ru","title":"他","tag":"造句与口语","level":"零基础口语","cn":"他","kz":"","ru":"Он","tip":"谈论第三个人。","group":"口语起步"},
-  {"id":"speaking-ru-04","course":"speaking-ru","title":"我们","tag":"造句与口语","level":"零基础口语","cn":"我们","kz":"","ru":"Мы","tip":"表达一起做事。","group":"口语起步"},
-  {"id":"speaking-ru-05","course":"speaking-ru","title":"你们","tag":"造句与口语","level":"零基础口语","cn":"你们","kz":"","ru":"Вы","tip":"对多人说话或礼貌称呼。","group":"口语起步"},
-  {"id":"speaking-ru-06","course":"speaking-ru","title":"他们","tag":"造句与口语","level":"零基础口语","cn":"他们","kz":"","ru":"Они","tip":"谈论多人。","group":"口语起步"},
+  {"id":"speaking-ru-01","course":"speaking-ru","title":"我想喝茶。","tag":"造句与口语","level":"零基础口语","cn":"我想喝茶。","kz":"","ru":"Я хочу чай.","tip":"хочу + 名词 = 我想要……。先会这一句，就能开口提要求。","group":"口语起步"},
+  {"id":"speaking-ru-02","course":"speaking-ru","title":"你想喝茶吗？","tag":"造句与口语","level":"零基础口语","cn":"你想喝茶吗？","kz":"","ru":"Ты хочешь чай?","tip":"问对方：хочу 换成 хочешь，语调上扬就是问句。","group":"口语起步"},
+  {"id":"speaking-ru-03","course":"speaking-ru","title":"我想吃饭。","tag":"造句与口语","level":"零基础口语","cn":"我想吃饭。","kz":"","ru":"Я хочу есть.","tip":"хочу + 动词原形。есть = 吃。","group":"口语起步"},
+  {"id":"speaking-ru-04","course":"speaking-ru","title":"你想去哪里？","tag":"造句与口语","level":"零基础口语","cn":"你想去哪里？","kz":"","ru":"Куда ты хочешь пойти?","tip":"куда = 去哪里。问路、打车前先问对方。","group":"口语起步"},
+  {"id":"speaking-ru-05","course":"speaking-ru","title":"我想睡觉。","tag":"造句与口语","level":"零基础口语","cn":"我想睡觉。","kz":"","ru":"Я хочу спать.","tip":"спать = 睡觉。同一个句型，换一个动词。","group":"口语起步"},
+  {"id":"speaking-ru-06","course":"speaking-ru","title":"我不想去。","tag":"造句与口语","level":"零基础口语","cn":"我不想去。","kz":"","ru":"Я не хочу идти.","tip":"не хочу = 不想。","group":"口语起步"},
   {"id":"speaking-ru-07","course":"speaking-ru","title":"我是中国人。","tag":"造句与口语","level":"零基础口语","cn":"我是中国人。","kz":"","ru":"Я из Китая.","tip":"直接练一条完整口语句。","group":"基础表达"},
   {"id":"speaking-ru-08","course":"speaking-ru","title":"你是中国人吗？","tag":"造句与口语","level":"零基础口语","cn":"你是中国人吗？","kz":"","ru":"Ты из Китая?","tip":"直接练提问。","group":"基础表达"},
   {"id":"speaking-ru-09","course":"speaking-ru","title":"他是我的同事。","tag":"造句与口语","level":"零基础口语","cn":"他是我的同事。","kz":"","ru":"Он мой коллега.","tip":"把人称词放进真实表达。","group":"基础表达"},
@@ -255,8 +255,8 @@ const lessons = [
   {"id":"speaking-ru-31","course":"speaking-ru","title":"请说慢一点。","tag":"造句与口语","level":"零基础口语","cn":"请说慢一点。","kz":"","ru":"Говорите медленнее, пожалуйста.","tip":"对方说快时使用。","group":"高频交流"},
   {"id":"speaking-ru-32","course":"speaking-ru","title":"请帮我。","tag":"造句与口语","level":"零基础口语","cn":"请帮我。","kz":"","ru":"Помогите мне, пожалуйста.","tip":"请求帮助。","group":"高频交流"},
   {"id":"speaking-ru-33","course":"speaking-ru","title":"我需要帮助。","tag":"造句与口语","level":"零基础口语","cn":"我需要帮助。","kz":"","ru":"Мне нужна помощь.","tip":"表达需要帮助。","group":"高频交流"},
-  {"id":"speaking-ru-34","course":"speaking-ru","title":"我想喝水。","tag":"造句与口语","level":"零基础口语","cn":"我想喝水。","kz":"","ru":"Я хочу пить воду.","tip":"从“我想”开始说。","group":"高频交流"},
-  {"id":"speaking-ru-35","course":"speaking-ru","title":"我想吃饭。","tag":"造句与口语","level":"零基础口语","cn":"我想吃饭。","kz":"","ru":"Я хочу поесть.","tip":"日常吃饭表达。","group":"高频交流"},
+  {"id":"speaking-ru-34","course":"speaking-ru","title":"我想休息。","tag":"造句与口语","level":"零基础口语","cn":"我想休息。","kz":"","ru":"Я хочу отдохнуть.","tip":"отдохнуть = 休息。累了就这样说。","group":"高频交流"},
+  {"id":"speaking-ru-35","course":"speaking-ru","title":"你想要什么？","tag":"造句与口语","level":"零基础口语","cn":"你想要什么？","kz":"","ru":"Что ты хочешь?","tip":"что = 什么。点餐、买东西时常听到。","group":"高频交流"},
   {"id":"speaking-ru-36","course":"speaking-ru","title":"我喜欢这个。","tag":"造句与口语","level":"零基础口语","cn":"我喜欢这个。","kz":"","ru":"Мне это нравится.","tip":"表达喜欢。","group":"实用场景"},
   {"id":"speaking-ru-37","course":"speaking-ru","title":"我不喜欢这个。","tag":"造句与口语","level":"零基础口语","cn":"我不喜欢这个。","kz":"","ru":"Мне это не нравится.","tip":"表达不喜欢。","group":"实用场景"},
   {"id":"speaking-ru-38","course":"speaking-ru","title":"多少钱？","tag":"造句与口语","level":"零基础口语","cn":"多少钱？","kz":"","ru":"Сколько стоит?","tip":"购物和服务高频句。","group":"实用场景"},
@@ -276,10 +276,10 @@ const lessons = [
 const courses = [
   { id:'daily-kz', icon:'🔤', title:'哈萨克语｜零基础·字母与发音', desc:'从 42 个字母、特殊音和拼读开始。先听、再读、再做辨音练习。', accent:'KZ', kind:'foundation', targetLang:'kk' },
   { id:'sentence-kz', icon:'📘', title:'哈萨克语｜基础语法课', desc:'把语法拆成最小单位：一个词、一个结构、一个例句。先单独学清楚，再组合成句子。', accent:'KZ', kind:'sentence', targetLang:'kk' },
-  { id:'speaking-kz', icon:'💬', title:'哈萨克语｜零基础造句与口语', desc:'不等语法学完，从“我、你、他”开始。先说短句，再一步步扩展。', accent:'KZ', kind:'speaking', targetLang:'kk' },
+  { id:'speaking-kz', icon:'💬', title:'哈萨克语｜零基础造句与口语', desc:'不背单词表，第一课就说整句：“我想喝茶”“你想去哪里？”。学会一个句型，换词就能说新句子。', accent:'KZ', kind:'speaking', targetLang:'kk' },
   { id:'daily-ru', icon:'🔤', title:'俄语｜零基础·字母与发音', desc:'从 33 个字母、发音、重音和拼读开始。先听、再读、再做辨音练习。', accent:'RU', kind:'foundation', targetLang:'ru' },
   { id:'sentence-ru', icon:'📘', title:'俄语｜基础语法课', desc:'把俄语语法拆成最小单位：一个词、一个结构、一个例句。先单独学清楚，再组合成句子。', accent:'RU', kind:'sentence', targetLang:'ru' },
-  { id:'speaking-ru', icon:'💬', title:'俄语｜零基础造句与口语', desc:'不等语法学完，从“我、你、他”开始。先说短句，再一步步扩展。', accent:'RU', kind:'speaking', targetLang:'ru' }
+  { id:'speaking-ru', icon:'💬', title:'俄语｜零基础造句与口语', desc:'不背单词表，第一课就说整句：“我想喝茶”“你想去哪里？”。学会一个句型，换词就能说新句子。', accent:'RU', kind:'speaking', targetLang:'ru' }
 ];
 
 const scenes = [
@@ -544,7 +544,7 @@ function renderCoursePage(){
   if(intro){
     if(c.kind==='foundation') intro.textContent='这是独立的基础课：从字母、特殊音和拼读开始。每一步都配听音练习，不急着背句子。';
     if(c.kind==='sentence') intro.textContent='正式语法课：把语法拆成小块。每节只讲一个结构，再用一个简单例句固定下来，最后自己换词练一次。';
-    if(c.kind==='speaking') intro.textContent='零基础口语课：不要求先懂一大堆术语，从“我、你、他”开始，用短句直接练开口。';
+    if(c.kind==='speaking') intro.textContent='零基础口语课：不从单词学起，第一课就开口说整句。先会“我想……”，再换词、提问、否定。';
   }
   const map=document.getElementById('courseStudyMap'); if(map) map.innerHTML=courseStudyMap(pool,c);
   const list=document.getElementById('lessonList');
@@ -598,7 +598,7 @@ function renderLearnPage(){
   if(courseForLearn?.kind==='sentence' || courseForLearn?.kind==='speaking'){
     if(kzRow) kzRow.style.display=courseForLearn.targetLang==='kk'?'flex':'none';
     if(ruRow) ruRow.style.display=courseForLearn.targetLang==='ru'?'flex':'none';
-    const side=document.getElementById('learnModeNote'); if(side) side.textContent=courseForLearn.kind==='speaking' ? (courseForLearn.targetLang==='kk'?'目标语言：哈萨克语。零基础直接从“我、你、他”开始说。':'目标语言：俄语。零基础直接从“我、你、他”开始说。') : (courseForLearn.targetLang==='kk'?'目标语言：哈萨克语。按语法体系从“我、你、他”开始。':'目标语言：俄语。按语法体系从“我、你、他”开始。');
+    const side=document.getElementById('learnModeNote'); if(side) side.textContent=courseForLearn.kind==='speaking' ? (courseForLearn.targetLang==='kk'?'目标语言：哈萨克语。直接说整句，一个句型换不同的词。':'目标语言：俄语。直接说整句，一个句型换不同的词。') : (courseForLearn.targetLang==='kk'?'目标语言：哈萨克语。按语法体系从“我、你、他”开始。':'目标语言：俄语。按语法体系从“我、你、他”开始。');
   } else { if(kzRow) kzRow.style.display='flex'; if(ruRow) ruRow.style.display='flex'; }
   function draw(){
     const l=pool[current]; if(!l) return;
