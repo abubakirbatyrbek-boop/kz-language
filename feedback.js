@@ -7,7 +7,7 @@
   if(configured && window.supabase?.createClient){
     client=window.supabase.createClient(cfg.url,cfg.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
   }
-  const messageEl=document.getElementById('feedbackMessage');
+  const messageEl=document.getElementById('feedbackStatus'); // status line (the textarea is #feedbackMessage)
   const submit=document.getElementById('feedbackSubmit');
   const emailInput=document.getElementById('feedbackEmail');
   const textArea=document.getElementById('feedbackMessage');
@@ -51,7 +51,8 @@
       count.textContent='0 / 2000';
       if(user?.email) emailInput.value=user.email;
     }catch(err){
-      setMsg(err?.message||'提交失败，请稍后再试。','bad');
+      console.warn('feedback submit failed',err);
+      setMsg(/fetch|network/i.test(err?.message||'')?'网络连接失败，请检查网络后重试。':'提交失败，请稍后再试。如果一直失败，可以发邮件联系我们。','bad');
     }finally{submit.disabled=false;submit.textContent='提交反馈';}
   });
 })();
