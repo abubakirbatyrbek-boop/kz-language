@@ -426,7 +426,49 @@
         options.forEach(value=>{const b=document.createElement('button');b.textContent=value;b.onclick=()=>{if(!feedback(value===target))return;if(step===0){step++;draw()}else finish()};area.appendChild(b)});
       }
     }
+    if(l.turns||l.drill){ lock(); specialPractice(); return; }
     lock();draw();
+
+    // Numbers / days: hear a word → pick what it means; see the meaning → pick the word.
+    // Dialogues: hear the other person's reply → pick its meaning; see the question → pick the right reply.
+    function specialPractice(){
+      const lang=c.targetLang, pick=(arr,n)=>[...arr].sort(()=>Math.random()-.5).slice(0,n);
+      const say=(t,rate=0.9)=>voice(t,lang,rate,box.querySelector('[role=status]'));
+      if(l.turns){
+        const panel=document.createElement('section');panel.id='lessonDialogue';panel.className='study-tool';
+        panel.innerHTML='<h3>对话</h3>'+l.turns.map((t,i)=>`<div class="dialogue-line"><strong>${esc(t[0])}</strong><span><b lang="${lang}">${esc(t[2])}</b><small>${esc(t[1])}</small></span><button type="button" data-line="${i}">🔊</button></div>`).join('')+'<p class="study-help">先逐句听，再点上方“▶ 原速”听整段。最后一句是对方的回答，练习会考你听懂它。</p>';
+        document.getElementById('lessonDialogue')?.remove(); audio.before(panel);
+        panel.querySelectorAll('[data-line]').forEach(b=>b.onclick=()=>voice(l.turns[+b.dataset.line][2],lang,0.9,audio.querySelector('[role=status]')));
+      }
+      let stepN=0;
+      function q(){
+        if(passed){finish();return;}
+        let prompt,play,correct,choices;
+        if(l.drill){
+          const isNum=s=>/^\d+$/.test(s), kind=isNum(l.drill[0][0]); // numbers vs weekdays: distractors from the same kind
+          const others=pool.filter(x=>x.drill&&x.id!==l.id).flatMap(x=>x.drill).filter(d=>isNum(d[0])===kind);
+          if(stepN===0){ const it=pick(l.drill,1)[0]; prompt='听发音，选出是哪个。'; play=it[1]; correct=it[0];
+            choices=pick([...new Set([...l.drill.map(d=>d[0]),...pick(others,4).map(d=>d[0])])].filter(x=>x!==correct),3).concat(correct); }
+          else { const it=pick(l.drill,1)[0]; prompt=`“${it[0]}” 怎么说？`; correct=it[1];
+            choices=pick([...new Set([...l.drill.map(d=>d[1]),...pick(others,4).map(d=>d[1])])].filter(x=>x!==correct),3).concat(correct); }
+        }else{
+          const dialogs=pool.filter(x=>x.turns&&x.id!==l.id), last=l.turns[l.turns.length-1];
+          if(stepN===0){ prompt='听对方的回答，选出它的意思。'; play=last[2]; correct=last[1];
+            choices=pick([...new Set(dialogs.map(x=>x.turns[x.turns.length-1][1]))].filter(x=>x!==correct),3).concat(correct); }
+          else { const reply=l.turns[1]; prompt=`对方说：“${l.turns[0][2]}”（${l.turns[0][1]}）你怎么回答？`; correct=reply[2];
+            choices=pick([...new Set(dialogs.map(x=>x.turns[1][2]))].filter(x=>x!==correct),3).concat(correct); }
+        }
+        choices=pick(choices,choices.length);
+        box.innerHTML=`<h3>小练习 ${stepN+1} / 2</h3><p>${esc(prompt)}</p>${play?'<button type="button" data-play>🔊 播放</button>':''}<div class="practice-options"></div><p role="status" class="study-status"></p>`;
+        if(play){ const b=box.querySelector('[data-play]'); b.onclick=()=>say(play); }
+        const area=box.querySelector('.practice-options');
+        choices.forEach(v=>{const b=document.createElement('button');b.textContent=v;b.onclick=()=>{
+          const ok=v===correct, fb=box.querySelector('[role=status]');
+          if(!ok){ fb.textContent=`正确答案：${correct}。${l.tip||''} 已加入错题复习，请再试一次。`; review(c,l); return; }
+          fb.textContent='回答正确！'; if(stepN===0){stepN++;setTimeout(q,500)}else finish(); };area.appendChild(b)});
+      }
+      q();
+    }
   }
   function renderReview(host){
     const entries=Object.entries(state().review||{});const due=entries.filter(([,x])=>x.due<=Date.now());

@@ -273,13 +273,92 @@ const lessons = [
   {"id":"speaking-ru-49","course":"speaking-ru","title":"物流：货物什么时候到？","tag":"造句与口语","level":"零基础口语","cn":"物流：货物什么时候到？","kz":"","ru":"Когда прибудет груз?","tip":"把口语带入物流。","group":"实用场景"},
 ];
 
+// “数字与情景对话” course: numbers, prices, time, and short two-person dialogues.
+// drill: [[shown label, spoken word], ...] → "listen, pick the number" practice.
+// turns: [[speaker, Chinese, target], ...] → dialogue lines; the last turn is the reply learners must understand.
+const TALK_COURSE = {
+  kk: [
+    {g:'数字 0–10', cn:'1、2、3', drill:[['1','бір'],['2','екі'],['3','үш']], tip:'先会 1 到 3。'},
+    {g:'数字 0–10', cn:'4、5、6', drill:[['4','төрт'],['5','бес'],['6','алты']], tip:'бес（5）和 бір（1）开头一样，注意听清。'},
+    {g:'数字 0–10', cn:'7、8、9', drill:[['7','жеті'],['8','сегіз'],['9','тоғыз']], tip:'жеті（7）和 жетпіс（70）别混。'},
+    {g:'数字 0–10', cn:'0 和 10', drill:[['0','нөл'],['10','он']], tip:'电话号码里常听到 нөл（0）。'},
+    {g:'数字 0–10', cn:'我要两瓶水。', t:'Маған екі бөтелке су керек.', tip:'数字直接放在名词前面：екі бөтелке = 两瓶。'},
+    {g:'大数字与价格', cn:'20、30、40、50', drill:[['20','жиырма'],['30','отыз'],['40','қырық'],['50','елу']], tip:'整十要单独记，没有规律。'},
+    {g:'大数字与价格', cn:'60、70、80、90', drill:[['60','алпыс'],['70','жетпіс'],['80','сексен'],['90','тоқсан']], tip:'жетпіс（70）= жеті（7）变来的，好记。'},
+    {g:'大数字与价格', cn:'100 和 1000', drill:[['100','жүз'],['1000','мың']], tip:'价格里最常听到的两个词。'},
+    {g:'大数字与价格', cn:'15、25、48、250', drill:[['15','он бес'],['25','жиырма бес'],['48','қырық сегіз'],['250','екі жүз елу']], tip:'大数字按顺序拼：25 = 20 + 5 = жиырма бес。'},
+    {g:'大数字与价格', cn:'问价', turns:[['A','多少钱？','Қанша тұрады?'],['B','两千五百坚戈。','Екі мың бес жүз теңге.']], tip:'2500 = екі мың（两千）+ бес жүз（五百）。重点是听懂对方报的价格。'},
+    {g:'大数字与价格', cn:'讲价', turns:[['A','有点贵。一千五百行吗？','Қымбат екен. Бір мың бес жүзге бола ма?'],['B','好吧。','Жарайды.']], tip:'讲价：数字 + -ге/-ға бола ма？（……可以吗？）'},
+    {g:'时间与日期', cn:'问时间', turns:[['A','现在几点？','Қазір сағат неше?'],['B','三点。','Сағат үш.']], tip:'сағат = 点钟。回答：сағат + 数字。'},
+    {g:'时间与日期', cn:'我们十点见。', t:'Сағат онда кездесейік.', tip:'сағат онда = 在十点。'},
+    {g:'时间与日期', cn:'星期一、二、三', drill:[['星期一','дүйсенбі'],['星期二','сейсенбі'],['星期三','сәрсенбі']], tip:'工作日安排、约时间都要用。'},
+    {g:'时间与日期', cn:'星期四到星期日', drill:[['星期四','бейсенбі'],['星期五','жұма'],['星期六','сенбі'],['星期日','жексенбі']], tip:'жұма = 星期五，也是“主麻日”。'},
+    {g:'时间与日期', cn:'问日期', turns:[['A','今天几号？','Бүгін нешесі?'],['B','今天五号。','Бүгін бесінші.']], tip:'日期用序数词：бес（5）→ бесінші（第五）。'},
+    {g:'时间与日期', cn:'明天早上九点可以吗？', t:'Ертең таңғы сағат тоғызда бола ма?', tip:'таңғы = 早上的。约时间的完整句。'},
+    {g:'对话：认识与寒暄', cn:'打招呼', turns:[['A','您好！','Сәлеметсіз бе!'],['B','您好！您好吗？','Сәлеметсіз бе! Қалыңыз қалай?'],['A','很好，谢谢。','Жақсы, рақмет.']], tip:'Қалыңыз қалай? = 您好吗？回答 Жақсы（好）。'},
+    {g:'对话：认识与寒暄', cn:'问名字', turns:[['A','您叫什么名字？','Атыңыз кім?'],['B','我叫阿斯哈尔。您呢？','Менің атым Асқар. Ал сіздің?'],['A','我叫王明。','Менің атым Ван Мин.']], tip:'Ал сіздің? = 您呢？把问题抛回给对方。'},
+    {g:'对话：认识与寒暄', cn:'问从哪里来', turns:[['A','您从哪里来？','Қайдан келдіңіз?'],['B','我从中国来。','Мен Қытайдан келдім.']], tip:'-дан/-дан = 从……。Қытайдан = 从中国。'},
+    {g:'对话：认识与寒暄', cn:'问工作', turns:[['A','您在这里做什么工作？','Мұнда немен айналысасыз?'],['B','我是工程师。','Мен инженермін.']], tip:'职业 + -мін = 我是……。'},
+    {g:'对话：购物与点餐', cn:'买东西', turns:[['A','这个多少钱？','Мынау қанша тұрады?'],['B','一千二百坚戈。','Бір мың екі жүз теңге.'],['A','我要这个。','Мынаны аламын.']], tip:'听懂价格后，用 Мынаны аламын 买下。'},
+    {g:'对话：购物与点餐', cn:'问能否刷卡', turns:[['A','可以刷卡吗？','Картамен төлеуге бола ма?'],['B','不行，只收现金。','Жоқ, тек қолма-қол ақша.']], tip:'қолма-қол ақша = 现金。'},
+    {g:'对话：购物与点餐', cn:'点餐', turns:[['A','您点什么？','Не тапсырыс бересіз?'],['B','一份抓饭和一杯茶。','Бір палау және бір шай.']], tip:'这里你是回答的一方：数字 + 菜名。'},
+    {g:'对话：购物与点餐', cn:'结账', turns:[['A','请结账。','Есепті әкеліңізші.'],['B','一共三千坚戈。','Барлығы үш мың теңге.']], tip:'барлығы = 一共。'},
+    {g:'对话：打车与问路', cn:'打车', turns:[['A','去哪里？','Қайда барасыз?'],['B','去火车站。','Вокзалға.'],['A','五百坚戈。','Бес жүз теңге.']], tip:'司机先问去哪里，再报价。'},
+    {g:'对话：打车与问路', cn:'问路', turns:[['A','请问，银行在哪里？','Кешіріңіз, банк қайда?'],['B','一直走，然后左转。','Тура жүріңіз, содан кейін солға бұрылыңыз.']], tip:'тура = 直走；солға = 向左；оңға = 向右。'},
+    {g:'对话：打车与问路', cn:'问远不远', turns:[['A','远吗？','Алыс па?'],['B','不远，走路五分钟。','Алыс емес, жаяу бес минут.']], tip:'жаяу = 步行。'},
+    {g:'对话：打车与问路', cn:'下车付钱', turns:[['A','请在这里停。','Осы жерде тоқтаңызшы.'],['B','好的。','Жақсы.'],['A','给您一千，不用找了。','Мә, мың теңге, қайтарымы керек емес.']], tip:'қайтарым = 找零。'}
+  ],
+  ru: [
+    {g:'数字 0–10', cn:'1、2、3', drill:[['1','один'],['2','два'],['3','три']], tip:'先会 1 到 3。'},
+    {g:'数字 0–10', cn:'4、5、6', drill:[['4','четыре'],['5','пять'],['6','шесть']], tip:'пять（5）和 пятьдесят（50）别混。'},
+    {g:'数字 0–10', cn:'7、8、9', drill:[['7','семь'],['8','восемь'],['9','девять']], tip:'семь（7）和 восемь（8）听起来接近，注意第一个音。'},
+    {g:'数字 0–10', cn:'0 和 10', drill:[['0','ноль'],['10','десять']], tip:'电话号码里常听到 ноль（0）。'},
+    {g:'数字 0–10', cn:'我要两瓶水。', t:'Мне нужно две бутылки воды.', tip:'два 在阴性名词前变成 две：две бутылки。'},
+    {g:'大数字与价格', cn:'20、30、40、50', drill:[['20','двадцать'],['30','тридцать'],['40','сорок'],['50','пятьдесят']], tip:'сорок（40）没有规律，单独记。'},
+    {g:'大数字与价格', cn:'60、70、80、90', drill:[['60','шестьдесят'],['70','семьдесят'],['80','восемьдесят'],['90','девяносто']], tip:'-десят = 十。девяносто（90）是例外。'},
+    {g:'大数字与价格', cn:'100 和 1000', drill:[['100','сто'],['1000','тысяча']], tip:'价格里最常听到的两个词。'},
+    {g:'大数字与价格', cn:'15、25、48、250', drill:[['15','пятнадцать'],['25','двадцать пять'],['48','сорок восемь'],['250','двести пятьдесят']], tip:'大数字按顺序拼：25 = 20 + 5 = двадцать пять。'},
+    {g:'大数字与价格', cn:'问价', turns:[['A','多少钱？','Сколько стоит?'],['B','两千五百坚戈。','Две тысячи пятьсот тенге.']], tip:'2500 = две тысячи（两千）+ пятьсот（五百）。重点是听懂对方报的价格。'},
+    {g:'大数字与价格', cn:'讲价', turns:[['A','有点贵。一千五百行吗？','Дорого. Можно за тысячу пятьсот?'],['B','好吧。','Хорошо.']], tip:'讲价：Можно за + 价格？（……可以吗？）'},
+    {g:'时间与日期', cn:'问时间', turns:[['A','现在几点？','Который час?'],['B','三点。','Три часа.']], tip:'2–4 点说 часа，5 点以后说 часов。'},
+    {g:'时间与日期', cn:'我们十点见。', t:'Встретимся в десять.', tip:'в + 数字 = 在……点。'},
+    {g:'时间与日期', cn:'星期一、二、三', drill:[['星期一','понедельник'],['星期二','вторник'],['星期三','среда']], tip:'工作日安排、约时间都要用。'},
+    {g:'时间与日期', cn:'星期四到星期日', drill:[['星期四','четверг'],['星期五','пятница'],['星期六','суббота'],['星期日','воскресенье']], tip:'выходные = 周末（星期六和星期日）。'},
+    {g:'时间与日期', cn:'问日期', turns:[['A','今天几号？','Какое сегодня число?'],['B','今天五号。','Сегодня пятое.']], tip:'日期用序数词：пять（5）→ пятое（第五）。'},
+    {g:'时间与日期', cn:'明天早上九点可以吗？', t:'Завтра в девять утра можно?', tip:'утра = 早上。约时间的完整句。'},
+    {g:'对话：认识与寒暄', cn:'打招呼', turns:[['A','您好！','Здравствуйте!'],['B','您好！您好吗？','Здравствуйте! Как дела?'],['A','很好，谢谢。','Хорошо, спасибо.']], tip:'Как дела? = 你好吗？回答 Хорошо（好）。'},
+    {g:'对话：认识与寒暄', cn:'问名字', turns:[['A','您叫什么名字？','Как вас зовут?'],['B','我叫阿斯哈尔。您呢？','Меня зовут Аскар. А вас?'],['A','我叫王明。','Меня зовут Ван Мин.']], tip:'А вас? = 您呢？把问题抛回给对方。'},
+    {g:'对话：认识与寒暄', cn:'问从哪里来', turns:[['A','您从哪里来？','Откуда вы?'],['B','我从中国来。','Я из Китая.']], tip:'из + 国家 = 来自……。'},
+    {g:'对话：认识与寒暄', cn:'问工作', turns:[['A','您做什么工作？','Кем вы работаете?'],['B','我是工程师。','Я инженер.']], tip:'俄语现在时不用“是”：Я инженер = 我是工程师。'},
+    {g:'对话：购物与点餐', cn:'买东西', turns:[['A','这个多少钱？','Сколько это стоит?'],['B','一千二百坚戈。','Тысяча двести тенге.'],['A','我要这个。','Я возьму это.']], tip:'听懂价格后，用 Я возьму это 买下。'},
+    {g:'对话：购物与点餐', cn:'问能否刷卡', turns:[['A','可以刷卡吗？','Можно оплатить картой?'],['B','不行，只收现金。','Нет, только наличными.']], tip:'наличными = 用现金。'},
+    {g:'对话：购物与点餐', cn:'点餐', turns:[['A','您点什么？','Что будете заказывать?'],['B','一份抓饭和一杯茶。','Один плов и один чай.']], tip:'这里你是回答的一方：数字 + 菜名。'},
+    {g:'对话：购物与点餐', cn:'结账', turns:[['A','请结账。','Счёт, пожалуйста.'],['B','一共三千坚戈。','Всего три тысячи тенге.']], tip:'всего = 一共。'},
+    {g:'对话：打车与问路', cn:'打车', turns:[['A','去哪里？','Куда едем?'],['B','去火车站。','На вокзал.'],['A','五百坚戈。','Пятьсот тенге.']], tip:'司机先问去哪里，再报价。'},
+    {g:'对话：打车与问路', cn:'问路', turns:[['A','请问，银行在哪里？','Извините, где банк?'],['B','一直走，然后左转。','Идите прямо, потом поверните налево.']], tip:'прямо = 直走；налево = 向左；направо = 向右。'},
+    {g:'对话：打车与问路', cn:'问远不远', turns:[['A','远吗？','Это далеко?'],['B','不远，走路五分钟。','Недалеко, пять минут пешком.']], tip:'пешком = 步行。'},
+    {g:'对话：打车与问路', cn:'下车付钱', turns:[['A','请在这里停。','Остановите здесь, пожалуйста.'],['B','好的。','Хорошо.'],['A','给您一千，不用找了。','Вот тысяча, сдачи не надо.']], tip:'сдача = 找零。'}
+  ]
+};
+for (const [lang, key, suffix] of [['kk','kz','kz'],['ru','ru','ru']]) {
+  TALK_COURSE[lang].forEach((x, i) => {
+    // No "—" before dialogue lines: the Kazakh voice mis-reads the dash (verified by speech recognition).
+    const target = x.t || (x.drill ? x.drill.map(d => d[1]).join(', ') : x.turns.map(t => t[2]).join(' '));
+    const cn = x.turns ? x.cn + '（对话）' : x.cn; // dialogue lines are shown line by line in the dialogue panel
+    lessons.push({ id:`talk-${suffix}-${String(i+1).padStart(2,'0')}`, course:`talk-${suffix}`, title:x.cn, tag:'数字与对话', level:'交流', cn,
+      kz: key==='kz' ? target : '', ru: key==='ru' ? target : '', tip:x.tip, group:x.g, drill:x.drill||null, turns:x.turns||null });
+  });
+}
+
 const courses = [
   { id:'daily-kz', icon:'🔤', title:'哈萨克语｜零基础·字母与发音', desc:'从 42 个字母、特殊音和拼读开始。先听、再读、再做辨音练习。', accent:'KZ', kind:'foundation', targetLang:'kk' },
   { id:'sentence-kz', icon:'📘', title:'哈萨克语｜基础语法课', desc:'把语法拆成最小单位：一个词、一个结构、一个例句。先单独学清楚，再组合成句子。', accent:'KZ', kind:'sentence', targetLang:'kk' },
   { id:'speaking-kz', icon:'💬', title:'哈萨克语｜零基础造句与口语', desc:'不背单词表，第一课就说整句：“我想喝茶”“你想去哪里？”。学会一个句型，换词就能说新句子。', accent:'KZ', kind:'speaking', targetLang:'kk' },
   { id:'daily-ru', icon:'🔤', title:'俄语｜零基础·字母与发音', desc:'从 33 个字母、发音、重音和拼读开始。先听、再读、再做辨音练习。', accent:'RU', kind:'foundation', targetLang:'ru' },
   { id:'sentence-ru', icon:'📘', title:'俄语｜基础语法课', desc:'把俄语语法拆成最小单位：一个词、一个结构、一个例句。先单独学清楚，再组合成句子。', accent:'RU', kind:'sentence', targetLang:'ru' },
-  { id:'speaking-ru', icon:'💬', title:'俄语｜零基础造句与口语', desc:'不背单词表，第一课就说整句：“我想喝茶”“你想去哪里？”。学会一个句型，换词就能说新句子。', accent:'RU', kind:'speaking', targetLang:'ru' }
+  { id:'speaking-ru', icon:'💬', title:'俄语｜零基础造句与口语', desc:'不背单词表，第一课就说整句：“我想喝茶”“你想去哪里？”。学会一个句型，换词就能说新句子。', accent:'RU', kind:'speaking', targetLang:'ru' },
+  { id:'talk-kz', icon:'🗣️', title:'哈萨克语｜数字与情景对话', desc:'听懂价格、时间、日期，再练一问一答的真实对话。重点练“听懂对方的回答”。', accent:'KZ', kind:'speaking', targetLang:'kk' },
+  { id:'talk-ru', icon:'🗣️', title:'俄语｜数字与情景对话', desc:'听懂价格、时间、日期，再练一问一答的真实对话。重点练“听懂对方的回答”。', accent:'RU', kind:'speaking', targetLang:'ru' }
 ];
 
 const scenes = [
@@ -771,6 +850,18 @@ const SpeakingFlow = (() => {
   function questions(c, m) {
     const target = l => c.targetLang === 'kk' ? l.kz : l.ru;
     const shuffle = a => a.map(v => [Math.random(), v]).sort((a,b) => a[0]-b[0]).map(x => x[1]);
+    const all = courseLessons(c.id);
+    // Number/day lessons: one question per item. Dialogue lessons: question → the right reply.
+    const special = l => {
+      if (l.drill) {
+        const isNum = s => /^\d+$/.test(s), kind = isNum(l.drill[0][0]);
+        const words = [...new Set(all.filter(x => x.drill).flatMap(x => x.drill).filter(d => isNum(d[0]) === kind).map(d => d[1]))];
+        return l.drill.map(([label, word]) => ({ prompt: '“' + label + '” 怎么说？', answer: word, options: shuffle([word, ...shuffle(words.filter(w => w !== word)).slice(0,3)]) }));
+      }
+      const replies = [...new Set(all.filter(x => x.turns).map(x => x.turns[1][2]))], reply = l.turns[1][2];
+      return [{ prompt: '对方说：“' + l.turns[0][2] + '”（' + l.turns[0][1] + '）怎么回答？', answer: reply, options: shuffle([reply, ...shuffle(replies.filter(r => r !== reply)).slice(0,3)]) }];
+    };
+    if (m.items.some(l => l.drill || l.turns)) return shuffle(m.items.flatMap(l => (l.drill || l.turns) ? special(l) : [{ prompt:l.cn, answer:target(l), options:shuffle([target(l), ...shuffle([...new Set(all.map(target).filter(v => v && v !== target(l)))]).slice(0,3)]) }]));
     return shuffle(m.items).map(l => ({
       prompt:l.cn, answer:target(l),
       options:shuffle([target(l), ...shuffle([...new Set(courseLessons(c.id).map(target).filter(v => v && v !== target(l))) ]).slice(0,3)])
@@ -970,6 +1061,9 @@ document.addEventListener('DOMContentLoaded', init);
         const sc=courseById('speaking-'+suffix);await SpeakingFlow.sync(sc,user);
         const ms=SpeakingFlow.modules(sc),ids=readCompleted();
         states.push({id:sc.id,title:'造句与口语',desc:'从第一句开始，听音、跟读、录音回放。',done:courseLessons(sc.id).filter(l=>ids.includes(l.id)).length,total:courseLessons(sc.id).length,passed:ms.filter(m=>SpeakingFlow.done(m)&&SpeakingFlow.best(sc,m)>=70).length,modules:ms.length,url:'course.html?id='+sc.id,storage:synced});
+        const tc=courseById('talk-'+suffix);await SpeakingFlow.sync(tc,user);
+        const tms=SpeakingFlow.modules(tc),tids=readCompleted();
+        states.push({id:tc.id,title:'数字与情景对话',desc:'听懂价格、时间和日期，练一问一答的真实对话。',done:courseLessons(tc.id).filter(l=>tids.includes(l.id)).length,total:courseLessons(tc.id).length,passed:tms.filter(m=>SpeakingFlow.done(m)&&SpeakingFlow.best(tc,m)>=70).length,modules:tms.length,url:'course.html?id='+tc.id,storage:synced});
         html+=`<section class="study-language" id="${lang}"><div class="study-language-head"><h2>${flag} ${label}</h2><a href="level-test.html?lang=${lang}">选做起点测试 →</a></div><div class="study-course-grid">`;
         for(const s of states){const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);html+=`<article class="study-course-card"><span class="eyebrow">${label}</span><h3>${s.title}</h3><p>${s.desc}</p><div class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><p class="study-count">${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</p><div class="study-actions"><a class="primary-btn" href="${esc(last?.url||s.url)}">${last||s.done?'继续学习':'开始学习'} →</a>${last?`<a class="study-text-link" href="${s.url}">课程目录</a>`:''}</div><small>${s.storage}</small></article>`;}
         html+=`</div><a class="study-legacy" href="path.html?lang=${lang}">学完字母后：拼读、问候、句型到工作场景的 6 个单元 →</a></section>`;

@@ -286,3 +286,9 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #a2
 .topbar nav{display:flex}
 @media(max-width:760px){.study-hero{grid-template-columns:1fr;gap:24px;padding-top:30px}.study-hero-card{padding:22px}.study-course-grid,.review-list{grid-template-columns:1fr}.study-course-card{padding:20px}.topbar .nav-wrap{gap:8px}.topbar nav{order:3;width:100%;flex-wrap:nowrap;overflow-x:auto;gap:20px;white-space:nowrap;padding-bottom:4px}.topbar .auth-nav{margin-left:auto}.study-language-head{align-items:flex-start}.study-actions .primary-btn,.study-actions .secondary-btn{white-space:normal;text-align:center}.grammar-v22-head{flex-direction:column}.lesson-actions{flex-wrap:wrap}.study-tool{padding:16px}}
 
+
+/* Dialogue lessons (数字与情景对话) */
+.dialogue-line{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid #e6ece8}
+.dialogue-line strong{width:28px;height:28px;border-radius:50%;background:#eef4f0;color:#173b2c;display:grid;place-items:center;font-size:12px}
+.dialogue-line b{display:block;font-size:18px;line-height:1.4}
+.dialogue-line small{display:block;color:#6b7a72;margin-top:2px}@media(max-width:560px){.dialogue-line{grid-template-columns:24px 1fr auto;gap:8px}.dialogue-line b{font-size:16px}}
