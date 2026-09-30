@@ -8,7 +8,7 @@
   const norm = t => String(t ?? '').replace(/\s+/g, ' ').trim();
   const langOf = l => /^kk/i.test(String(l || '')) ? 'kk' : /^ru/i.test(String(l || '')) ? 'ru' : null;
   let index = null, indexLoad = null, player = null, token = 0;
-  const cache = new Map();
+  const cache = new Map(), mismatched = {};
   function loadIndex() {
     if (index) return Promise.resolve(index);
     return indexLoad ||= fetch(INDEX_URL).then(r => r.ok ? r.json() : {}).catch(() => ({})).then(j => (index = j || {}));
@@ -19,9 +19,16 @@
     const id = lang + '|' + text;
     if (cache.has(id)) return cache.get(id);
     const [start, length] = entry;
+    if (mismatched[lang]) return null;
     const res = await fetch(lang + '.bin', {headers: {Range: 'bytes=' + start + '-' + (start + length - 1)}});
     if (!res.ok) return null;
+    // index.json and the .bin must come from the same build; otherwise offsets point at the
+    // wrong sentence. On a size mismatch (e.g. halfway through an upload) use the device voice.
+    const expected = idx._size?.[lang];
+    const total = res.status === 206 ? Number((res.headers.get('Content-Range') || '').split('/')[1]) : null;
     let buf = await res.arrayBuffer();
+    const actual = res.status === 200 ? buf.byteLength : total;
+    if (expected && actual && actual !== expected) { mismatched[lang] = true; return null; }
     if (res.status === 200) buf = buf.slice(start, start + length); // server ignored Range
     const url = URL.createObjectURL(new Blob([buf], {type: 'audio/mpeg'}));
     cache.set(id, url);
@@ -361,7 +368,7 @@
   function audioTools(host,c,l){
     releaseRecording();
     const text=c.targetLang==='kk'?l.kz:l.ru;
-    host.innerHTML=`<h3>听一听，自己说</h3><div class="study-actions"><button type="button" data-speed="1">▶ 原速</button><button type="button" data-speed="0.65">▶ 慢速</button>${c.kind==='speaking'?'<button type="button" data-record>● 录音跟读</button>':''}</div><p class="study-status" role="status"></p>${c.kind==='speaking'?'<audio controls hidden></audio><p class="study-help">录音只在本页回放，不上传；离开页面后清除。</p>':''}`;
+    host.innerHTML=`<h3>听一听，自己说</h3><div class="study-actions"><button type="button" data-speed="1">▶ 原速</button><button type="button" data-speed="0.75">▶ 慢速</button>${c.kind==='speaking'?'<button type="button" data-record>● 录音跟读</button>':''}</div><p class="study-status" role="status"></p>${c.kind==='speaking'?'<audio controls hidden></audio><p class="study-help">录音只在本页回放，不上传；离开页面后清除。</p>':''}`;
     const status=host.querySelector('[role=status]');host.querySelectorAll('[data-speed]').forEach(b=>b.onclick=()=>voice(text,c.targetLang,Number(b.dataset.speed),status));
     const btn=host.querySelector('[data-record]');if(!btn)return;
     let stream,recorder,url,timer,disposed=false;
