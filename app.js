@@ -1138,14 +1138,18 @@ document.addEventListener('DOMContentLoaded', init);
         const vms=SpeakingFlow.modules(vc),vids=readCompleted();
         states.push({id:vc.id,title:'主题词汇与换词造句',desc:'20 个主题、600 个常用词，学完马上换词造句。',done:courseLessons(vc.id).filter(l=>vids.includes(l.id)).length,total:courseLessons(vc.id).length,passed:vms.filter(m=>SpeakingFlow.done(m)&&SpeakingFlow.best(vc,m)>=70).length,modules:vms.length,url:'course.html?id='+vc.id,storage:synced});
         html+=`<section class="study-language" id="${lang}"><div class="study-language-head"><h2>${flag} ${label}</h2><a href="level-test.html?lang=${lang}">选做起点测试 →</a></div><div class="study-course-grid">`;
-        for(const s of states){const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);html+=`<article class="study-course-card"><span class="eyebrow">${label}</span><h3>${s.title}</h3><p>${s.desc}</p><div class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><p class="study-count">${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</p><div class="study-actions"><a class="primary-btn" href="${esc(last?.url||s.url)}">${last||s.done?'继续学习':'开始学习'} →</a>${last?`<a class="study-text-link" href="${s.url}">课程目录</a>`:''}</div><small>${s.storage}</small></article>`;}
+        for(const s of states){const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);html+=`<article class="study-course-card${s.id.startsWith('vocab-')?' study-card-vocab':''}" id="card-${s.id}"><span class="eyebrow">${label}</span><h3>${s.title}</h3><p>${s.desc}</p><div class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><p class="study-count">${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</p><div class="study-actions"><a class="primary-btn" href="${esc(last?.url||s.url)}">${last||s.done?'继续学习':'开始学习'} →</a>${last?`<a class="study-text-link" href="${s.url}">课程目录</a>`:''}</div><small>${s.storage}</small></article>`;}
         html+=`</div><a class="study-legacy" href="path.html?lang=${lang}">学完字母后：拼读、问候、句型到工作场景的 6 个单元 →</a></section>`;
       }
       host.innerHTML=html;
       const account=document.getElementById('progressUser');if(account)account.textContent=user?'当前账号：'+(user.email||'已登录')+'。字母、语法、口语进度，继续学习位置和错题复习都会同步到账号。':'无需注册即可学习全部课程：完成本模块小课并通过考试（≥70%）即可解锁下一模块。进度保存在本设备，登录后可同步到账号、换设备继续。';
       const review=document.getElementById('dailyReview');if(review)window.KZLearning.renderReview(review);
       window.KZLearning.updateLinks();
-      if(location.hash)document.getElementById(location.hash.slice(1))?.scrollIntoView();
+      // #vocab (nav link 主题词汇): scroll to the vocabulary course and highlight both languages' cards
+      const focusHash=()=>{ if(location.hash==='#vocab'){const v=host.querySelectorAll('.study-card-vocab');v.forEach(x=>x.classList.add('study-card-highlight'));v[0]?.scrollIntoView({block:'center',behavior:'smooth'});} else if(location.hash)document.getElementById(location.hash.slice(1))?.scrollIntoView(); };
+      setTimeout(focusHash,150); // after layout settles
+      if(!window.__hubHashBound){window.__hubHashBound=true;window.addEventListener('hashchange',()=>setTimeout(focusHash,50)); // nav link clicked while already on this page
+        document.addEventListener('click',e=>{const a=e.target.closest('a[href$="#vocab"]');if(a&&location.hash==='#vocab'&&a.pathname===location.pathname){e.preventDefault();focusHash();}});} // same hash again: no hashchange fires
     }catch(error){console.warn('learning hub failed',error);host.innerHTML='<p role="status">暂时无法读取学习状态，请刷新重试。</p><a href="unit.html?lang=kk&unit=kk-u1">哈语字母课程</a> · <a href="unit.html?lang=ru&unit=ru-u1">俄语字母课程</a>';}
   }
   document.addEventListener('DOMContentLoaded',draw);
