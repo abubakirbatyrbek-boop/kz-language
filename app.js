@@ -807,9 +807,9 @@ function renderLearnPage(){
   } else { if(kzRow) kzRow.style.display='flex'; if(ruRow) ruRow.style.display='flex'; }
   function draw(){
     const l=pool[current]; if(!l) return;
-    title.textContent=l.title; count.textContent=`${current+1} / ${pool.length}`; cn.textContent=l.cn; kz.textContent=l.kz; ru.textContent=l.ru;
+    title.textContent=l.title; title.hidden=l.title===l.cn; count.textContent=`${current+1} / ${pool.length}`; cn.textContent=l.cn; kz.textContent=l.kz; ru.textContent=l.ru;
     // learn.html ships placeholder data-text ("您好") on the 🔊 buttons; point them at this sentence.
-    kzRow?.querySelector('[data-text]')?.setAttribute('data-text', l.kz||''); ruRow?.querySelector('[data-text]')?.setAttribute('data-text', l.ru||''); tip.textContent=l.tip; if(grammar) grammar.textContent=l.group ? `${courseForLearn?.kind==='sentence'?'语法模块':courseForLearn?.open?'主题':'模块'}：${l.group}` : ''; if(memory) memory.innerHTML=`<span>记忆方法</span><strong>${courseForLearn ? memoryMethod(l,courseForLearn) : '先听 2 次 → 跟读 3 次 → 遮住答案自己说 1 次。'}</strong>`; tag.textContent=l.tag; path.textContent=`当前内容：${label}`;
+    kzRow?.querySelector('[data-text]')?.setAttribute('data-text', l.kz||''); ruRow?.querySelector('[data-text]')?.setAttribute('data-text', l.ru||''); tip.textContent=l.tip; if(grammar) grammar.textContent=l.group ? `${courseForLearn?.kind==='sentence'?'语法模块':courseForLearn?.open?'主题':'模块'}：${l.group}` : ''; if(memory) memory.innerHTML=`<span>记忆方法</span><strong>${courseForLearn ? memoryMethod(l,courseForLearn) : '先听 2 次 → 跟读 3 次 → 遮住答案自己说 1 次。'}</strong>`; if(memory) memory.hidden=courseForLearn?.kind!=='sentence'; tag.textContent=l.tag; path.textContent=`当前内容：${label}`;
     document.getElementById('prevLink').href = learnUrl(current-1<0?pool.length-1:current-1);
     document.getElementById('nextLink').href = learnUrl((current+1)%pool.length);
     document.getElementById('markBtn').textContent = completed.includes(l.id) ? '已记住 ✓' : '记住了，下一句';
@@ -1203,6 +1203,7 @@ document.addEventListener('DOMContentLoaded', init);
       }
       // #vocab (nav link 主题词汇) turns the hub into the vocabulary page; elsewhere the vocabulary course is not listed.
       const vocabMode=location.hash==='#vocab';
+      const homeMode=document.body.dataset.page==='study-home', profileMode=document.body.dataset.page==='study-progress';
       let html='';
       for(const [lang,label,flag,suffix] of [['kk','哈萨克语','🇰🇿','kz'],['ru','俄语','🇷🇺','ru']]){
         const first=foundation[lang];const fd=first.lessons.filter(l=>(basic['v5:'+l.id]||basic[l.id])?.status==='done').length;
@@ -1222,15 +1223,39 @@ document.addEventListener('DOMContentLoaded', init);
         states.push({id:vc.id,title:'主题词汇与换词造句',desc:'20 个主题、600 个常用词，学完马上换词造句。',done:courseLessons(vc.id).filter(l=>vids.includes(l.id)).length,total:courseLessons(vc.id).length,passed:vms.filter(m=>SpeakingFlow.done(m)&&SpeakingFlow.best(vc,m)>=70).length,modules:vms.length,url:'course.html?id='+vc.id,storage:synced});
         // Recommended order for beginners; cards follow it and the route shows ✓ / the step to do now.
         const order=['foundation-'+lang,'speaking-'+suffix,'talk-'+suffix,'sentence-'+suffix];
+        const route0=order.map(id=>states.find(s=>s.id===id)).filter(Boolean), step=route0.findIndex(s=>s.done<s.total);
+        const routeList=cls=>`<ol class="study-route ${cls||''}" aria-label="${label}推荐学习顺序">${route0.map((s,i)=>{const fin=s.total&&s.done>=s.total;return `<li class="${fin?'done':i===step?'current':''}"><a href="${esc(s.url)}"><span>${fin?'✓':i+1}</span>${s.title}</a></li>`;}).join('')}</ol>`;
+        if(homeMode){
+          // Home: one card per language — the route and one big button to the step to do now.
+          const now=route0[step<0?0:step], last=window.KZLearning.resume(now.id), any=states.some(s=>s.done);
+          html+=`<section class="home-lang" id="${lang}"><h3>${flag} ${label}</h3>${routeList('compact')}<a class="primary-btn home-lang-btn" href="${esc(last?.url||now.url)}">${any?'继续学'+label:'学'+label} →</a><p class="home-lang-links"><a href="courses.html#${lang}">全部课程</a> · <a href="level-test.html?lang=${lang}">已有基础？做起点测试</a></p></section>`;
+          continue;
+        }
+        if(profileMode){
+          // My learning: one progress row per course (vocabulary included), no course cards.
+          const rows=[...route0,...states.filter(s=>!order.includes(s.id))];
+          html+=`<section class="profile-lang" id="${lang}"><h2>${flag} ${label}</h2><ul class="profile-courses">${rows.map(s=>{const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);return `<li><a href="${esc(last?.url||s.url)}"><span class="profile-course-title">${s.title}</span><span class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></span><small>${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</small><b>${s.done>=s.total&&s.total?'✓ 完成':s.done||last?'继续 →':'开始 →'}</b></a></li>`;}).join('')}</ul></section>`;
+          continue;
+        }
         const shown=states.filter(s=>s.id.startsWith('vocab-')===vocabMode).sort((x,y)=>order.indexOf(x.id)-order.indexOf(y.id));
-        const route=order.map(id=>states.find(s=>s.id===id)).filter(Boolean), cur=route.findIndex(s=>s.done<s.total);
-        const routeHtml=vocabMode?'':`<ol class="study-route" aria-label="${label}推荐学习顺序">${route.map((s,i)=>{const fin=s.total&&s.done>=s.total;return `<li class="${fin?'done':i===cur?'current':''}"><a href="${esc(s.url)}"><span>${fin?'✓':i+1}</span>${s.title}</a></li>`;}).join('')}</ol><p class="study-route-note">推荐按这个顺序学；主题词汇可以随时从导航栏“主题词汇”进入。</p>`;
+        const routeHtml=vocabMode?'':routeList()+'<p class="study-route-note">推荐按这个顺序学；主题词汇可以随时从导航栏“主题词汇”进入。</p>';
         html+=`<section class="study-language" id="${lang}"><div class="study-language-head"><h2>${flag} ${label}</h2>${vocabMode?'':`<a href="level-test.html?lang=${lang}">选做起点测试 →</a>`}</div>${routeHtml}<div class="study-course-grid">`;
         for(const s of shown){const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);html+=`<article class="study-course-card" id="card-${s.id}"><span class="eyebrow">${label}</span><h3>${s.title}</h3><p>${s.desc}</p><div class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><p class="study-count">${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</p><div class="study-actions"><a class="primary-btn" href="${esc(last?.url||s.url)}">${last||s.done?'继续学习':'开始学习'} →</a>${last?`<a class="study-text-link" href="${s.url}">课程目录</a>`:''}</div><small>${s.storage}</small></article>`;}
         html+='</div></section>';
       }
-      host.innerHTML=html;
-      const account=document.getElementById('progressUser');if(account)account.textContent=user?'当前账号：'+(user.email||'已登录')+'。字母、语法、口语进度，继续学习位置和错题复习都会同步到账号。':'无需注册即可学习全部课程：完成本模块小课并通过考试（≥70%）即可解锁下一模块。进度保存在本设备，登录后可同步到账号、换设备继续。';
+      host.innerHTML=homeMode?`<div class="home-langs">${html}</div>`:html;
+      const stats=document.getElementById('profileStats');
+      if(stats){
+        const t=window.KZLearning.today(),st=window.KZLearning.state(),lessons=[...host.querySelectorAll('.profile-courses small')].reduce((n,el)=>n+(parseInt(el.textContent,10)||0),0);
+        stats.innerHTML=[[t.streak,'连续学习天数'],[(st.days||[]).length,'累计学习天数'],[lessons,'已完成小课'],[t.due,'待复习词句']].map(([n,l])=>`<div><b>${n}</b><small>${l}</small></div>`).join('');
+      }
+      const account=document.getElementById('progressUser');
+      if(account){
+        account.innerHTML=user?`<span class="eyebrow">账号</span><p>${esc(user.email||'已登录')}<br><small>学习进度、继续学习位置和错题复习都已同步到这个账号。</small></p><button type="button" class="secondary-btn" data-logout>退出登录</button>`
+          :`<span class="eyebrow">账号</span><p>未登录：进度只保存在这台设备上。<br><small>免费注册后，换手机、换电脑也能接着学。</small></p><div class="study-actions"><a class="primary-btn" href="auth.html?mode=signup&next=progress.html">免费注册</a><a class="secondary-btn" href="auth.html?next=progress.html">登录</a></div>`;
+        const out=account.querySelector('[data-logout]');
+        if(out)out.onclick=async()=>{out.disabled=true;try{await window.KZAuth.getClient().auth.signOut();}catch{}location.reload();};
+      }
       const review=document.getElementById('dailyReview');if(review)window.KZLearning.renderReview(review);
       window.KZLearning.updateLinks();
       // Page heading follows the mode (the static text describes the normal course list).

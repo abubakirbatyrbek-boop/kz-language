@@ -342,8 +342,8 @@
       const title=document.getElementById('learnTitle'),count=document.getElementById('learnCount'),cn=document.getElementById('learnCn'),kz=document.getElementById('learnKz'),ru=document.getElementById('learnRu'),tip=document.getElementById('learnTip'),memory=document.getElementById('learnMemory'),grammar=document.getElementById('learnGrammar'),tag=document.getElementById('learnTag'),path=document.getElementById('learnPath');
       const kr=document.getElementById('learnKzRow'),rr=document.getElementById('learnRuRow');
       if(kr)kr.style.display=c.targetLang==='kk'?'flex':'none';if(rr)rr.style.display=c.targetLang==='ru'?'flex':'none';
-      if(title)title.textContent=l.title;if(count)count.textContent=`${idx+1} / ${pool.length}`;if(cn)cn.textContent=l.cn;if(kz)kz.textContent=l.kz||'';if(ru)ru.textContent=l.ru||'';if(tip)tip.textContent=l.tip;if(tag)tag.textContent=l.tag;if(grammar)grammar.textContent=`模块 ${String(m.no).padStart(2,'0')}：${m.title}`;if(path)path.textContent=`${c.title} · 模块 ${String(m.no).padStart(2,'0')}`;
-      if(memory)memory.innerHTML='<span>记忆方法</span><strong>'+esc(grammarMemory(l))+'</strong>';
+      if(title){title.textContent=l.title;title.hidden=l.title===l.cn;}if(count)count.textContent=`${idx+1} / ${pool.length}`;if(cn)cn.textContent=l.cn;if(kz)kz.textContent=l.kz||'';if(ru)ru.textContent=l.ru||'';if(tip)tip.textContent=l.tip;if(tag)tag.textContent=l.tag;if(grammar)grammar.textContent=`模块 ${String(m.no).padStart(2,'0')}：${m.title}`;if(path)path.textContent=`${c.title} · 模块 ${String(m.no).padStart(2,'0')}`;
+      if(memory){memory.innerHTML='<span>记忆方法</span><strong>'+esc(grammarMemory(l))+'</strong>';memory.hidden=false;}
       const lang=codeOf(c);
       document.querySelectorAll('[data-text]').forEach(b=>{b.onclick=()=>speak(b.dataset.text,b.dataset.lang||lang)});
       const prev=document.getElementById('prevLink'),next=document.getElementById('nextLink');
