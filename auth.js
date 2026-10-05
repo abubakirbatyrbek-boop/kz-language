@@ -340,10 +340,10 @@
   function snapshot(s){return {review:s.review||{},practice:s.practice||{},courses:s.courses||{},last:s.last||null,daily:s.daily||null,days:s.days||[]};}
   // Daily goals: today's counters (lessons finished, reviews done, sentences heard) and the list of days studied.
   const dayKey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-  function bump(kind){update(s=>{const d=dayKey();if(s.daily?.date!==d)s.daily={date:d,lessons:0,review:0,listen:0};s.daily[kind]=(s.daily[kind]||0)+1;
-    if(kind==='lessons'||kind==='review'){s.days=[...new Set([...(s.days||[]),d])].sort().slice(-400);}});}
+  function bump(kind){update(s=>{const d=dayKey();if(s.daily?.date!==d)s.daily={date:d,lessons:0,review:0,listen:0,word:0};s.daily[kind]=(s.daily[kind]||0)+1;
+    if(kind==='lessons'||kind==='review'||kind==='word'){s.days=[...new Set([...(s.days||[]),d])].sort().slice(-400);}});}
   function streak(days){const set=new Set(days||[]);let n=0,d=new Date();if(!set.has(dayKey(d)))d.setDate(d.getDate()-1);while(set.has(dayKey(d))){n++;d.setDate(d.getDate()-1);}return n;}
-  function today(){const s=state(),d=dayKey(),t=s.daily?.date===d?s.daily:{lessons:0,review:0,listen:0};
+  function today(){const s=state(),d=dayKey(),t=s.daily?.date===d?s.daily:{lessons:0,review:0,listen:0,word:0};
     const due=Object.values(s.review||{}).filter(x=>x.due<=Date.now()).length;return {...t,due,streak:streak(s.days),last:resume()};}
   function pushNow(){
     clearTimeout(pushTimer);pushTimer=null;
@@ -471,6 +471,10 @@
         // Word list: every word on its own line with its own 🔊; "原速/慢速" read the words one by one.
         const p=panelOf('lessonDialogue','词表',l.drill.map((d,i)=>`<div class="dialogue-line"><strong>${i+1}</strong><span><b lang="${lang}">${esc(d[1])}</b><small>${esc(d[0])}</small></span><button type="button" data-word="${i}">🔊</button></div>`).join('')+'<p class="study-help">先逐个听、跟读，再点“▶ 原速”按顺序听一遍。</p>');
         p.querySelectorAll('[data-word]').forEach(b=>b.onclick=()=>voice(l.drill[+b.dataset.word][1],lang,1,audio.querySelector('[role=status]')));
+        // Arrived from the home card's "今日单词": mark that word; hearing it completes the daily goal.
+        const dw=new URLSearchParams(location.search).get('word'), row=dw!==null&&p.querySelectorAll('.dialogue-line')[+dw];
+        if(row){row.classList.add('daily-word');row.querySelector('small').insertAdjacentHTML('beforeend',' · <em>今日单词</em>');row.scrollIntoView({block:'center'});
+          const b=row.querySelector('button'),hear=b.onclick;b.onclick=()=>{hear();if(!today().word)bump('word');};}
         const list=rate=>window.KZAudio?window.KZAudio.playList(l.drill.map(d=>d[1]),lang,rate):say(l.drill.map(d=>d[1]).join(', '),rate);
         audio.querySelectorAll('[data-speed]').forEach(b=>b.onclick=()=>list(Number(b.dataset.speed)));
         if(sound)sound.onclick=()=>list(1);
@@ -543,21 +547,27 @@
   window.addEventListener('kz-heard',()=>bump('listen'));
   // Home page card: where the learner stopped last time + today's three goals with ✓ when done.
   function ago(ts){if(!ts)return '';const m=Math.round((Date.now()-ts)/60000);if(m<1)return '刚刚';if(m<60)return m+' 分钟前';const h=Math.round(m/60);if(h<24)return h+' 小时前';const d=Math.round(h/24);return d===1?'昨天':d+' 天前';}
+  // One word a day from the topic vocabulary, in the language studied last; the same word all day.
+  function dailyWord(){
+    if(typeof courseLessons!=='function')return null;
+    const lang=/(^|-)ru(-|$)/.test(resume()?.course||'')?'ru':'kk',suffix=lang==='kk'?'kz':'ru',all=[];
+    courseLessons('vocab-'+suffix).forEach((l,i)=>(l.drill||[]).forEach((w,j)=>all.push({cn:w[0],word:w[1],lang,url:`learn.html?pool=course&id=vocab-${suffix}&start=${i}&word=${j}`})));
+    return all.length?all[(Math.floor(Date.parse(dayKey())/864e5)*37)%all.length]:null;
+  }
   function renderToday(host){
-    if(!host)return;const t=today(),LISTEN=3;
+    if(!host)return;const t=today(),w=dailyWord();
     const goals=[
-      {ok:t.lessons>=1,label:'完成 1 节小课',note:t.lessons?'今天已完成 '+t.lessons+' 节':'做完一节课的练习就算'},
-      {ok:t.due===0,label:'复习到期的错题',note:t.due?'还有 '+t.due+' 个待复习':(t.review?'今天复习了 '+t.review+' 个':'今天没有待复习的')},
-      {ok:t.listen>=LISTEN,label:'听 '+LISTEN+' 句发音',note:Math.min(t.listen,LISTEN)+' / '+LISTEN}
-    ];
+      {ok:t.lessons>=1,label:'完成 1 节小课',note:t.lessons?'今天已完成 '+t.lessons+' 节':'做完一节课的练习就算',url:t.last?.url||'courses.html',btn:t.lessons?'再学一节':'去学习'},
+      {ok:t.due===0,label:'复习到期的错题',note:t.due?'还有 '+t.due+' 个待复习':(t.review?'今天复习了 '+t.review+' 个':'今天没有待复习的'),url:'progress.html#dailyReview',btn:t.due?'去复习':'查看'},
+      w&&{ok:t.word>=1,label:'记 1 个单词',note:'今日单词：'+w.cn+' = '+w.word,url:w.url,btn:t.word?'再听':'去记'}
+    ].filter(Boolean);
     const all=goals.every(g=>g.ok);
     host.innerHTML=`<span class="eyebrow">今天的学习</span>`+
       (t.last?`<div class="today-last"><small>上次学到 · ${esc(ago(t.last.at))}</small><strong>${esc(t.last.title||'继续上次的课程')}</strong><a class="primary-btn" href="${esc(t.last.url)}">继续学习 →</a></div>`
              :`<div class="today-last"><small>还没有开始学习</small><strong>从第一课开始吧</strong><a class="primary-btn" href="courses.html">选择课程 →</a></div>`)+
       `<h2>${all?'今天的目标都完成了 🎉':'今日目标'}</h2><ul class="today-goals">`+
-      goals.map(g=>`<li class="${g.ok?'done':''}"><span class="mark" aria-hidden="true">${g.ok?'✓':''}</span><span><b>${g.label}</b><small>${esc(g.note)}</small></span><span class="sr-only">${g.ok?'已完成':'未完成'}</span></li>`).join('')+
+      goals.map(g=>`<li class="${g.ok?'done':''}"><span class="mark" aria-hidden="true">${g.ok?'✓':''}</span><span><b>${g.label}</b><small>${esc(g.note)}</small></span><span class="sr-only">${g.ok?'已完成':'未完成'}</span><a class="goal-btn" href="${esc(g.url)}">${g.btn} →</a></li>`).join('')+
       `</ul><p class="today-streak">${t.streak?'🔥 已连续学习 '+t.streak+' 天':'今天完成一节课，开始连续学习记录'}</p>`+
-      (t.due?`<a class="study-text-link" href="progress.html#dailyReview">去复习错题 →</a>`:'')+
       // Guests keep progress only on this device: invite them to register so it follows them.
       (window.KZAuth?.getUser?.()?'':`<p class="today-signup">💾 为了同步学习进度，建议<a href="auth.html?mode=signup&next=index.html">免费注册</a>：换手机、换电脑也能接着学。</p>`);
   }

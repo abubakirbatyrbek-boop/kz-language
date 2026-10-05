@@ -380,3 +380,4 @@ body[data-page=learn] .study-tool{padding:14px 16px;margin:12px 0}.study-tool h3
   .profile-stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.profile-stats div{padding:10px 4px}.profile-stats b{font-size:22px}.profile-stats small{font-size:11px}
 }
 @media(max-width:640px){body[data-page=learn] .lesson-memory{margin:8px 0;padding:8px 12px}body[data-page=learn] .lesson-memory span{display:none}body[data-page=learn] .lesson-memory strong{font-size:13px}}
+.today-goals li{grid-template-columns:28px 1fr auto}.goal-btn{white-space:nowrap;font-size:13px;font-weight:700;color:#173b2c;text-decoration:none;padding:6px 12px;border:1px solid #b9cfc1;border-radius:999px;background:#fff}.goal-btn:hover{background:#eef4f0}.today-goals li.done .goal-btn{color:#6b7a72;border-color:#dfe7e3}.dialogue-line.daily-word{background:#fdf6e9;border-radius:10px;padding-left:6px;padding-right:6px}.dialogue-line.daily-word em{font-style:normal;color:#b98534;font-weight:700}
