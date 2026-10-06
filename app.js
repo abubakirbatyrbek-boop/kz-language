@@ -1189,6 +1189,8 @@ function init(){
     location.replace(i>=0?`learn.html?pool=course&id=${id}&start=${i}`:`scene.html?id=${encodeURIComponent(qs('scene')||'')}`); return;
   }
   bindSounds();
+  // Home showcase: tap a sentence to hear it.
+  document.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>window.KZLearning?.voice(b.dataset.say,b.dataset.lang,1));
   if(page==='home') renderHome();
   if(page==='scene-list') renderSceneList();
   if(page==='course'){
@@ -1294,6 +1296,8 @@ document.addEventListener('DOMContentLoaded', init);
       if(h1&&vocabMode){ h1.dataset.orig??=h1.innerHTML; if(lead) lead.dataset.orig??=lead.innerHTML;
         h1.textContent='主题词汇与换词造句'; if(lead) lead.textContent='20 个生活与工作主题、600 个常用词。选一种语言开始：每个主题先学词，再用这些词换词造句。'; }
       else if(h1?.dataset.orig!==undefined){ h1.innerHTML=h1.dataset.orig; if(lead?.dataset.orig!==undefined) lead.innerHTML=lead.dataset.orig; }
+      // Nav highlight follows the mode on courses.html (课程 ↔ 主题词汇).
+      if(document.body.dataset.page==='study-courses') document.querySelectorAll('.main-nav [data-nav]').forEach(a=>{const on=a.dataset.nav===(vocabMode?'vocab':'courses');if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
       if(vocabMode) window.scrollTo(0,0); else if(location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
       // Nav links only change the hash on this page (courses.html ↔ courses.html#vocab): redraw instead of reloading.
       if(!window.__hubHashBound){window.__hubHashBound=true;window.addEventListener('hashchange',draw);}
