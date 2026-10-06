@@ -384,3 +384,4 @@ body[data-page=learn] .study-tool{padding:14px 16px;margin:12px 0}.study-tool h3
 
 /* Scene page: language switch */
 .scene-lang-switch{display:inline-flex;gap:6px;margin-top:14px;padding:4px;border:1px solid var(--line);border-radius:999px;background:#fff}.scene-lang-switch button{font:inherit;font-weight:700;border:0;background:none;padding:8px 16px;border-radius:999px;cursor:pointer;color:#4b5a52}.scene-lang-switch button.active{background:#173b2c;color:#fff}.test-btn.disabled{opacity:.55;cursor:default}
+.list-item.locked{opacity:.5;cursor:default}
