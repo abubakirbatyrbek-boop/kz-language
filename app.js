@@ -491,6 +491,14 @@ const scenes = [
   { id:'business', icon:'🤝', title:'商务', desc:'谈价、会议、合同', type:'business', category:'work' }
 ];
 
+// Scenes as one course per language: every scene is a module (all open), with the same lesson page,
+// practice, module test and progress as the other courses. `src` keeps the original sentence id.
+for (const [lang, key, suffix] of [['kk','kz','kz'],['ru','ru','ru']]) {
+  scenes.forEach(s => sceneLessons(s.type, s.id).forEach(l => lessons.push({ ...l, id:`scene-${suffix}-${l.id}`, course:`scene-${suffix}`, group:s.title, tag:s.title+'场景', src:l.id, scene:s.id })));
+  courses.push({ id:`scene-${suffix}`, icon:'🗺️', title:(lang==='kk'?'哈萨克语':'俄语')+'｜生活与工作场景', desc:'打车、租房、银行、单据、工厂、物流等 16 个场景，学完就能在当地用。所有场景都可以直接学。', accent:suffix.toUpperCase(), kind:'speaking', targetLang:lang, open:true });
+}
+const sceneLang = () => { const q=qs('lang'); if(q==='kk'||q==='ru') return q; try{ const v=localStorage.getItem('kz-scene-lang'); if(v==='kk'||v==='ru') return v; }catch{} return 'kk'; };
+
 const sceneTestBank = {
   documents:[
     ['请给我们开一张付款发票。','Бізге төлемге шот жазып беріңізші.','Выставьте нам, пожалуйста, счёт на оплату.'],
@@ -687,6 +695,7 @@ function bindSounds(){
 
 function renderSceneList(){
   const grid=document.getElementById('sceneGrid'); if(!grid) return;
+  const q=qs('lang'); if(q==='kk'||q==='ru') try{localStorage.setItem('kz-scene-lang',q)}catch{}
   const group=(title,sub,items)=>`<section class="scene-group"><div class="scene-group-head"><div><span class="eyebrow">${title==='生活场景'?'LIFE':title==='单据与发票'?'DOCS':'WORK'}</span><h2>${title}</h2></div><p>${sub}</p></div><div class="scene-grid">${items.map(s=>`<a class="scene scene-link" href="scene.html?id=${s.id}"><div><div class="scene-icon">${s.icon}</div><h3>${s.title}</h3><p>${s.desc}</p></div><div class="tagline">练习 → <span class="test-pill">场景小测</span></div></a>`).join('')}</div></section>`;
   const docs=scenes.filter(s=>s.category==='docs'),life=scenes.filter(s=>s.category==='life'),work=scenes.filter(s=>s.category==='work');
   grid.outerHTML=group('单据与发票','工作中每天都要问的单据：发票、电子发票（ЭСФ）、完工单、发货单、商业报价。',docs)+group('生活场景','先学在哈萨克斯坦生活时最常遇到的表达。',life)+group('工作场景','再按岗位和现场分类学习：工厂、物流、铁路、销售、办公室、安保、工程等。',work);
@@ -782,14 +791,26 @@ function renderScenePage(){
   if(!document.getElementById('sceneTitle')) return;
   document.getElementById('sceneTitle').textContent=titleText;
   document.getElementById('sceneDesc').textContent=scene.desc;
-  const pool=sceneLessons(scene.type, scene.id);
+  // Learn the scene in one language (remembered); lessons and the test are the scene module of that course.
+  const lang=sceneLang(), c=courseById(lang==='kk'?'scene-kz':'scene-ru'), all=courseLessons(c.id);
+  const ms=SpeakingFlow.modules(c), mi=ms.findIndex(m=>m.name===scene.title), m=ms[mi], pool=m?m.items:[];
+  const head=document.querySelector('.detail-head > div');
+  if(head && !document.getElementById('sceneLangSwitch')) head.insertAdjacentHTML('beforeend','<div class="scene-lang-switch" id="sceneLangSwitch" role="group" aria-label="选择语言"><button type="button" data-lang="kk">🇰🇿 哈萨克语</button><button type="button" data-lang="ru">🇷🇺 俄语</button></div>');
+  document.querySelectorAll('#sceneLangSwitch button').forEach(b=>{b.classList.toggle('active',b.dataset.lang===lang);b.setAttribute('aria-pressed',String(b.dataset.lang===lang));
+    b.onclick=()=>{try{localStorage.setItem('kz-scene-lang',b.dataset.lang)}catch{} const u=new URL(location.href);u.searchParams.set('lang',b.dataset.lang);history.replaceState(null,'',u);renderScenePage();};});
+  const ids=readCompleted(), target=l=>lang==='kk'?l.kz:l.ru, url=l=>`learn.html?pool=course&id=${c.id}&start=${all.indexOf(l)}`;
   const list=document.getElementById('sceneLessonList');
-  list.innerHTML=pool.map((l,i)=>`<a class="list-item" href="learn.html?pool=scene&scene=${encodeURIComponent(scene.id)}&type=${encodeURIComponent(scene.type)}&start=${i}"><span class="num">${String(i+1).padStart(2,'0')}</span><span><strong>${l.title}</strong><small>${l.cn}</small></span><span class="arrow">→</span></a>`).join('');
-  document.getElementById('sceneCount').textContent=`${pool.length} 句`;
-  document.getElementById('sceneStart').href=`learn.html?pool=scene&scene=${encodeURIComponent(scene.id)}&type=${encodeURIComponent(scene.type)}&start=0`;
-  const testLink=document.getElementById('sceneTest'); if(testLink) testLink.href=`test.html?scene=${encodeURIComponent(scene.id)}`;
+  list.innerHTML=pool.map((l,i)=>`<a class="list-item" href="${url(l)}"><span class="num">${ids.includes(l.id)?'✓':String(i+1).padStart(2,'0')}</span><span><strong>${l.title}</strong><small>${l.cn} · ${target(l)}</small></span><span class="arrow">→</span></a>`).join('');
+  const done=pool.filter(l=>ids.includes(l.id)).length, next=pool.find(l=>!ids.includes(l.id))||pool[0];
+  document.getElementById('sceneCount').textContent=`${done} / ${pool.length} 句`;
+  const start=document.getElementById('sceneStart'); start.href=url(next); start.textContent=done?(done===pool.length?'再练一遍 →':'继续学习 →'):'开始学习 →';
+  const finished=SpeakingFlow.done(m), testLink=document.getElementById('sceneTest');
+  if(testLink){ testLink.href=finished?`course.html?id=${c.id}&exam=${mi+1}`:'#'; testLink.classList.toggle('disabled',!finished); testLink.textContent=finished?'参加场景小测 →':`学完 ${pool.length} 句后可以小测`; testLink.onclick=finished?null:e=>e.preventDefault(); }
   const best=document.getElementById('sceneBest');
-  if(best){ const b=bestScoreForScene(scene.id); best.textContent=b?`最佳成绩：${b}%`:'最佳成绩：未参加'; }
+  if(best){ const b=Math.floor(SpeakingFlow.best(c,m)); best.textContent=b?`小测最佳：${b}%`:'小测：未参加'; }
+  // Signed in: pull this course's progress from the account once, then redraw.
+  const synced=renderScenePage.synced||={};
+  if(!synced[c.id]){ synced[c.id]=true; window.KZLearning?.ready().then(()=>SpeakingFlow.sync(c,window.KZAuth.getUser())).then(()=>{completed=readCompleted();renderScenePage();}).catch(()=>{}); }
 }
 
 function renderLearnPage(){
@@ -1098,8 +1119,9 @@ const SpeakingFlow = (() => {
     renderLearnPage();
     const m = ms[index], position = m.items.indexOf(pool[current]);
     const next = document.getElementById('nextLink'), prev = document.getElementById('prevLink');
-    prev.href = position === 0 ? courseUrl(c) : lessonUrl(c,pool.indexOf(m.items[position-1]));
-    if(position===0)prev.textContent = '返回模块列表';
+    const sceneHome = pool[current].scene && `scene.html?id=${pool[current].scene}&lang=${c.targetLang}`;
+    prev.href = position === 0 ? (sceneHome || courseUrl(c)) : lessonUrl(c,pool.indexOf(m.items[position-1]));
+    if(position===0)prev.textContent = sceneHome ? '返回场景' : '返回模块列表';
     const destination = position===m.items.length-1 ? examUrl(c,index) : lessonUrl(c,pool.indexOf(m.items[position+1]));
     next.href = destination;
     document.getElementById('markBtn').textContent = position===m.items.length-1?'完成本课，参加模块考试':'记住了，下一句';
@@ -1159,6 +1181,12 @@ function init(){
   if((page==='course'||page==='learn') && qs('pool')!=='scene'){
     const c=courseById(qs('id')||'daily-kz')||courses[0];
     if(c.kind==='foundation'){ const lang=c.targetLang==='ru'?'ru':'kk'; location.replace(`unit.html?lang=${lang}&unit=${lang}-u1`); return; }
+  }
+  // Old scene lesson links (pool=scene, both languages on one page) → the same sentence in the scene course.
+  if(page==='learn' && qs('pool')==='scene'){
+    const src=sceneLessons(qs('type')||'daily-kz', qs('scene'))[Number(qs('start')||0)], id=sceneLang()==='kk'?'scene-kz':'scene-ru';
+    const i=courseLessons(id).findIndex(l=>l.src===src?.id);
+    location.replace(i>=0?`learn.html?pool=course&id=${id}&start=${i}`:`scene.html?id=${encodeURIComponent(qs('scene')||'')}`); return;
   }
   bindSounds();
   if(page==='home') renderHome();
@@ -1221,6 +1249,9 @@ document.addEventListener('DOMContentLoaded', init);
         const vc=courseById('vocab-'+suffix);await SpeakingFlow.sync(vc,user);
         const vms=SpeakingFlow.modules(vc),vids=readCompleted();
         states.push({id:vc.id,title:'主题词汇与换词造句',desc:'20 个主题、600 个常用词，学完马上换词造句。',done:courseLessons(vc.id).filter(l=>vids.includes(l.id)).length,total:courseLessons(vc.id).length,passed:vms.filter(m=>SpeakingFlow.done(m)&&SpeakingFlow.best(vc,m)>=70).length,modules:vms.length,url:'course.html?id='+vc.id,storage:synced});
+        const scc=courseById('scene-'+suffix);await SpeakingFlow.sync(scc,user);
+        const scms=SpeakingFlow.modules(scc),scids=readCompleted();
+        states.push({id:scc.id,title:'生活与工作场景',desc:'打车、租房、银行、单据、工厂等 16 个场景。',done:courseLessons(scc.id).filter(l=>scids.includes(l.id)).length,total:courseLessons(scc.id).length,passed:scms.filter(m=>SpeakingFlow.done(m)&&SpeakingFlow.best(scc,m)>=70).length,modules:scms.length,mod:'场景',url:`scenes.html?lang=${lang}`,storage:synced});
         // Recommended order for beginners; cards follow it and the route shows ✓ / the step to do now.
         const order=['foundation-'+lang,'sentence-'+suffix,'talk-'+suffix,'speaking-'+suffix];
         const route0=order.map(id=>states.find(s=>s.id===id)).filter(Boolean), step=route0.findIndex(s=>s.done<s.total);
@@ -1234,10 +1265,10 @@ document.addEventListener('DOMContentLoaded', init);
         if(profileMode){
           // My learning: one progress row per course (vocabulary included), no course cards.
           const rows=[...route0,...states.filter(s=>!order.includes(s.id))];
-          html+=`<section class="profile-lang" id="${lang}"><h2>${flag} ${label}</h2><ul class="profile-courses">${rows.map(s=>{const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);return `<li><a href="${esc(last?.url||s.url)}"><span class="profile-course-title">${s.title}</span><span class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></span><small>${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</small><b>${s.done>=s.total&&s.total?'✓ 完成':s.done||last?'继续 →':'开始 →'}</b></a></li>`;}).join('')}</ul></section>`;
+          html+=`<section class="profile-lang" id="${lang}"><h2>${flag} ${label}</h2><ul class="profile-courses">${rows.map(s=>{const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);return `<li><a href="${esc(last?.url||s.url)}"><span class="profile-course-title">${s.title}</span><span class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></span><small>${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} ${s.mod||'模块'}通过</small><b>${s.done>=s.total&&s.total?'✓ 完成':s.done||last?'继续 →':'开始 →'}</b></a></li>`;}).join('')}</ul></section>`;
           continue;
         }
-        const shown=states.filter(s=>s.id.startsWith('vocab-')===vocabMode).sort((x,y)=>order.indexOf(x.id)-order.indexOf(y.id));
+        const shown=states.filter(s=>!s.id.startsWith('scene-')&&s.id.startsWith('vocab-')===vocabMode).sort((x,y)=>order.indexOf(x.id)-order.indexOf(y.id));
         const routeHtml=vocabMode?'':routeList()+'<p class="study-route-note">推荐按这个顺序学；主题词汇可以随时从导航栏“主题词汇”进入。</p>';
         html+=`<section class="study-language" id="${lang}"><div class="study-language-head"><h2>${flag} ${label}</h2>${vocabMode?'':`<a href="level-test.html?lang=${lang}">选做起点测试 →</a>`}</div>${routeHtml}<div class="study-course-grid">`;
         for(const s of shown){const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);html+=`<article class="study-course-card" id="card-${s.id}"><span class="eyebrow">${label}</span><h3>${s.title}</h3><p>${s.desc}</p><div class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><p class="study-count">${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</p><div class="study-actions"><a class="primary-btn" href="${esc(last?.url||s.url)}">${last||s.done?'继续学习':'开始学习'} →</a>${last?`<a class="study-text-link" href="${s.url}">课程目录</a>`:''}</div><small>${s.storage}</small></article>`;}
