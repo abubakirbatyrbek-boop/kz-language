@@ -314,8 +314,8 @@
       const title=document.getElementById('courseTitle'); if(title) title.textContent=c.title;
       const desc=document.getElementById('courseDesc'); if(desc) desc.textContent=c.desc;
       const intro=document.getElementById('courseIntroNote'); if(intro) intro.textContent=c.targetLang==='kk'
-        ? '正式哈萨克语基础语法课：每次只学一个词或一个结构。按模块学习，完成一个模块后参加考核，答对 ≥70% 才能进入下一模块。'
-        : '正式俄语基础语法课：每次只学一个词或一个结构。按模块学习，完成一个模块后参加考核，答对 ≥70% 才能进入下一模块。';
+        ? '哈萨克语基础语法：每次只学一个词或一个结构。按模块学习，完成一个模块后参加考核，答对 ≥70% 才能进入下一模块。'
+        : '俄语基础语法：每次只学一个词或一个结构。按模块学习，完成一个模块后参加考核，答对 ≥70% 才能进入下一模块。';
       const map=document.getElementById('courseStudyMap');
       if(map) map.innerHTML=`<div class="grammar-v22-note"><strong>闯关规则</strong><span>每个模块完成全部小课后参加考试；答对 ≥70% 才能通过。${user?'进度已同步到账号。':'无需注册即可学习全部模块；登录后进度可在其他设备继续。'}</span></div>`;
       const pct=document.getElementById('courseProgress');

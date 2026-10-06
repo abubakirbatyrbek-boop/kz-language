@@ -2,7 +2,7 @@
 const V5_PATHS = {
   kk: {
     label: '哈萨克语', flag: '🇰🇿',
-    desc: '先把字母和发音学会。学完后回到课程中心，按推荐顺序继续：造句与口语 → 数字与情景对话 → 基础语法。',
+    desc: '先把字母和发音学会。学完后回到课程中心，按推荐顺序继续：基础语法 → 数字与情景对话 → 造句与口语。',
     units: [
       {id:'kk-u1',num:1,title:'字母与发音',desc:'42 个字母：特殊元音、特殊辅音、常用字母、外来词字母和拼读',level:'入门',lessons:[
         {id:'kk-u1-l1',title:'特殊元音 Ә Ө Ұ Ү І',type:'intro',items:[
@@ -215,7 +215,7 @@ const V5_PATHS = {
   },
   ru: {
     label: '俄语', flag:'🇷🇺',
-    desc: '先把字母和发音学会。学完后回到课程中心，按推荐顺序继续：造句与口语 → 数字与情景对话 → 基础语法。',
+    desc: '先把字母和发音学会。学完后回到课程中心，按推荐顺序继续：基础语法 → 数字与情景对话 → 造句与口语。',
     units: [
       {id:'ru-u1',num:1,title:'字母与发音',desc:'33 个字母：元音、形似拉丁字母的“假朋友”、辅音、软硬音符号和重音',level:'入门',lessons:[
         {id:'ru-u1-l1',title:'元音与难点辅音',type:'intro',items:[
@@ -597,9 +597,9 @@ for (const l of ['kk','ru']) V5_PATHS[l].units.length = 1;
 function v7Recommend(lang,score){
   const s=lang==='kk'?'kz':'ru';
   if(score<=5)  return {title:'字母与发音', href:`unit.html?lang=${lang}&unit=${lang}-u1`, why:'先把字母和发音打牢，后面学句子会快很多。'};
-  if(score<=11) return {title:'造句与口语', href:`course.html?id=speaking-${s}`, why:'你已经认识字母和一些常用词，可以直接开口说整句了。'};
+  if(score<=11) return {title:'基础语法', href:`course.html?id=sentence-${s}`, why:'你已经认识字母和一些常用词，接下来用基础语法弄清句子是怎么组成的。'};
   if(score<=15) return {title:'数字与情景对话', href:`course.html?id=talk-${s}`, why:'基础句子没问题，接下来练听懂价格、时间和真实对话。'};
-  return {title:'基础语法', href:`course.html?id=sentence-${s}`, why:'你的基础不错，用语法课把零散的知识系统整理一遍。'};
+  return {title:'造句与口语', href:`course.html?id=speaking-${s}`, why:'你的基础不错，可以直接练造句和开口表达了。'};
 }
 function v7PlacementCard(path){
   const p=v7GetPlacement(langKey());
