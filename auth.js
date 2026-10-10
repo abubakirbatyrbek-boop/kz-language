@@ -395,13 +395,67 @@
     u.onerror=()=>{if(status)status.textContent='朗读失败，请检查设备语音设置后重试。';};speechSynthesis.speak(u);window.dispatchEvent(new Event('kz-heard'));
     if(status)status.textContent='';
   }
-  let releaseRecording=()=>{};
-  window.addEventListener('pagehide',()=>releaseRecording());
+  let releaseRecording=()=>{},releaseScoring=()=>{};
+  window.addEventListener('pagehide',()=>{releaseRecording();releaseScoring();});
+  // Pronunciation scoring: record up to 15 s, convert to a 16 kHz mono WAV and send it to /api/pronounce,
+  // which checks the login, the daily limit (10) and asks Azure. The Azure key never reaches the browser.
+  async function toWav16k(blob){
+    const AC=window.AudioContext||window.webkitAudioContext,ctx=new AC(),raw=await blob.arrayBuffer();
+    let src;try{src=await new Promise((ok,bad)=>{const p=ctx.decodeAudioData(raw,ok,bad);if(p&&p.then)p.then(ok,bad);});}finally{try{ctx.close();}catch{}}
+    const off=new OfflineAudioContext(1,Math.max(1,Math.ceil(src.duration*16000)),16000),s=off.createBufferSource();s.buffer=src;s.connect(off.destination);s.start();
+    const pcm=(await off.startRendering()).getChannelData(0),out=new DataView(new ArrayBuffer(44+pcm.length*2));
+    const str=(o,t)=>{for(let i=0;i<t.length;i++)out.setUint8(o+i,t.charCodeAt(i));};
+    str(0,'RIFF');out.setUint32(4,36+pcm.length*2,true);str(8,'WAVE');str(12,'fmt ');out.setUint32(16,16,true);out.setUint16(20,1,true);out.setUint16(22,1,true);
+    out.setUint32(24,16000,true);out.setUint32(28,32000,true);out.setUint16(32,2,true);out.setUint16(34,16,true);str(36,'data');out.setUint32(40,pcm.length*2,true);
+    for(let i=0;i<pcm.length;i++){const v=Math.max(-1,Math.min(1,pcm[i]));out.setInt16(44+i*2,v<0?v*0x8000:v*0x7fff,true);}
+    return new Uint8Array(out.buffer);
+  }
+  const toBase64=bytes=>{let s='';for(let i=0;i<bytes.length;i+=0x8000)s+=String.fromCharCode.apply(null,bytes.subarray(i,i+0x8000));return btoa(s);};
+  const PRON_ERRORS={limit:'今天的 10 次发音打分已经用完，明天再来吧。',nomatch:'没有听清楚。请靠近麦克风、大声一点再读一遍（这次不计次数）。',not_configured:'发音打分功能还在准备中，请稍后再试。',azure_quota:'今天的打分服务已满，请明天再试。',audio:'录音太短或太长，请重新读一遍（15 秒以内）。'};
+  function pronScore(btn,box,text,lang){
+    if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder||!window.OfflineAudioContext){btn.hidden=true;return;}
+    let stream,rec,timer,disposed=false;
+    const stopTracks=()=>stream?.getTracks().forEach(t=>t.stop());
+    releaseScoring=()=>{disposed=true;clearTimeout(timer);if(rec?.state==='recording')rec.stop();stopTracks();};
+    const show=html=>{box.hidden=false;box.innerHTML=html;};
+    const loginHtml=`<p>发音打分需要先<a href="auth.html?mode=login&next=${encodeURIComponent(location.pathname.replace(/^\//,'')+location.search)}">登录</a>（可免费注册），每天可以打分 10 次。</p>`;
+    const grade=s=>s>=85?'good':s>=60?'ok':'bad';
+    btn.onclick=async()=>{
+      if(rec?.state==='recording'){rec.stop();return;}
+      if(!window.KZAuth?.getUser?.()){show(loginHtml);return;}
+      btn.disabled=true;
+      try{stream=await navigator.mediaDevices.getUserMedia({audio:true});}catch{btn.disabled=false;show('<p>无法使用麦克风。请允许麦克风权限后重试。</p>');return;}
+      if(disposed){stopTracks();return;}
+      const parts=[];rec=new MediaRecorder(stream);rec.ondataavailable=e=>{if(e.data.size)parts.push(e.data)};
+      rec.onstop=async()=>{
+        clearTimeout(timer);stopTracks();if(disposed)return;
+        btn.textContent='🎤 读一遍打分';btn.disabled=true;show('<p class="pron-wait">正在打分…</p>');
+        try{
+          const wav=await toWav16k(new Blob(parts,{type:rec.mimeType}));
+          const token=(await window.KZAuth.getClient().auth.getSession()).data?.session?.access_token;if(!token){show(loginHtml);return;}
+          const r=await fetch('/api/pronounce',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify({lang,text,audio:toBase64(wav)})});
+          const d=await r.json().catch(()=>({error:'server'}));
+          if(d.error==='login'){show(loginHtml);return;}
+          if(d.error){show(`<p>${PRON_ERRORS[d.error]||'打分服务暂时不可用，请稍后再试。'}</p>`);return;}
+          const msg=d.total>=90?'非常棒！发音很标准。':d.total>=75?'很好！继续保持。':d.total>=60?'不错，红色的词再练练。':'先听一遍标准发音，再慢慢读。';
+          show(`<div class="pron-head"><span class="pron-score ${grade(d.total)}"><b>${d.total}</b> 分</span><span class="pron-msg">${msg}</span></div>
+            <p class="pron-words">${d.words.map(w=>`<span class="pw ${w.error==='Omission'?'miss':grade(w.score)}" title="${w.error==='Omission'?'漏读':w.score+' 分'}">${esc(w.word)}</span>`).join(' ')}</p>
+            <p class="pron-meta">准确度 ${d.accuracy} · 流利度 ${d.fluency} · 完整度 ${d.completeness}　|　今天还能打分 ${d.left} 次</p>
+            <p class="pron-legend"><span class="pw good">绿色</span>读得好 <span class="pw ok">黄色</span>还可以 <span class="pw bad">红色</span>要再练 <span class="pw miss">灰色</span>漏读</p>`);
+        }catch{show('<p>打分失败，请检查网络后再试。</p>');}
+        finally{btn.disabled=false;}
+      };
+      rec.start();btn.disabled=false;btn.textContent='■ 读完了，打分';
+      show('<p class="pron-wait">🔴 正在录音：请读出上面的句子，读完点“读完了，打分”（最长 15 秒）。</p>');
+      timer=setTimeout(()=>{if(rec.state==='recording')rec.stop();},15000);
+    };
+  }
   function audioTools(host,c,l){
-    releaseRecording();
+    releaseRecording();releaseScoring();
     const text=c.targetLang==='kk'?l.kz:l.ru;
-    host.innerHTML=`<h3>听一听，自己说</h3><div class="study-actions"><button type="button" data-speed="1">▶ 原速</button><button type="button" data-speed="0.75">▶ 慢速</button>${c.kind==='speaking'?'<button type="button" data-record>● 录音跟读</button>':''}</div><p class="study-status" role="status"></p>${c.kind==='speaking'?'<audio controls hidden></audio><p class="study-help">录音只在本页回放，不上传；离开页面后清除。</p>':''}`;
+    host.innerHTML=`<h3>听一听，自己说</h3><div class="study-actions"><button type="button" data-speed="1">▶ 原速</button><button type="button" data-speed="0.75">▶ 慢速</button>${c.kind==='speaking'?'<button type="button" data-record>● 录音跟读</button><button type="button" class="pron-btn" data-score>🎤 读一遍打分</button>':''}</div><p class="study-status" role="status"></p>${c.kind==='speaking'?'<div class="pron-result" hidden></div><audio controls hidden></audio><p class="study-help">“录音跟读”只在本页回放，不上传。“读一遍打分”需登录，录音只用于这一次打分，不保存。</p>':''}`;
     const status=host.querySelector('[role=status]');host.querySelectorAll('[data-speed]').forEach(b=>b.onclick=()=>voice(text,c.targetLang,Number(b.dataset.speed),status));
+    const scoreBtn=host.querySelector('[data-score]');if(scoreBtn)pronScore(scoreBtn,host.querySelector('.pron-result'),text,c.targetLang);
     const btn=host.querySelector('[data-record]');if(!btn)return;
     let stream,recorder,url,timer,disposed=false;
     const stopTracks=()=>stream?.getTracks().forEach(t=>t.stop());
