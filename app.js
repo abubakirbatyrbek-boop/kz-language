@@ -1,3 +1,5 @@
+// Drawn flags (emoji flags show as letters on Windows).
+const FLAGS={kk:'<svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" rx="2" fill="#00AFCA"/><circle cx="16" cy="8.6" r="3.3" fill="#FEC50C"/><g stroke="#FEC50C" stroke-width=".8" stroke-linecap="round"><path d="M16 3.4v-1.2M16 15v-1.2M10.8 8.6H9.6M22.4 8.6h-1.2M12.3 4.9l-.8-.8M20.5 13.1l-.8-.8M12.3 12.3l-.8.8M20.5 4.1l-.8.8"/></g><path d="M11.6 14.4c1.5.8 2.9 1.1 4.4 1.1s2.9-.3 4.4-1.1" fill="none" stroke="#FEC50C" stroke-width="1"/><rect x="2.4" y="2" width="1.3" height="16" rx=".6" fill="#FEC50C"/></svg>',ru:'<svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" rx="2" fill="#fff"/><path d="M0 6.67h30v6.66H0z" fill="#0039A6"/><path d="M0 13.33h30V18a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2z" fill="#D52B1E"/><rect x=".5" y=".5" width="29" height="19" rx="1.6" fill="none" stroke="rgba(0,0,0,.14)"/></svg>'};
 const lessons = [
   { id:'daily-01', course:'daily-kz', title:'日常打招呼', tag:'生活', level:'入门', cn:'您好。', kz:'Сәлеметсіз бе?', ru:'Здравствуйте.', tip:'正式、礼貌地向陌生人打招呼时可以使用。' },
   { id:'daily-02', course:'daily-kz', title:'感谢别人', tag:'生活', level:'入门', cn:'谢谢。', kz:'Рақмет.', ru:'Спасибо.', tip:'两个语言里都是非常高频的礼貌表达。' },
@@ -795,7 +797,7 @@ function renderScenePage(){
   const lang=sceneLang(), c=courseById(lang==='kk'?'scene-kz':'scene-ru'), all=courseLessons(c.id);
   const ms=SpeakingFlow.modules(c), mi=ms.findIndex(m=>m.name===scene.title), m=ms[mi], pool=m?m.items:[];
   const head=document.querySelector('.detail-head > div');
-  if(head && !document.getElementById('sceneLangSwitch')) head.insertAdjacentHTML('beforeend','<div class="scene-lang-switch" id="sceneLangSwitch" role="group" aria-label="选择语言"><button type="button" data-lang="kk">🇰🇿 哈萨克语</button><button type="button" data-lang="ru">🇷🇺 俄语</button></div>');
+  if(head && !document.getElementById('sceneLangSwitch')) head.insertAdjacentHTML('beforeend','<div class="scene-lang-switch" id="sceneLangSwitch" role="group" aria-label="选择语言"><button type="button" data-lang="kk">'+FLAGS.kk+' 哈萨克语</button><button type="button" data-lang="ru">'+FLAGS.ru+' 俄语</button></div>');
   document.querySelectorAll('#sceneLangSwitch button').forEach(b=>{b.classList.toggle('active',b.dataset.lang===lang);b.setAttribute('aria-pressed',String(b.dataset.lang===lang));
     b.onclick=()=>{try{localStorage.setItem('kz-scene-lang',b.dataset.lang)}catch{} const u=new URL(location.href);u.searchParams.set('lang',b.dataset.lang);history.replaceState(null,'',u);renderScenePage();};});
   const ids=readCompleted(), target=l=>lang==='kk'?l.kz:l.ru, url=l=>`learn.html?pool=course&id=${c.id}&start=${all.indexOf(l)}`;
@@ -1235,7 +1237,7 @@ document.addEventListener('DOMContentLoaded', init);
       const vocabMode=location.hash==='#vocab';
       const homeMode=document.body.dataset.page==='study-home', profileMode=document.body.dataset.page==='study-progress';
       let html='';
-      for(const [lang,label,flag,suffix] of [['kk','哈萨克语','🇰🇿','kz'],['ru','俄语','🇷🇺','ru']]){
+      for(const [lang,label,flag,suffix] of [['kk','哈萨克语',FLAGS.kk,'kz'],['ru','俄语',FLAGS.ru,'ru']]){
         const first=foundation[lang];const fd=first.lessons.filter(l=>(basic['v5:'+l.id]||basic[l.id])?.status==='done').length;
         const states=[{id:'foundation-'+lang,title:'字母与发音',desc:lang==='kk'?'从 42 个字母、特殊音和拼读开始。':'从 33 个字母、重音和拼读开始。',done:fd,total:first.lessons.length,passed:(basic['v5:'+first.id]||basic[first.id])?.status==='passed'?1:0,modules:1,url:`unit.html?lang=${lang}&unit=${first.id}`,storage:''}];
         const gc=courseById('sentence-'+suffix);const gs=await window.GrammarFlow.summary(gc);

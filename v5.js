@@ -1,7 +1,9 @@
+// Drawn flags (emoji flags show as letters on Windows).
+const FLAGS={kk:'<svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" rx="2" fill="#00AFCA"/><circle cx="16" cy="8.6" r="3.3" fill="#FEC50C"/><g stroke="#FEC50C" stroke-width=".8" stroke-linecap="round"><path d="M16 3.4v-1.2M16 15v-1.2M10.8 8.6H9.6M22.4 8.6h-1.2M12.3 4.9l-.8-.8M20.5 13.1l-.8-.8M12.3 12.3l-.8.8M20.5 4.1l-.8.8"/></g><path d="M11.6 14.4c1.5.8 2.9 1.1 4.4 1.1s2.9-.3 4.4-1.1" fill="none" stroke="#FEC50C" stroke-width="1"/><rect x="2.4" y="2" width="1.3" height="16" rx=".6" fill="#FEC50C"/></svg>',ru:'<svg class="flag" viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" rx="2" fill="#fff"/><path d="M0 6.67h30v6.66H0z" fill="#0039A6"/><path d="M0 13.33h30V18a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2z" fill="#D52B1E"/><rect x=".5" y=".5" width="29" height="19" rx="1.6" fill="none" stroke="rgba(0,0,0,.14)"/></svg>'};
 /* V5 beginner-first learning engine: pronunciation -> reading -> words -> sentences -> dialogue */
 const V5_PATHS = {
   kk: {
-    label: '哈萨克语', flag: '🇰🇿',
+    label: '哈萨克语', flag: FLAGS.kk,
     desc: '先把字母和发音学会。学完后回到课程中心，按推荐顺序继续：基础语法 → 数字与情景对话 → 造句与口语。',
     units: [
       {id:'kk-u1',num:1,title:'字母与发音',desc:'42 个字母：特殊元音、特殊辅音、常用字母、外来词字母和拼读',level:'入门',lessons:[
@@ -214,7 +216,7 @@ const V5_PATHS = {
     ]
   },
   ru: {
-    label: '俄语', flag:'🇷🇺',
+    label: '俄语', flag:FLAGS.ru,
     desc: '先把字母和发音学会。学完后回到课程中心，按推荐顺序继续：基础语法 → 数字与情景对话 → 造句与口语。',
     units: [
       {id:'ru-u1',num:1,title:'字母与发音',desc:'33 个字母：元音、形似拉丁字母的“假朋友”、辅音、软硬音符号和重音',level:'入门',lessons:[
@@ -501,7 +503,7 @@ function speak(text,lang){text=letterWord(text,lang)||text;if(window.KZLearning)
 function renderPath(){
   const path=getPath();
   document.title=`${path.label}学习路径｜中亚语言通`;
-  document.getElementById('pathTitle').textContent=`${path.flag} ${path.label}`;
+  document.getElementById('pathTitle').innerHTML=`${path.flag} ${path.label}`;
   document.getElementById('pathDesc').textContent=getUser()?path.desc:`${path.desc} 无需注册即可学习全部单元；登录后进度可在其他设备继续。`;
   const unlocked=path.units.filter((u,i)=>unitUnlocked(path,i)).length;
   document.getElementById('pathStats').innerHTML=`<div><b>${unlocked}</b><span>当前可进入</span></div><div><b>${path.units.length}</b><span>总单元</span></div><div><b>${getUser()?'已登录':'游客'}</b><span>${getUser()?'进度云端同步':'登录后可同步进度'}</span></div>`;
@@ -624,7 +626,7 @@ function v7LoginGate(path,unit,idx){
 
 function renderPath(){
   const path=getPath(), p=v7GetPlacement(langKey()); document.title=`${path.label}学习路径｜中亚语言通`;
-  document.getElementById('pathTitle').textContent=`${path.flag} ${path.label}`;
+  document.getElementById('pathTitle').innerHTML=`${path.flag} ${path.label}`;
   document.getElementById('pathDesc').textContent=p?path.desc:`${path.desc} 可直接从第 1 单元开始，等级测试为可选。`;
   const card=document.getElementById('placementCard'); if(card) card.innerHTML=v7PlacementCard(path);
   const unlocked=path.units.filter((u,i)=>v7UnitUnlocked(path,i)).length;
