@@ -698,7 +698,7 @@ function bindSounds(){
 function renderSceneList(){
   const grid=document.getElementById('sceneGrid'); if(!grid) return;
   const q=qs('lang'); if(q==='kk'||q==='ru') try{localStorage.setItem('kz-scene-lang',q)}catch{}
-  const group=(title,sub,items)=>`<section class="scene-group"><div class="scene-group-head"><div><span class="eyebrow">${title==='生活场景'?'LIFE':title==='单据与发票'?'DOCS':'WORK'}</span><h2>${title}</h2></div><p>${sub}</p></div><div class="scene-grid">${items.map(s=>`<a class="scene scene-link" href="scene.html?id=${s.id}"><div><div class="scene-icon">${s.icon}</div><h3>${s.title}</h3><p>${s.desc}</p></div><div class="tagline">练习 → <span class="test-pill">场景小测</span></div></a>`).join('')}</div></section>`;
+  const group=(title,sub,items)=>`<section class="scene-group"><div class="scene-group-head"><div><span class="eyebrow">${title==='生活场景'?'生活':title==='单据与发票'?'工作必备':'工作'} · ${items.length} 个场景</span><h2>${title}</h2></div><p>${sub}</p></div><div class="scene-grid">${items.map(s=>`<a class="scene scene-link" href="scene.html?id=${s.id}"><div><div class="scene-icon">${s.icon}</div><h3>${s.title}</h3><p>${s.desc}</p></div><div class="tagline">练习 → <span class="test-pill">场景小测</span></div></a>`).join('')}</div></section>`;
   const docs=scenes.filter(s=>s.category==='docs'),life=scenes.filter(s=>s.category==='life'),work=scenes.filter(s=>s.category==='work');
   grid.outerHTML=group('单据与发票','工作中每天都要问的单据：发票、电子发票（ЭСФ）、完工单、发货单、商业报价。',docs)+group('生活场景','先学在哈萨克斯坦生活时最常遇到的表达。',life)+group('工作场景','再按岗位和现场分类学习：工厂、物流、铁路、销售、办公室、安保、工程等。',work);
 }

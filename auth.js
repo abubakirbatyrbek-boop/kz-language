@@ -641,3 +641,6 @@
     window.addEventListener('pageshow',card); // back from a lesson (bfcache)
   }).catch(()=>{});
 })();
+
+// Course progress ring: mirror the "37%" text (written by app.js / grammar-flow.js) into a CSS variable.
+(()=>{const run=()=>{const el=document.getElementById('courseProgress')||document.getElementById('sceneCount');const box=el?.closest('.progress-box');if(!box)return;const set=()=>{const m=el.textContent.match(/(\d+)\s*\/\s*(\d+)/);box.style.setProperty('--p',m?Math.round(100*m[1]/(m[2]||1)):(parseInt(el.textContent,10)||0));};set();new MutationObserver(set).observe(el,{childList:true,characterData:true,subtree:true});};document.readyState==='loading'?document.addEventListener('DOMContentLoaded',run):run();})();
