@@ -453,7 +453,9 @@
   function audioTools(host,c,l){
     releaseRecording();releaseScoring();
     const text=c.targetLang==='kk'?l.kz:l.ru;
-    host.innerHTML=`<h3>听一听，自己说</h3><div class="study-actions"><button type="button" data-speed="1">▶ 原速</button><button type="button" data-speed="0.75">▶ 慢速</button>${c.kind==='speaking'?'<button type="button" data-record>● 录音跟读</button><button type="button" class="pron-btn" data-score>🎤 读一遍打分</button>':''}</div><p class="study-status" role="status"></p>${c.kind==='speaking'?'<div class="pron-result" hidden></div><audio controls hidden></audio><p class="study-help">“录音跟读”只在本页回放，不上传。“读一遍打分”需登录，录音只用于这一次打分，不保存。</p>':''}`;
+    // Scoring is offered in every course with words and sentences (grammar and speaking); not for single letters.
+    const speak=c.kind==='speaking',score=speak||c.kind==='sentence';
+    host.innerHTML=`<h3>听一听，自己说</h3><div class="study-actions"><button type="button" data-speed="1">▶ 原速</button><button type="button" data-speed="0.75">▶ 慢速</button>${speak?'<button type="button" data-record>● 录音跟读</button>':''}${score?'<button type="button" class="pron-btn" data-score>🎤 读一遍打分</button>':''}</div><p class="study-status" role="status"></p>${score?'<div class="pron-result" hidden></div>':''}${speak?'<audio controls hidden></audio>':''}${score?`<p class="study-help">${speak?'“录音跟读”只在本页回放，不上传。':''}“读一遍打分”需登录，每天 10 次；录音只用于这一次打分，不保存。</p>`:''}`;
     const status=host.querySelector('[role=status]');host.querySelectorAll('[data-speed]').forEach(b=>b.onclick=()=>voice(text,c.targetLang,Number(b.dataset.speed),status));
     const scoreBtn=host.querySelector('[data-score]');if(scoreBtn)pronScore(scoreBtn,host.querySelector('.pron-result'),text,c.targetLang);
     const btn=host.querySelector('[data-record]');if(!btn)return;
@@ -626,7 +628,7 @@
       (window.KZAuth?.getUser?.()?'':`<p class="today-signup">💾 为了同步学习进度，建议<a href="auth.html?mode=signup&next=index.html">免费注册</a>：换手机、换电脑也能接着学。</p>`);
   }
   async function ready(){await window.KZAuth.ready;if(!window.KZAuth.getClient())throw new Error('登录服务不可用');await pull();}
-  window.KZLearning={ready,esc,resume,remember,state,review,attachLesson,renderReview,voice,updateLinks,bump,today,renderToday};
+  window.KZLearning={ready,esc,resume,remember,state,review,attachLesson,renderReview,voice,updateLinks,bump,today,renderToday,pronounce:pronScore};
   window.KZAuth.ready.then(()=>{
     const u=window.KZAuth.getUser();
     if(u&&!localStorage.getItem('kz-study-guest-claimed')){
