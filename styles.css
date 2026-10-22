@@ -930,3 +930,5 @@ p,.page-lead,.lead,blockquote p{text-wrap:pretty}
 .kt-review summary{min-height:36px;display:flex;align-items:center;cursor:pointer;color:var(--accent);font-weight:700}
 .kt-nb{display:inline-block}
 .kt-table th,.kt-table td:nth-child(2),.kt-table td:nth-child(3){white-space:nowrap}@media(max-width:560px){.kt-table{font-size:13.5px}.kt-table th,.kt-table td{padding:9px 8px}}
+.level-chips{display:inline-flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.kt-chip{background:var(--accent-soft);color:var(--accent-dark,#13402f);text-decoration:none}.kt-chip:hover{background:var(--accent);color:#fff}
+.card-top{flex-wrap:wrap;row-gap:6px}.card-top .eyebrow{white-space:nowrap}.card-top .level-chips{justify-content:flex-start}
