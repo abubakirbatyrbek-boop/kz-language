@@ -753,9 +753,9 @@ function courseStudyMap(pool,c){
 // CEFR level each course covers (KAZTEST and ТРКИ use the same A1–C1 scale), keyed by course id prefix.
 const COURSE_LEVEL={daily:'A1 入门',foundation:'A1 入门',sentence:'A1–A2',talk:'A1',speaking:'A1',vocab:'A1–A2',scene:'A2'};
 function courseLevel(id){return COURSE_LEVEL[String(id).split('-')[0]]||'';}
-function levelChip(id){const l=courseLevel(id);if(!l)return '';const kk=/-(kk|kz)$/.test(id);return `<span class="level-chips"><span class="level-chip" title="对应欧洲语言共同参考框架（CEFR）等级；哈萨克语 KAZTEST、俄语 ТРКИ 都用这套等级">${l}</span>${kk?'<a class="level-chip kt-chip" href="kaztest.html" title="本课内容覆盖 KAZTEST 考试的考点，点击查看考试说明和模拟题">可备考 KAZTEST</a>':''}</span>`;}
-// Course page header: "课程详情 · A1–A2", plus the KAZTEST link on Kazakh courses.
-function markCourseLevel(c){const eb=document.querySelector('.detail-head .eyebrow');const l=courseLevel(c.id);if(eb&&l)eb.innerHTML='课程详情 · 对应 '+l+(c.targetLang==='kk'?' · <a href="kaztest.html">可备考 KAZTEST</a>':'');}
+function levelChip(id){const l=courseLevel(id);if(!l)return '';return `<span class="level-chips"><span class="level-chip" title="对应欧洲语言共同参考框架（CEFR）等级；哈萨克语 KAZTEST、俄语 ТРКИ 都用这套等级">${l}</span></span>`;}
+// Course page header: "课程详情 · 对应 A1–A2".
+function markCourseLevel(c){const eb=document.querySelector('.detail-head .eyebrow');const l=courseLevel(c.id);if(eb&&l)eb.textContent='课程详情 · 对应 '+l;}
 function renderCoursePage(){
   const id=qs('id') || 'daily-kz'; const c=courseById(id) || courses[0];
   document.title = `${c.title}｜中亚语言通`;
@@ -1269,7 +1269,7 @@ document.addEventListener('DOMContentLoaded', init);
         if(homeMode){
           // Home: one card per language — the route and one big button to the step to do now.
           const now=route0[step<0?0:step], last=window.KZLearning.resume(now.id), any=states.some(s=>s.done);
-          html+=`<section class="home-lang" id="${lang}"><h3>${flag} ${label}</h3>${routeList('compact')}<a class="primary-btn home-lang-btn" href="${esc(last?.url||now.url)}">${any?'继续学'+label:'学'+label} →</a><p class="home-lang-links"><a href="courses.html#${lang}">全部课程</a> · <a href="level-test.html?lang=${lang}">已有基础？做起点测试</a>${lang==='kk'?' · <a href="kaztest.html">KAZTEST 居留考试备考</a>':''}</p></section>`;
+          html+=`<section class="home-lang" id="${lang}" data-lang-panel="${lang}" hidden><h3>${flag} ${label}</h3>${routeList('compact')}<a class="primary-btn home-lang-btn" href="${esc(last?.url||now.url)}">${any?'继续学'+label:'学'+label} →</a><p class="home-lang-links"><a href="courses.html#${lang}">全部课程</a> · <a href="level-test.html?lang=${lang}">已有基础？做起点测试</a></p></section>`;
           continue;
         }
         if(profileMode){
@@ -1280,11 +1280,20 @@ document.addEventListener('DOMContentLoaded', init);
         }
         const shown=states.filter(s=>!s.id.startsWith('scene-')&&s.id.startsWith('vocab-')===vocabMode).sort((x,y)=>order.indexOf(x.id)-order.indexOf(y.id));
         const routeHtml=vocabMode?'':routeList()+'<p class="study-route-note">推荐按这个顺序学；主题词汇可以随时从导航栏“主题词汇”进入。</p>';
-        html+=`<section class="study-language" id="${lang}"><div class="study-language-head"><h2>${flag} ${label}</h2>${vocabMode?'':`<a href="level-test.html?lang=${lang}">选做起点测试 →</a>`}</div>${routeHtml}<div class="study-course-grid">`;
+        html+=`<section class="study-language" id="${lang}"${vocabMode?'':` data-lang-panel="${lang}" hidden`}><div class="study-language-head"><h2>${flag} ${label}</h2>${vocabMode?'':`<a href="level-test.html?lang=${lang}">选做起点测试 →</a>`}</div>${lang==='kk'&&!vocabMode&&window.KZKaztest?window.KZKaztest.intro():''}${routeHtml}<div class="study-course-grid">`;
         for(const s of shown){const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);html+=`<article class="study-course-card" id="card-${s.id}"><div class="card-top"><span class="eyebrow">${label}</span>${levelChip(s.id)}</div><h3>${s.title}</h3><p>${s.desc}</p><div class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><p class="study-count">${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</p><div class="study-actions"><a class="primary-btn" href="${esc(last?.url||s.url)}">${last||s.done?'继续学习':'开始学习'} →</a>${last?`<a class="study-text-link" href="${s.url}">课程目录</a>`:''}</div><small>${s.storage}</small></article>`;}
         html+='</div></section>';
       }
-      host.innerHTML=homeMode?`<div class="home-langs">${html}</div>`:html;
+      // Home and course list start with just the two languages; a language's courses open under its button.
+      const picker=homeMode||(!profileMode&&!vocabMode)?`<div class="lang-picker" role="group" aria-label="选择要学的语言">${[['kk','哈萨克语',FLAGS.kk],['ru','俄语',FLAGS.ru]].map(([l,lab,fl])=>`<button type="button" class="lang-pick" data-pick="${l}" aria-expanded="false" aria-controls="${l}">${fl}<span><b>${lab}</b><small>字母与发音 · 基础语法 · 数字与情景对话 · 造句与口语</small></span><i aria-hidden="true"></i></button>`).join('')}</div>`:'';
+      host.innerHTML=picker+(homeMode?`<div class="home-langs">${html}</div>`:html);
+      const picks=host.querySelectorAll('[data-pick]');
+      if(picks.length){
+        const open=l=>{picks.forEach(b=>{const on=b.dataset.pick===l;b.setAttribute('aria-expanded',String(on));b.classList.toggle('on',on);});host.querySelectorAll('[data-lang-panel]').forEach(p=>p.hidden=p.dataset.langPanel!==l);};
+        picks.forEach(b=>b.onclick=()=>{const l=b.getAttribute('aria-expanded')==='true'?'':b.dataset.pick;open(l);if(!homeMode)history.replaceState(null,'',l?'#'+l:location.pathname+location.search);});
+        const h=location.hash.slice(1);if(h==='kk'||h==='ru')open(h);
+      }
+      window.KZKaztest?.mount(host.querySelector('#ktTests'));
       const stats=document.getElementById('profileStats');
       if(stats){
         const t=window.KZLearning.today(),st=window.KZLearning.state(),lessons=[...host.querySelectorAll('.profile-courses small')].reduce((n,el)=>n+(parseInt(el.textContent,10)||0),0);
