@@ -75,7 +75,8 @@
       await pause(450);
     }
   }
-  window.KZAudio = {play: (...a) => { listToken++; return play(...a); }, playList, has, ready: loadIndex};
+  const stop = () => { listToken++; token++; try { player?.pause(); } catch {} };
+  window.KZAudio = {play: (...a) => { listToken++; return play(...a); }, playList, has, stop, ready: loadIndex};
   // Route every existing speechSynthesis caller (app.js, grammar-flow.js, v5.js, government.html) through the clips.
   const synth = window.speechSynthesis;
   if (synth && window.SpeechSynthesisUtterance) {
@@ -477,6 +478,18 @@
       finally{btn.disabled=false;}
     };
   }
+  // Handwriting panel (cursive.js) under the listening tools: every word of the lesson, plus the whole
+  // phrase when it is short; the reading quiz draws on the words of the whole course.
+  function handwriting(after,c,l,pool){
+    document.getElementById('lessonHandwriting')?.remove();
+    const C=window.KZCursive;if(!C)return;
+    const lang=c.targetLang,textOf=x=>[lang==='kk'?x.kz:x.ru,...(x.drill||[]).map(d=>d[1]),...(x.turns||[]).map(t=>t[2])].filter(Boolean);
+    const own=textOf(l),words=own.flatMap(C.wordsOf),items=[];
+    own.forEach(t=>{const w=C.wordsOf(t);if(w.length>1&&w.length<=3&&w.join(' ').length<=20)items.push(w.join(' '));});
+    items.push(...words);
+    const hw=document.createElement('details');hw.id='lessonHandwriting';after.after(hw);
+    C.panel(hw,{items:items.slice(0,14),pool:[...new Set(pool.flatMap(x=>textOf(x).flatMap(C.wordsOf)))].slice(0,300),lang});
+  }
   function attachLesson(c,l,pool){
     const next=document.getElementById('nextLink');if(!next)return;
     remember(c.id,c.title+' · '+l.title);
@@ -489,6 +502,7 @@
     const audio=document.createElement('section');audio.id='lessonAudioTools';audio.className='study-tool';
     const box=document.createElement('section');box.id='lessonPractice';box.className='study-tool';
     const anchor=document.querySelector('.lesson-actions');anchor.before(audio,box);audioTools(audio,c,l);
+    handwriting(audio,c,l,pool);
     let passed=practiceDone(c,l),step=0;
     const target=c.targetLang==='kk'?l.kz:l.ru;
     const others=[...new Set(pool.map(x=>c.targetLang==='kk'?x.kz:x.ru).filter(x=>x&&x!==target))];

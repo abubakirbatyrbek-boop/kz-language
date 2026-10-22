@@ -274,7 +274,7 @@
       await initUser(); migrateGuest(c); injectStyles();
       const pool=courseLessons(c.id), ms=allModules(c);
       document.title=`${c.title}｜中亚语言通`;
-      const title=document.getElementById('courseTitle'); if(title) title.textContent=c.title;
+      const title=document.getElementById('courseTitle'); if(title) title.textContent=c.title; window.markCourseLevel?.(c);
       const desc=document.getElementById('courseDesc'); if(desc) desc.textContent=c.desc;
       const intro=document.getElementById('courseIntroNote'); if(intro) intro.textContent='按模块闯关：完成全部小课 → 模块考试达到 70% → 解锁下一模块。'+(user?'进度已同步到账号。':'无需注册即可学习全部模块；登录后进度可在其他设备继续。');
       const map=document.getElementById('courseStudyMap');

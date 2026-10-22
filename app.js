@@ -750,10 +750,16 @@ function courseStudyMap(pool,c){
   const groups=courseGroups(pool);
   return `<div class="course-map-grid">${groups.map((g,i)=>`<div class="course-map-card"><span class="course-map-no">${String(i+1).padStart(2,'0')}</span><div><strong>${g.name}</strong><small>${g.items.length} 个小课 · 每次只学一个重点</small></div></div>`).join('')}</div>`;
 }
+// CEFR level each course covers (KAZTEST and ТРКИ use the same A1–C1 scale), keyed by course id prefix.
+const COURSE_LEVEL={daily:'A1 入门',foundation:'A1 入门',sentence:'A1–A2',talk:'A1',speaking:'A1',vocab:'A1–A2',scene:'A2'};
+function courseLevel(id){return COURSE_LEVEL[String(id).split('-')[0]]||'';}
+function levelChip(id){const l=courseLevel(id);return l?`<span class="level-chip" title="对应欧洲语言共同参考框架（CEFR）等级；哈萨克语 KAZTEST、俄语 ТРКИ 都用这套等级">${l}</span>`:'';}
+// Course page header: "课程详情 · A1–A2", plus the KAZTEST link on Kazakh courses.
+function markCourseLevel(c){const eb=document.querySelector('.detail-head .eyebrow');const l=courseLevel(c.id);if(eb&&l)eb.innerHTML='课程详情 · 对应 '+l+(c.targetLang==='kk'?' · <a href="kaztest.html">KAZTEST 备考</a>':'');}
 function renderCoursePage(){
   const id=qs('id') || 'daily-kz'; const c=courseById(id) || courses[0];
   document.title = `${c.title}｜中亚语言通`;
-  const title=document.getElementById('courseTitle'); if(title) title.textContent=c.title;
+  const title=document.getElementById('courseTitle'); if(title) title.textContent=c.title; markCourseLevel(c);
   const desc=document.getElementById('courseDesc'); if(desc) desc.textContent=c.desc;
   const pool=courseLessons(c.id);
   const intro=document.getElementById('courseIntroNote');
@@ -1043,7 +1049,7 @@ const SpeakingFlow = (() => {
   async function renderCourse(c) {
     const user = await userNow(), ms = modules(c), pool = courseLessons(c.id);
     document.title = c.title + '｜中亚语言通';
-    document.getElementById('courseTitle').textContent = c.title;
+    document.getElementById('courseTitle').textContent = c.title; markCourseLevel(c);
     document.getElementById('courseDesc').textContent = c.desc;
     document.getElementById('courseIntroNote').textContent = (c.open ? '所有主题都可以直接学，按需要挑选。每个主题学完可以参加小测，检查掌握情况。' : '按模块闯关：完成全部小课 → 模块考试达到 70% → 解锁下一模块。') + (user ? '进度已同步到账号。' : '无需注册即可学习全部模块；登录后进度可在其他设备继续。');
     document.getElementById('courseProgress').textContent = percentFor(pool) + '%';
@@ -1263,7 +1269,7 @@ document.addEventListener('DOMContentLoaded', init);
         if(homeMode){
           // Home: one card per language — the route and one big button to the step to do now.
           const now=route0[step<0?0:step], last=window.KZLearning.resume(now.id), any=states.some(s=>s.done);
-          html+=`<section class="home-lang" id="${lang}"><h3>${flag} ${label}</h3>${routeList('compact')}<a class="primary-btn home-lang-btn" href="${esc(last?.url||now.url)}">${any?'继续学'+label:'学'+label} →</a><p class="home-lang-links"><a href="courses.html#${lang}">全部课程</a> · <a href="level-test.html?lang=${lang}">已有基础？做起点测试</a></p></section>`;
+          html+=`<section class="home-lang" id="${lang}"><h3>${flag} ${label}</h3>${routeList('compact')}<a class="primary-btn home-lang-btn" href="${esc(last?.url||now.url)}">${any?'继续学'+label:'学'+label} →</a><p class="home-lang-links"><a href="courses.html#${lang}">全部课程</a> · <a href="level-test.html?lang=${lang}">已有基础？做起点测试</a>${lang==='kk'?' · <a href="kaztest.html">KAZTEST 居留考试备考</a>':''}</p></section>`;
           continue;
         }
         if(profileMode){
@@ -1274,8 +1280,8 @@ document.addEventListener('DOMContentLoaded', init);
         }
         const shown=states.filter(s=>!s.id.startsWith('scene-')&&s.id.startsWith('vocab-')===vocabMode).sort((x,y)=>order.indexOf(x.id)-order.indexOf(y.id));
         const routeHtml=vocabMode?'':routeList()+'<p class="study-route-note">推荐按这个顺序学；主题词汇可以随时从导航栏“主题词汇”进入。</p>';
-        html+=`<section class="study-language" id="${lang}"><div class="study-language-head"><h2>${flag} ${label}</h2>${vocabMode?'':`<a href="level-test.html?lang=${lang}">选做起点测试 →</a>`}</div>${routeHtml}<div class="study-course-grid">`;
-        for(const s of shown){const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);html+=`<article class="study-course-card" id="card-${s.id}"><span class="eyebrow">${label}</span><h3>${s.title}</h3><p>${s.desc}</p><div class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><p class="study-count">${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</p><div class="study-actions"><a class="primary-btn" href="${esc(last?.url||s.url)}">${last||s.done?'继续学习':'开始学习'} →</a>${last?`<a class="study-text-link" href="${s.url}">课程目录</a>`:''}</div><small>${s.storage}</small></article>`;}
+        html+=`<section class="study-language" id="${lang}"><div class="study-language-head"><h2>${flag} ${label}</h2>${vocabMode?'':`<a href="level-test.html?lang=${lang}">选做起点测试 →</a>`}</div>${routeHtml}${lang==='kk'&&!vocabMode?'<a class="kt-banner" href="kaztest.html"><b>KAZTEST 备考</b><span>在哈萨克斯坦申请居留要先考 KAZTEST A1：中文说明、备考路线和 A1 / B1 / B2 模拟卷 →</span></a>':''}<div class="study-course-grid">`;
+        for(const s of shown){const pct=Math.round(s.done/(s.total||1)*100),last=window.KZLearning.resume(s.id);html+=`<article class="study-course-card" id="card-${s.id}"><div class="card-top"><span class="eyebrow">${label}</span>${levelChip(s.id)}</div><h3>${s.title}</h3><p>${s.desc}</p><div class="study-meter" role="progressbar" aria-label="${label}${s.title}完成进度" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div><p class="study-count">${s.done} / ${s.total} 小课 · ${s.passed} / ${s.modules} 模块通过</p><div class="study-actions"><a class="primary-btn" href="${esc(last?.url||s.url)}">${last||s.done?'继续学习':'开始学习'} →</a>${last?`<a class="study-text-link" href="${s.url}">课程目录</a>`:''}</div><small>${s.storage}</small></article>`;}
         html+='</div></section>';
       }
       host.innerHTML=homeMode?`<div class="home-langs">${html}</div>`:html;
