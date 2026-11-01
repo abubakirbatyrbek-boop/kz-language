@@ -755,7 +755,7 @@ const COURSE_LEVEL={daily:'A1 入门',foundation:'A1 入门',sentence:'A1–A2',
 function courseLevel(id){return COURSE_LEVEL[String(id).split('-')[0]]||'';}
 function levelChip(id){const l=courseLevel(id);if(!l)return '';return `<span class="level-chips"><span class="level-chip" title="对应欧洲语言共同参考框架（CEFR）等级；哈萨克语 KAZTEST、俄语 ТРКИ 都用这套等级">${l}</span></span>`;}
 // Course page header: "课程详情 · 对应 A1–A2".
-function markCourseLevel(c){const eb=document.querySelector('.detail-head .eyebrow');const l=courseLevel(c.id);if(eb&&l)eb.textContent='课程详情 · 对应 '+l;}
+function markCourseLevel(c){const back=document.getElementById('courseBack');if(back)back.href=String(c.id).startsWith('vocab-')?'courses.html#vocab':'courses.html#'+(c.targetLang==='ru'?'ru':'kk');const eb=document.querySelector('.detail-head .eyebrow');const l=courseLevel(c.id);if(eb&&l)eb.textContent='课程详情 · 对应 '+l;}
 function renderCoursePage(){
   const id=qs('id') || 'daily-kz'; const c=courseById(id) || courses[0];
   document.title = `${c.title}｜中亚语言通`;
@@ -1212,6 +1212,9 @@ function init(){
   if(page==='scene') renderScenePage();
   if(page==='learn'){
     const c=courseById(qs('id')||'daily-kz')||courses[0];
+    // Top-left way back: the course's module list, or the scene list for scene sentences.
+    const back=document.getElementById('learnBack');
+    if(back){const sc=c.id.startsWith('scene-');back.href=sc?`scenes.html?lang=${c.targetLang==='ru'?'ru':'kk'}`:`course.html?id=${encodeURIComponent(c.id)}`;back.textContent=sc?'← 返回场景':'← 返回课程目录';}
     if(c.kind==='speaking' && qs('pool')!=='scene') SpeakingFlow.start(c,'learn');
     else if(c.kind==='sentence' && window.GrammarFlow) window.GrammarFlow.renderLearnPage(c);
     else renderLearnPage();

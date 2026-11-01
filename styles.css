@@ -942,3 +942,5 @@ p,.page-lead,.lead,blockquote p{text-wrap:pretty}
 .stage-foot{flex-direction:column;gap:8px}.stage-foot .sc-tip{white-space:nowrap;margin:0}
 /* skip link: hidden until a keyboard user tabs to it */
 .skip-link{position:absolute;left:12px;top:-60px;z-index:1000;padding:10px 16px;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;text-decoration:none;transition:top .15s}.skip-link:focus{top:12px}main:focus{outline:none}
+/* back links sit on their own line above a page title, with a finger-sized hit area */
+.back-link{display:table;padding:6px 0;margin-bottom:14px;font-weight:600;color:var(--ink-2,#3a433e);text-decoration:none}.back-link:hover{color:var(--accent)}
