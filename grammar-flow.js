@@ -294,7 +294,7 @@
       const inModuleIndex=m.lessons.findIndex(x=>x.id===l.id);
 
       const root=document.getElementById('protectedContent');
-      if(!open(c,mi)){root.innerHTML='';root.appendChild(Object.assign(document.createElement('div'),{className:'grammar-v22-gate',innerHTML:`<span class="eyebrow">尚未解锁</span><h2>等待上一模块通过</h2><p>完成前面模块全部小课，并在各模块考试中答对 ≥70% 后，才能进入本模块。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a>`}));return;}
+      if(!open(c,mi)){root.innerHTML='';root.appendChild(Object.assign(document.createElement('div'),{className:'grammar-v22-gate',innerHTML:`<span class="eyebrow">尚未解锁</span><h1 class="gate-title">等待上一模块通过</h1><p>完成前面模块全部小课，并在各模块考试中答对 ≥70% 后，才能进入本模块。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a>`}));return;}
       if(inModuleIndex>0 && !m.lessons.slice(0,inModuleIndex).every(x=>done(c,x.id))){
         const first=m.lessons.findIndex(x=>!done(c,x.id));
         idx=pool.findIndex(x=>x.id===m.lessons[first].id); l=pool[idx];
@@ -320,8 +320,8 @@
     renderTestPage: async function(c,mNo){
       await initUser(); migrateGuest(c); injectStyles();
       const ms=allModules(c),m=ms.find(x=>x.no===mNo),root=document.getElementById('grammarTestRoot'); if(!m||!root)return;
-      if(!open(c,ms.indexOf(m))){root.innerHTML='';const b=document.createElement('div');b.className='grammar-v22-gate';b.innerHTML=`<span class="eyebrow">尚未解锁</span><h2>等待上一模块通过</h2><p>完成前面模块全部小课，各模块考试答对 ≥70% 才能进入下一模块。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a>`;root.appendChild(b);return;}
-      if(!complete(c,m)){root.innerHTML=`<div class="grammar-v22-gate"><span class="eyebrow">还不能考试</span><h2>请先完成模块 ${mNo} 的全部小课</h2><p>目前完成 ${m.lessons.filter(l=>done(c,l.id)).length} / ${m.lessons.length} 课。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a></div>`;return;}
+      if(!open(c,ms.indexOf(m))){root.innerHTML='';const b=document.createElement('div');b.className='grammar-v22-gate';b.innerHTML=`<span class="eyebrow">尚未解锁</span><h1 class="gate-title">等待上一模块通过</h1><p>完成前面模块全部小课，各模块考试答对 ≥70% 才能进入下一模块。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a>`;root.appendChild(b);return;}
+      if(!complete(c,m)){root.innerHTML=`<div class="grammar-v22-gate"><span class="eyebrow">还不能考试</span><h1 class="gate-title">请先完成模块 ${mNo} 的全部小课</h1><p>目前完成 ${m.lessons.filter(l=>done(c,l.id)).length} / ${m.lessons.length} 课。</p><a class="primary-btn" href="course.html?id=${encodeURIComponent(c.id)}">返回课程 →</a></div>`;return;}
 
       const pool=m.lessons, questions=[];
       for(let i=0;i<10;i++){

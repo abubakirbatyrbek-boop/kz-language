@@ -889,7 +889,7 @@ function renderTestPage(){
     qNo.textContent=current+1; prompt.textContent=q.prompt;
     const showSourceAudio=isTargetScript(q.source);
     source.style.display=showSourceAudio?'inline-flex':'none'; source.textContent=showSourceAudio?'🔊 听原句':''; source.dataset.text=showSourceAudio?q.source:''; source.dataset.lang=showSourceAudio?q.lang:'zh-CN';
-    optionsEl.innerHTML=q.options.map((opt,i)=>`<button class="answer-option" data-answer-index="${i}"><span class="option-letter">${String.fromCharCode(65+i)}</span><span>${opt}</span>${isTargetScript(opt)?`<span class="option-audio" data-text="${opt.replace(/"/g,'&quot;')}" data-lang="${q.lang||'kk-KZ'}">🔊</span>`:''}</button>`).join('');
+    optionsEl.innerHTML=q.options.map((opt,i)=>`<button class="answer-option" data-answer-index="${i}"><span class="option-letter">${String.fromCharCode(65+i)}</span><span>${opt}</span>${isTargetScript(opt)?`<span class="option-audio" aria-hidden="true" data-text="${opt.replace(/"/g,'&quot;')}" data-lang="${q.lang||'kk-KZ'}">🔊</span>`:''}</button>`).join('');
     feedback.className='test-feedback'; feedback.textContent=''; nextBtn.disabled=true; nextBtn.textContent=current===questions.length-1?'查看成绩':'下一题'; progress.style.width=`${Math.round((current/questions.length)*100)}%`;
     optionsEl.querySelectorAll('.option-audio').forEach(b=>b.onclick=e=>{e.stopPropagation();speak(b.dataset.text,b.dataset.lang)});
   }
@@ -1019,6 +1019,8 @@ const SpeakingFlow = (() => {
     if (error) throw error;
     return null;
   }
+  // Whole-page version of gate(): a card with its own page heading (exam or lesson opened before it is unlocked).
+  const gatePage = (title, html, tag = 'h1') => '<div class="result-card gate-card"><span class="eyebrow">未解锁</span><' + tag + ' class="gate-title">' + title + '</' + tag + '>' + html + '</div>';
   function gate(c, ms, i, user, next) {
     return '<p>未解锁：等待上一模块通过。请先完成前面模块的全部小课，并通过各模块考试（≥70%）。</p><a class="primary-btn" href="' + esc(courseUrl(c)) + '">返回模块列表</a>';
   }
@@ -1063,7 +1065,7 @@ const SpeakingFlow = (() => {
         root.innerHTML = '<p>没有这个模块。</p><a class="secondary-btn" href="' + esc(courseUrl(c)) + '">返回模块列表</a>';
         return;
       }
-      if (!unlocked(c, ms, index, user)) { root.innerHTML = gate(c, ms, index, user, examUrl(c,index)); return; }
+      if (!unlocked(c, ms, index, user)) { root.innerHTML = gatePage('这个模块考试还没解锁', gate(c, ms, index, user, examUrl(c,index)), 'h2'); return; }
       if (!done(ms[index])) { root.innerHTML = '<p>完成本模块全部小课后才能参加考试。</p><a class="primary-btn" href="' + esc(courseUrl(c)) + '">继续学习</a>'; return; }
       renderExam(c, ms, index, root);
       return;
@@ -1100,7 +1102,7 @@ const SpeakingFlow = (() => {
         submitting = true;
         root.querySelector('#speakingNext').disabled = true;
         const user = await userNow();
-        if (!unlocked(c,ms,index,user) || !done(ms[index])) { root.innerHTML = gate(c,ms,index,user,examUrl(c,index)); return; }
+        if (!unlocked(c,ms,index,user) || !done(ms[index])) { root.innerHTML = gatePage('这个模块考试还没解锁', gate(c,ms,index,user,examUrl(c,index)), 'h2'); return; }
         // Keep exact score: rounding 69.5% up to 70 must never unlock a module.
         const score = correct / bank.length * 100;
         try { localStorage.setItem(scoreKey(c,ms[index]),String(Math.max(best(c,ms[index]),score))); }
@@ -1121,7 +1123,7 @@ const SpeakingFlow = (() => {
     const current = Number.isInteger(raw) && raw >= 0 && raw < pool.length ? raw : 0;
     const index = ms.findIndex(m => m.items.includes(pool[current]));
     const user = await userNow();
-    if (!unlocked(c,ms,index,user)) { host.innerHTML = '<section class="section"><div class="container">' + gate(c,ms,index,user,lessonUrl(c,current)) + '</div></section>'; host.hidden = false; return; }
+    if (!unlocked(c,ms,index,user)) { host.innerHTML = '<section class="section"><div class="container narrow">' + gatePage('这一小课还没解锁', gate(c,ms,index,user,lessonUrl(c,current))) + '</div></section>'; host.hidden = false; return; }
     // Normalize malformed URLs before invoking the existing lesson renderer.
     const url = new URL(location.href); url.searchParams.set('start',String(current)); history.replaceState(null,'',url);
     renderLearnPage();
@@ -1215,7 +1217,7 @@ function init(){
     else renderLearnPage();
   }
   if(page==='test'){
-    if(qs('grammar')==='1' && window.GrammarFlow){
+    if((qs('grammar')==='1'||document.getElementById('grammarTestRoot')) && window.GrammarFlow){
       const c=courseById(qs('course')||'sentence-kz')||courses.find(x=>x.kind==='sentence');
       window.GrammarFlow.renderTestPage(c,Math.max(1,Number(qs('module')||1)));
     } else renderTestPage();

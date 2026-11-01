@@ -937,3 +937,8 @@ p,.page-lead,.lead,blockquote p{text-wrap:pretty}
 .kt-intro h3{margin:6px 0 10px;font-size:20px;line-height:1.4}.kt-intro>p{margin:0 0 10px;font-size:15px;line-height:1.8;color:var(--ink-2,#3a433e)}
 .kt-intro .kt-about{margin:10px 0 0}
 @media(max-width:640px){.lang-picker{grid-template-columns:1fr}.kt-intro{padding:16px}}
+.gate-title{font:700 clamp(22px,4vw,28px)/1.35 var(--display,"Noto Serif SC",serif);margin:8px 0 10px;letter-spacing:0}.gate-card{padding:26px}.gate-card p{color:var(--ink-2,#3a433e);line-height:1.75}
+/* phrase stage: the hint sits on its own line above the dots at every width (it wrapped beside them on desktop) */
+.stage-foot{flex-direction:column;gap:8px}.stage-foot .sc-tip{white-space:nowrap;margin:0}
+/* skip link: hidden until a keyboard user tabs to it */
+.skip-link{position:absolute;left:12px;top:-60px;z-index:1000;padding:10px 16px;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;text-decoration:none;transition:top .15s}.skip-link:focus{top:12px}main:focus{outline:none}

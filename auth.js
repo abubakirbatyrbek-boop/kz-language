@@ -219,7 +219,8 @@
     function friendlyError(err) {
       if (err?.status === 429 || /rate.limit|too many|after .*seconds/i.test(err?.message || '')) return '发送或验证过于频繁，请稍后再试。';
       if (err?.code === 'otp_expired' || /expired|invalid.*token/i.test(err?.message || '')) return '验证码或链接无效、已过期或已使用，请重新发送验证码。';
-      if (/fetch|network/i.test(err?.message || '')) return '网络连接失败，请检查网络后重试。';
+      // A request that never reaches the server: either this device is offline, or the account service is down.
+      if (/fetch|network|load failed/i.test(err?.message || '')) return navigator.onLine === false ? '网络已断开，请连上网络后重试。' : '账号服务暂时连不上，请过一会儿再试。课程可以先不登录继续学，进度会保存在这台设备上。';
       return err?.message || '操作失败，请稍后再试。';
     }
     resend?.addEventListener('click', async () => {
@@ -539,7 +540,7 @@
       const panelOf=(id,title,html)=>{document.getElementById(id)?.remove();const p=document.createElement('section');p.id=id;p.className='study-tool';p.innerHTML='<h3>'+title+'</h3>'+html;audio.before(p);return p;};
       if(l.drill){
         // Word list: every word on its own line with its own 🔊; "原速/慢速" read the words one by one.
-        const p=panelOf('lessonDialogue','词表',l.drill.map((d,i)=>`<div class="dialogue-line"><strong>${i+1}</strong><span><b lang="${lang}">${esc(d[1])}</b><small>${esc(d[0])}</small></span><button type="button" data-word="${i}">🔊</button></div>`).join('')+'<p class="study-help">先逐个听、跟读，再点“▶ 原速”按顺序听一遍。</p>');
+        const p=panelOf('lessonDialogue','词表',l.drill.map((d,i)=>`<div class="dialogue-line"><strong>${i+1}</strong><span><b lang="${lang}">${esc(d[1])}</b><small>${esc(d[0])}</small></span><button type="button" data-word="${i}" aria-label="播放：${esc(d[1])}">🔊</button></div>`).join('')+'<p class="study-help">先逐个听、跟读，再点“▶ 原速”按顺序听一遍。</p>');
         p.querySelectorAll('[data-word]').forEach(b=>b.onclick=()=>voice(l.drill[+b.dataset.word][1],lang,1,audio.querySelector('[role=status]')));
         // Arrived from the home card's "今日单词": mark that word; hearing it completes the daily goal.
         const dw=new URLSearchParams(location.search).get('word'), row=dw!==null&&p.querySelectorAll('.dialogue-line')[+dw];
@@ -557,7 +558,7 @@
       }
       if(l.turns){
         const panel=document.createElement('section');panel.id='lessonDialogue';panel.className='study-tool';
-        panel.innerHTML='<h3>对话</h3>'+l.turns.map((t,i)=>`<div class="dialogue-line"><strong>${esc(t[0])}</strong><span><b lang="${lang}">${esc(t[2])}</b><small>${esc(t[1])}</small></span><button type="button" data-line="${i}">🔊</button></div>`).join('')+'<p class="study-help">先逐句听，再点上方“▶ 原速”听整段。最后一句是对方的回答，练习会考你听懂它。</p>';
+        panel.innerHTML='<h3>对话</h3>'+l.turns.map((t,i)=>`<div class="dialogue-line"><strong>${esc(t[0])}</strong><span><b lang="${lang}">${esc(t[2])}</b><small>${esc(t[1])}</small></span><button type="button" data-line="${i}" aria-label="播放：${esc(t[2])}">🔊</button></div>`).join('')+'<p class="study-help">先逐句听，再点上方“▶ 原速”听整段。最后一句是对方的回答，练习会考你听懂它。</p>';
         document.getElementById('lessonDialogue')?.remove(); audio.before(panel);
         panel.querySelectorAll('[data-line]').forEach(b=>b.onclick=()=>voice(l.turns[+b.dataset.line][2],lang,0.9,audio.querySelector('[role=status]')));
       }
