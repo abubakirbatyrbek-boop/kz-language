@@ -499,7 +499,7 @@ const LETTER_SOUND_WORD={
 };
 function letterWord(text,lang){const m=String(text||'').trim().match(/^(\S)\s+(\S)$/);if(!m||m[1]===m[2]||m[1].toLowerCase()!==m[2])return null; // only "Ө ө"-style letter cards; "Я" alone is the word "I"
 return LETTER_SOUND_WORD[String(lang).startsWith('kk')?'kk':'ru'][m[1].toLowerCase()]||null;}
-// Letter cards play only the letter's own sound, about twice as long as in speech ("аа", "мм"), from clips packed by
+// Letter cards play only the letter's own sound, read a little long ("аа", "мм"), from clips packed by
 // tools\letter-audio.ps1 as "letter:<lowercase>" entries. Languages without those clips keep the word above.
 const LETTER_CLIP_LANGS=['kk','ru'];
 function letterOf(text){const m=String(text||'').trim().match(/^(\S)\s+(\S)$/);return m&&m[1]!==m[2]&&m[1].toLowerCase()===m[2]?m[2]:null}
