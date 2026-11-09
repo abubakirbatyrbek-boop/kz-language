@@ -550,7 +550,7 @@ body[data-page=learn] .lesson-card{background:#fff;border:1px solid var(--line);
 :root{
   --steppe:#1d5a42;--steppe-deep:#0f3326;--steppe-ink:#0b241b;--gold:#b2832f;--gold-ink:#7f5a1a;--gold-2:#d8b35e;--gold-soft:#f6ecd9;
   --sky:#2b97c4;--paper:#f8f5ef;--paper-2:#efe8db;--card:#fffdf9;--ink:#1b2420;--ink-2:#3a433e;--muted:#5d6660;
-  --display:"Noto Serif SC","Noto Serif","Songti SC",Georgia,serif;--serif-cy:"Noto Serif",Georgia,serif;
+  --display:"Noto Serif","Songti SC","STSong","Noto Serif CJK SC","Source Han Serif SC","SimSun",Georgia,serif; /* Chinese from the device: the web font cost ~770 KB per first visit */--serif-cy:"Noto Serif",Georgia,serif;
   --ease:cubic-bezier(.2,.7,.2,1);--r-lg:28px
 }
 /* readable everywhere: no text under 12.5px, muted text meets 4.5:1 on paper */
@@ -613,7 +613,8 @@ body[data-page=study-home] main{overflow:hidden}
   .ornament path:nth-child(n+6){animation-delay:.85s}
   @keyframes draw{to{stroke-dashoffset:0}}
   .hero2-text>*{animation:rise .8s var(--ease) both}
-  .hero2-text>:nth-child(2){animation-delay:.06s}.hero2-text>:nth-child(3){animation-delay:.12s}.hero2-text>:nth-child(4){animation-delay:.18s}.hero2-text>:nth-child(5){animation-delay:.24s}
+  .hero2-text>h1{animation:none} /* the headline is the first thing to read: shown at once, not faded in */
+  .hero2-text>:nth-child(3){animation-delay:.12s}.hero2-text>:nth-child(4){animation-delay:.18s}.hero2-text>:nth-child(5){animation-delay:.24s}.hero2-text>:nth-child(6){animation-delay:.3s}
   .stage-card{animation:rise .9s .15s var(--ease) both}
   @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
   .will-reveal{opacity:0;transform:translateY(22px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
@@ -970,3 +971,21 @@ p,.page-lead,.lead,blockquote p{text-wrap:pretty}
 .tr-mt{border-style:dashed}
 .tr-badge{display:inline-block;font-size:12px;font-weight:700;color:#8a5a00;background:#fdf1d6;border-radius:6px;padding:2px 8px;margin-bottom:6px}
 .tr-note{font-size:14px;color:var(--ink-2);margin:8px 0}
+/* Homepage hero: choose a language right away (the first decision), resume link only for returning learners */
+.hero-cta [hidden]{display:none}
+.hero-more{margin:12px 0 0;font-size:15px;color:var(--ink-2)}
+.hero-more a{font-weight:700;color:var(--accent);text-decoration:underline;text-underline-offset:3px;display:inline-block;padding:8px 0}
+/* Streak badge in the header, and the last seven days in "今日目标" */
+.streak-badge{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;margin-right:8px;border-radius:999px;background:#fdf1d6;color:#7a4a00;font-weight:800;font-size:14px;white-space:nowrap}
+.streak-badge:hover{background:#fae6b8}
+.week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;list-style:none;margin:10px 0 0;padding:0;max-width:420px}
+.week-strip li{display:grid;justify-items:center;gap:4px}
+.week-strip li>span[aria-hidden]{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:2px solid var(--line);background:#fff;color:#fff;font-weight:800}
+.week-strip li.on>span[aria-hidden]{background:var(--accent);border-color:var(--accent)}
+.week-strip li.today>span[aria-hidden]{box-shadow:0 0 0 3px var(--accent-soft)}
+.week-strip small{font-size:12px;color:var(--ink-2)}
+/* Course page: where to continue */
+.course-next{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:14px 16px;margin:0 0 16px;border-radius:16px;background:var(--accent-soft);border:1px solid var(--line)}
+.course-next[hidden]{display:none}
+.course-next small{display:block;font-size:13px;font-weight:700;color:var(--accent)}
+.course-next strong{display:block;font-size:17px;line-height:1.4}

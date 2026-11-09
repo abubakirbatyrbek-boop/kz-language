@@ -1376,3 +1376,26 @@ document.addEventListener('DOMContentLoaded', init);
   }
   document.addEventListener('DOMContentLoaded',draw);
 })();
+
+// Course page: a "next lesson" banner above the modules, so a returning learner does not have to look for their place
+// in the list. It is read from the rendered list (the first unlocked lesson not finished yet, otherwise the open
+// module's exam), so it works for both course flows (SpeakingFlow here, GrammarFlow in grammar-flow.js).
+(function nextLessonBanner(){
+  if(document.body.dataset.page!=='course')return;
+  const list=document.getElementById('lessonList');if(!list)return;
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const box=document.createElement('div');box.className='course-next';box.hidden=true;list.before(box);
+  const draw=()=>{
+    const rows=[...list.querySelectorAll('.course-lesson-item')];
+    const isDone=el=>el.querySelector('.num')?.textContent.trim()==='✓';
+    const next=rows.find(el=>el.tagName==='A'&&!isDone(el));
+    const exam=!next&&[...list.querySelectorAll('.study-module a.primary-btn')].find(a=>/参加模块考试/.test(a.textContent));
+    if(new URLSearchParams(location.search).has('exam')||(!next&&!exam)){box.hidden=true;return;}
+    const started=rows.some(isDone);
+    const title=next?next.querySelector('strong')?.textContent:exam.closest('.study-module')?.querySelector('h3')?.textContent;
+    box.innerHTML=`<div><small>${next?(started?'下一课':'从这里开始'):'这个模块的课都学完了'}</small><strong>${esc(title)}</strong></div>`+
+      `<a class="primary-btn" href="${esc((next||exam).getAttribute('href'))}">${next?(started?'继续学习 →':'开始学习 →'):'参加模块考试 →'}</a>`;
+    box.hidden=false;
+  };
+  new MutationObserver(draw).observe(list,{childList:true,subtree:true});draw();
+})();

@@ -343,7 +343,7 @@
   // Daily goals: today's counters (lessons finished, reviews done, sentences heard) and the list of days studied.
   const dayKey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   function bump(kind){update(s=>{const d=dayKey();if(s.daily?.date!==d)s.daily={date:d,lessons:0,review:0,listen:0,word:0};s.daily[kind]=(s.daily[kind]||0)+1;
-    if(kind==='lessons'||kind==='review'||kind==='word'){s.days=[...new Set([...(s.days||[]),d])].sort().slice(-400);}});}
+    if(kind==='lessons'||kind==='review'||kind==='word'){s.days=[...new Set([...(s.days||[]),d])].sort().slice(-400);}});showStreak();}
   function streak(days){const set=new Set(days||[]);let n=0,d=new Date();if(!set.has(dayKey(d)))d.setDate(d.getDate()-1);while(set.has(dayKey(d))){n++;d.setDate(d.getDate()-1);}return n;}
   function today(){const s=state(),d=dayKey(),t=s.daily?.date===d?s.daily:{lessons:0,review:0,listen:0,word:0};
     const due=Object.values(s.review||{}).filter(x=>x.due<=Date.now()).length;return {...t,due,streak:streak(s.days),last:resume()};}
@@ -374,13 +374,14 @@
         mergeState(remote);
         // This device knew something the account did not (e.g. guest work): upload the merged state.
         if(JSON.stringify(snapshot(state()))!==JSON.stringify(snapshot(remote||{})))schedulePush();
-        updateLinks();
+        updateLinks();showStreak();
       }catch{}
     })();
   }
   function safeUrl(raw){try{const u=new URL(raw,location.href);return u.origin===location.origin && /\/(learn|course|unit|lesson-v4|quiz-v4|grammar-test)\.html$/.test(u.pathname)?u.pathname.split('/').pop()+u.search:null}catch{return null}}
   function resume(course){const s=state(),r=course?s.courses?.[course]:s.last;return r&&safeUrl(r.url)?r:null;}
-  function updateLinks(){document.querySelectorAll('[data-continue]').forEach(a=>{const r=resume();a.href=r?safeUrl(r.url):'courses.html';a.textContent=r?'继续学习':'选择课程';});}
+  // data-resume-only: the link is shown only to someone who has a lesson to come back to.
+  function updateLinks(){document.querySelectorAll('[data-continue]').forEach(a=>{const r=resume();a.href=r?safeUrl(r.url):'courses.html';a.textContent=r?'继续学习':'选择课程';if(a.hasAttribute('data-resume-only'))a.hidden=!r;});}
   function remember(course,title,url=location.href){const valid=safeUrl(url);if(!valid)return;update(s=>{const r={course,title,url:valid,at:Date.now()};s.last=r;(s.courses||={})[course]=r});updateLinks();}
   function review(c,l){update(s=>{(s.review||={})[c.id+':'+l.id]={course:c.id,id:l.id,title:l.title,cn:l.cn,target:c.targetLang==='kk'?l.kz:l.ru,lang:c.targetLang,note:l.tip||'',due:Date.now(),streak:0};});}
   function practiceDone(c,l){return !!state().practice?.[c.id+':'+l.id];}
@@ -625,6 +626,21 @@
     courseLessons('vocab-'+suffix).forEach((l,i)=>(l.drill||[]).forEach((w,j)=>all.push({cn:w[0],word:w[1],lang,url:`learn.html?pool=course&id=vocab-${suffix}&start=${i}&word=${j}`})));
     return all.length?all[(Math.floor(Date.parse(dayKey())/864e5)*37)%all.length]:null;
   }
+  // The last seven days, oldest first: which days had a finished lesson, review or word (the streak rule).
+  function weekStrip(){
+    const set=new Set(state().days||[]),names='日一二三四五六',out=[];
+    for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const on=set.has(dayKey(d));
+      out.push(`<li class="${on?'on':''}${i?'':' today'}"><span aria-hidden="true">${on?'✓':''}</span><small>${i?'周'+names[d.getDay()]:'今天'}</small><span class="sr-only">${on?'学了':'没学'}</span></li>`);}
+    return `<ol class="week-strip" aria-label="最近 7 天的学习">${out.join('')}</ol>`;
+  }
+  // Streak badge next to the sign-in button on every page, shown from the first day of a streak.
+  function showStreak(){
+    const wrap=document.querySelector('.nav-wrap'),auth=document.getElementById('authNav');if(!wrap||!auth)return;
+    const n=streak(state().days);let b=wrap.querySelector('.streak-badge');
+    if(!n){b?.remove();return;}
+    if(!b){b=document.createElement('a');b.className='streak-badge';b.href='progress.html';auth.before(b);}
+    b.textContent='🔥 '+n;b.setAttribute('aria-label','已连续学习 '+n+' 天，查看我的学习');
+  }
   function renderToday(host){
     if(!host)return;const t=today(),w=dailyWord();
     const goals=[
@@ -638,13 +654,14 @@
              :`<div class="today-last"><small>还没有开始学习</small><strong>从第一课开始吧</strong><a class="primary-btn" href="courses.html">选择课程 →</a></div>`)+
       `<h2>${all?'今天的目标都完成了 🎉':'今日目标'}</h2><ul class="today-goals">`+
       goals.map(g=>`<li class="${g.ok?'done':''}"><span class="mark" aria-hidden="true">${g.ok?'✓':''}</span><span><b>${g.label}</b><small>${esc(g.note)}</small></span><span class="sr-only">${g.ok?'已完成':'未完成'}</span><a class="goal-btn" href="${esc(g.url)}">${g.btn} →</a></li>`).join('')+
-      `</ul><p class="today-streak">${t.streak?'🔥 已连续学习 '+t.streak+' 天':'今天完成一节课，开始连续学习记录'}</p>`+
+      `</ul><p class="today-streak">${t.streak?'🔥 已连续学习 '+t.streak+' 天':'今天完成一节课，开始连续学习记录'}</p>`+weekStrip()+
       // Guests keep progress only on this device: invite them to register so it follows them.
       (window.KZAuth?.getUser?.()?'':`<p class="today-signup">💾 为了同步学习进度，建议<a href="auth.html?mode=signup&next=index.html">免费注册</a>：换手机、换电脑也能接着学。</p>`);
   }
   async function ready(){await window.KZAuth.ready;if(!window.KZAuth.getClient())throw new Error('登录服务不可用');await pull();}
   window.KZLearning={ready,esc,resume,remember,state,review,attachLesson,renderReview,voice,updateLinks,bump,today,renderToday,pronounce:pronScore};
   window.KZAuth.ready.then(()=>{
+    showStreak();
     const u=window.KZAuth.getUser();
     if(u&&!localStorage.getItem('kz-study-guest-claimed')){
       const guest=readKey('kz-study:guest'),account=state();
