@@ -1,6 +1,8 @@
 {
   "functions": {
-    "api/pronounce.js": { "maxDuration": 30 }
+    "api/pronounce.js": { "maxDuration": 30 },
+    "api/translate.js": { "maxDuration": 15 },
+    "api/speak.js": { "maxDuration": 20 }
   },
   "crons": [
     { "path": "/api/keepalive", "schedule": "0 6 * * *" }

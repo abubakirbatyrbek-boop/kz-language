@@ -412,6 +412,11 @@ h1{letter-spacing:-.03em}
 .main-nav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .main-nav .ns,.main-nav [data-nav=home]{display:none}
 .auth-nav .auth-link,.auth-nav-btn{border:1px solid var(--line-2);border-radius:999px;padding:7px 14px;background:#fff;font-weight:700;font-size:13px}
+/* Seven links: on narrower desktops drop the icons and tighten them so the sign-in button stays on the first line */
+@media(min-width:861px) and (max-width:1240px){
+  .main-nav a{padding:8px 9px}
+  .main-nav svg{display:none}
+}
 @media(max-width:860px){
   .topbar{backdrop-filter:none;background:var(--paper)}
   .nav-wrap{height:58px}.brand small{display:none}
@@ -944,3 +949,24 @@ p,.page-lead,.lead,blockquote p{text-wrap:pretty}
 .skip-link{position:absolute;left:12px;top:-60px;z-index:1000;padding:10px 16px;border-radius:12px;background:var(--accent);color:#fff;font-weight:700;text-decoration:none;transition:top .15s}.skip-link:focus{top:12px}main:focus{outline:none}
 /* back links sit on their own line above a page title, with a finger-sized hit area */
 .back-link{display:table;padding:6px 0;margin-bottom:14px;font-weight:600;color:var(--ink-2,#3a433e);text-decoration:none}.back-link:hover{color:var(--accent)}
+/* Translation page (translate.html) */
+.tr-form{display:grid;gap:10px;margin:18px 0 22px}
+.tr-label{font-weight:700}
+.tr-form textarea{width:100%;font:inherit;font-size:17px;line-height:1.5;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);resize:vertical}
+.tr-form textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
+.tr-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tr-hint{font-size:14px;color:var(--ink-2)}
+.tr-try{display:flex;gap:8px;flex-wrap:wrap}
+.tr-try button{font:inherit;font-size:14px;min-height:40px;padding:6px 14px;border:1px solid var(--line);border-radius:999px;background:var(--paper-2);color:var(--ink);cursor:pointer}
+.tr-h{font-size:18px;margin:8px 0 10px}
+.tr-h small{font-size:13px;font-weight:500;color:var(--ink-2);margin-left:6px}
+.tr-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.tr-zh{margin:0 0 6px;font-weight:700;font-size:16px}
+.tr-line{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:4px 0}
+.tr-lang{font-size:12px;font-weight:700;color:var(--ink-2);background:var(--paper-2);border-radius:6px;padding:2px 7px}
+.tr-text{font-size:17px;overflow-wrap:anywhere}
+.tr-play{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:17px;cursor:pointer}
+.tr-play.on{background:var(--accent-soft);border-color:var(--accent)}
+.tr-mt{border-style:dashed}
+.tr-badge{display:inline-block;font-size:12px;font-weight:700;color:#8a5a00;background:#fdf1d6;border-radius:6px;padding:2px 8px;margin-bottom:6px}
+.tr-note{font-size:14px;color:var(--ink-2);margin:8px 0}
