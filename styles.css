@@ -989,3 +989,12 @@ p,.page-lead,.lead,blockquote p{text-wrap:pretty}
 .course-next[hidden]{display:none}
 .course-next small{display:block;font-size:13px;font-weight:700;color:var(--accent)}
 .course-next strong{display:block;font-size:17px;line-height:1.4}
+/* Kazakh in the Arabic script (төте жазу) and the 1964–1984 Latin, under each Kazakh sentence */
+.kk-scripts{display:grid;gap:4px;margin:6px 0 0}
+.kk-scripts[hidden]{display:none}
+.kk-scripts p{display:flex;align-items:baseline;gap:8px;margin:0}
+.kk-script-tag{flex:none;font-size:12px;font-weight:700;color:var(--ink-2);background:var(--paper-2);border-radius:6px;padding:1px 7px}
+.kk-script-text{min-width:0;font-size:17px;line-height:1.6;color:var(--ink);overflow-wrap:anywhere}
+.kk-script-text[lang=kk-Arab]{font-family:"Noto Naskh Arabic","Geeza Pro","Segoe UI","Arial",sans-serif;font-size:19px}/* translation results: the scripts go on their own line under the Kazakh text, the play button stays beside it */
+.tr-line .tr-play{grid-column:3;grid-row:1}
+.tr-line .kk-scripts{grid-column:2/4;grid-row:2;margin:0}
