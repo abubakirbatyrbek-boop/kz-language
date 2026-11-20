@@ -998,3 +998,14 @@ p,.page-lead,.lead,blockquote p{text-wrap:pretty}
 .kk-script-text[lang=kk-Arab]{font-family:"Noto Naskh Arabic","Geeza Pro","Segoe UI","Arial",sans-serif;font-size:19px}/* translation results: the scripts go on their own line under the Kazakh text, the play button stays beside it */
 .tr-line .tr-play{grid-column:3;grid-row:1}
 .tr-line .kk-scripts{grid-column:2/4;grid-row:2;margin:0}
+/* interface language switch (i18n.js) */
+.ui-lang{flex:none;height:36px;padding:0 8px;margin-right:6px;border:1px solid var(--line,#d9e1dc);border-radius:999px;background:#fff;color:inherit;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
+.ui-lang:focus-visible{outline:2px solid #1f6b4a;outline-offset:2px}
+html[data-ui=arab] body{font-family:"Noto Naskh Arabic","Segoe UI","Geeza Pro",Inter,"PingFang SC","Microsoft YaHei",sans-serif}
+html[data-ui=arab] :is(h1,h2,h3,h4,p,li,label,legend,summary,small,strong,span,a,button,option,th,td,blockquote){unicode-bidi:plaintext}
+html[data-ui=arab] .nav-wrap,html[data-ui=latn] .nav-wrap{gap:12px}
+@media(min-width:861px){html:is([data-ui=arab],[data-ui=latn]) .main-nav a{padding:8px 8px}html:is([data-ui=arab],[data-ui=latn]) .main-nav svg{display:none}}
+html:is([data-ui=arab],[data-ui=latn]) .auth-nav{min-width:auto}html:is([data-ui=arab],[data-ui=latn]) .auth-link{white-space:nowrap}
+@media(min-width:861px) and (max-width:1240px){html:is([data-ui=arab],[data-ui=latn]) .main-nav .nl{display:none}html:is([data-ui=arab],[data-ui=latn]) .main-nav .ns{display:inline}html:is([data-ui=arab],[data-ui=latn]) .main-nav a{font-size:13.5px;padding:8px 7px}}
+@media(min-width:861px) and (max-width:1020px){html:is([data-ui=arab],[data-ui=latn]) .brand small{display:none}html:is([data-ui=arab],[data-ui=latn]) .main-nav a{font-size:13px;padding:8px 5px}}
+@media(min-width:861px) and (max-width:960px){html[data-ui=latn] .topbar .brand>span:last-child{display:none}}
