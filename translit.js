@@ -13,8 +13,11 @@
   const AR = { а: 'ا', ә: 'ا', б: 'ب', в: 'ۆ', г: 'گ', ғ: 'ع', д: 'د', е: 'ە', ё: 'يو', ж: 'ج', з: 'ز', и: 'ي', й: 'ي',
     к: 'ك', қ: 'ق', л: 'ل', м: 'م', н: 'ن', ң: 'ڭ', о: 'و', ө: 'و', п: 'پ', р: 'ر', с: 'س', т: 'ت', у: 'ۋ', ұ: 'ۇ',
     ү: 'ۇ', ф: 'ف', х: 'ح', һ: 'ھ', ц: 'تس', ч: 'چ', ш: 'ش', щ: 'شش', ъ: '', ы: 'ى', і: 'ى', ь: '', э: 'ە', ю: 'يۋ', я: 'يا' };
+  // A letter on its own is written as in the alphabet chart, where the front vowels carry their hamza: ٵ ٶ ٷ ٸ.
+  const ALONE = { ә: 'ٵ', ө: 'ٶ', ү: 'ٷ', і: 'ٸ' };
   function arabWord(w) {
     w = w.toLowerCase();
+    if (w.length === 1 && ALONE[w]) return ALONE[w];
     const body = [...w].map(c => AR[c] ?? c).join('');
     return /[әөүі]/.test(w) && !/[еэкгқғ]/.test(w) ? 'ٴ' + body : body;
   }
